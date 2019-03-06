@@ -1,0 +1,177 @@
+#!/usr/bin/env node
+/*
+ * K2HR3 REST API
+ *
+ * Copyright 2017 Yahoo! Japan Corporation.
+ *
+ * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+ * common management information for the cloud.
+ * K2HR3 can dynamically manage information as "who", "what", "operate".
+ * These are stored as roles, resources, policies in K2hdkc, and the
+ * client system can dynamically read and modify these information.
+ *
+ * For the full copyright and license information, please view
+ * the license file that was distributed with this source code.
+ *
+ * AUTHOR:   Takeshi Nakatani
+ * CREATE:   Wed Jun 8 2017
+ * REVISION:
+ *
+ */
+
+'use strict';
+
+//
+// Module dependencies.
+//
+
+var app			= require('../app');
+var debug		= require('debug')('k2hr3-api:server');
+var fs			= require('fs');
+var cluster		= require('cluster');
+var numCPUs		= require('os').cpus().length;
+var	r3Conf		= require('../lib/k2hr3config').r3ApiConfig;
+var	apiConf		= new r3Conf();
+
+//
+// Setup console logging
+//
+apiConf.setConsoleLogging(__dirname + '/..', false);								// replace output from stdout/stderr to file if set in config
+
+if(cluster.isMaster && (undefined == apiConf.isMultiProc() || false !== apiConf.isMultiProc())){
+	console.log(`Master ${process.pid} is running`);
+
+	// Fork workers.
+	var	cnt;
+	for(cnt = 0; cnt < numCPUs; ++cnt){
+		cluster.fork();
+	}
+
+	cluster.on('exit', function(worker, code, signal){
+		if(signal){
+			console.log(`worker was killed by signal: ${signal}`);
+		}else if(0 !== code){
+			console.log(`worker exited with error code: ${code}`);
+		}else{
+			console.log(`worker ${worker.process.pid} died`);
+		}
+	});
+}else{
+	//
+	// Get port from environment and store in Express.
+	//
+	var	options;
+	var	secure	= false;
+	var key		= apiConf.getPrivateKey();			// allow empty
+	var cert	= apiConf.getCert();				// allow empty
+	var ca		= apiConf.getCA();					// allow empty
+	var user	= apiConf.getRunUser();				// allow empty
+	var	port	= apiConf.getPort();
+
+	//
+	// scheme
+	//
+	if('https' == apiConf.getScheme() || 'HTTPS' == apiConf.getScheme()){
+		secure	= true;
+		options = {
+			key:	fs.readFileSync(key),
+			cert:	fs.readFileSync(cert),
+			ca:		fs.readFileSync(ca)
+		};
+	}else if('http' == apiConf.getScheme() || 'HTTP' == apiConf.getScheme()){
+		secure	= false;
+	}else{
+		console.log('scheme value(' + apiConf.getScheme() + ') in config is wrong');
+		process.exit(1);
+	}
+
+	//
+	// Others
+	//
+	var os		= require('os');
+	var hostname= os.hostname()	|| '127.0.0.1';
+
+	//
+	// Store in Express.
+	//
+	app.set('port', port);
+
+	//
+	// Create HTTP server.
+	//
+	var	server;
+	if(secure){
+		var	https	= require('https');
+		server		= https.createServer(options, app);
+	}else{
+		var	http	= require('http');
+		server		= http.createServer(app);
+	}
+
+	//
+	// Listen on provided port, on all network interfaces.
+	//
+	server.listen(port, function()
+	{
+		if(undefined !== user && null !== user && 'string' == typeof user && '' !== user){
+			console.log('Attempting setuid to user "' + user + '"...');
+			try {
+				process.setuid(user);
+				console.log('Succeeded to setuid');
+			} catch (err) {
+				console.log('Failed to setuid');
+				process.exit(1);
+			}
+		}
+	});
+
+	server.on('error', onError);
+	server.on('listening', onListening);
+
+	console.log('Server running at ' + apiConf.getScheme() + '://' + hostname + ':' + port + '/');
+	console.log(`Worker ${process.pid} started`);
+}
+
+//
+// Event listener for HTTP server "error" event.
+//
+function onError(error)
+{
+	if('listen' !== error.syscall){
+		throw error;
+	}
+	var bind	= ('string' === typeof port) ? 'Pipe ' + port : 'Port ' + port;
+
+	// handle specific listen errors with friendly messages
+	switch(error.code){
+		case 'EACCES':
+			console.error(bind + ' requires elevated privileges');
+			process.exit(1);
+			break;
+
+		case 'EADDRINUSE':
+			console.error(bind + ' is already in use');
+			process.exit(1);
+			break;
+
+		default:
+			throw error;
+	}
+}
+
+//
+// Event listener for HTTP server "listening" event.
+//
+function onListening()
+{
+	var addr	= server.address();
+	var bind	= ('string' === typeof addr) ? 'pipe ' + addr : 'port ' + addr.port;
+
+	debug('Listening on ' + bind);
+}
+
+/*
+ * VIM modelines
+ *
+ * vim:set ts=4 fenc=utf-8:
+ */

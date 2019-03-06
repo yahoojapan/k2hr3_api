@@ -1,0 +1,92 @@
+/*
+ * K2HR3 REST API
+ *
+ * Copyright 2017 Yahoo! Japan Corporation.
+ *
+ * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+ * common management information for the cloud.
+ * K2HR3 can dynamically manage information as "who", "what", "operate".
+ * These are stored as roles, resources, policies in K2hdkc, and the
+ * client system can dynamically read and modify these information.
+ *
+ * For the full copyright and license information, please view
+ * the license file that was distributed with this source code.
+ *
+ * AUTHOR:   Takeshi Nakatani
+ * CREATE:   Wed Jun 8 2017
+ * REVISION:
+ *
+ */
+
+//
+// Default(base) configuration file by json for config
+//
+// [NOTE]
+// The 'corsips' element for our test temporary environments.
+// You need to change or remove these value.
+//
+// k2hr3admin object is used for removing ip addresses by cuk
+// (delete ip addresses), its members are tenant and role name
+// for allowed client.
+//
+{
+	'keystone': {
+		'type':				'openstackapiv3',
+		'eptype':			'list',
+		'epfile':			null,
+		'eplist': {
+			'myregion':		'https://dummy.keystone.openstack/'
+		}
+	},
+
+	'k2hdkc': {
+		'config':			'/etc/k2hdkc/slave.ini',
+		'port':				8031
+	},
+
+	'multiproc':			true,
+	'scheme':				'https',
+	'runuser':				'nobody',
+	'privatekey':			'config/key.pem',
+	'cert':					'config/cert.pem',
+	'ca':					'/etc/pki/tls/certs/ca-bundle.crt',
+
+	'logdir':				'log',
+	'accesslogname':		'access.log',
+	'consolelogname':		'error.log',
+	'watcherlogname':		'watcher.log',
+	'wconsolelogname':		'watchererror.log',
+	'logrotateopt': {
+		'compress':			'gzip',
+		'interval':			'6h',
+		'initialRotation':	true
+	},
+
+	'userdata': {
+		'baseuri':			'https://localhost',
+		'cc_templ':			'config/k2hr3-cloud-config.txt.templ',
+		'script_templ':		'config/k2hr3-init.sh.templ',
+		'errscript_templ':	'config/k2hr3-init-error.sh.templ',
+		'algorithm':		'aes-256-cbc',
+		'passphrase':		'k2hr3_regpass'
+	},
+
+	'k2hr3admin': {
+		'tenant':			'admintenant',
+		'delhostrole':		'delhostrole'
+	},
+
+	'confirmtenant':		false,
+
+	'chkipconfig': {
+		'type':				'Listener'
+	},
+
+	'allowcredauth':		true
+}
+
+/*
+ * VIM modelines
+ *
+ * vim:set ts=4 fenc=utf-8:
+ */

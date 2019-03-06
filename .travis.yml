@@ -1,0 +1,77 @@
+#
+# K2HR3 REST API
+#
+# Copyright 2017 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the licenses file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Wed Jun 8 2017
+# REVISION:
+#
+
+language: cpp
+
+sudo: required
+
+dist: trusty
+
+env:
+  global:
+    - PCUSER=antpickax
+    - PCREPO=stable
+  matrix:
+    - OS=ubuntu
+      TAG=18.04
+      NODE_MAJOR_VERSION=6
+      PUBLISHER=false
+      INSTPKG="k2hdkc-dev"
+    - OS=ubuntu
+      TAG=18.04
+      NODE_MAJOR_VERSION=8
+      PUBLISHER=false
+      INSTPKG="k2hdkc-dev"
+    - OS=ubuntu
+      TAG=18.04
+      NODE_MAJOR_VERSION=10
+      PUBLISHER=true
+      INSTPKG="k2hdkc-dev"
+
+cache: apt
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update -qq
+  - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
+  - sudo service docker restart
+  - sleep 5
+  - sudo docker image pull ${OS}:${TAG}
+
+script:
+  - sudo docker container run
+    --rm=true
+    -e TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+    -e TRAVIS_TAG=${TRAVIS_TAG}
+    -e FORCE_PUBLISH_PKG=${FORCE_PUBLISH_PKG}
+    -e NPM_TOKEN=${NPM_TOKEN}
+    -e NODE_MAJOR_VERSION=${NODE_MAJOR_VERSION}
+    -e USE_PC_REPO=${USE_PC_REPO}
+    -e PUBLISHER=${PUBLISHER}
+    -v `pwd`:/k2hr3_api:rw
+    ${OS}:${TAG}
+    /bin/sh -c "/k2hr3_api/.travis_helper.sh -pcuser ${PCUSER} -pcrepo ${PCREPO} ${INSTPKG}"
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# K2HR3 Frontend Web Application
+#
+# Copyright 2018 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Tue Oct 2 2018
+# REVISION:
+#
+
+SCRIPTNAME="k2hr3-init"
+LOGFILE="/var/log/${SCRIPTNAME}.log"
+CLOUDINIT_DATA_DIR="/var/lib/cloud/data"
+INSTANCE_ID_FILE="${CLOUDINIT_DATA_DIR}/instance-id"
+K2HR3_ROLE_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-role"
+
+K2HR3_USER_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
+K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}/v1/role"
+K2HR3_ROLE_NAME="{{= %K2HR3_ROLE_NAME% }}"
+
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Start to initialize information for k2hr3" | tee -a ${LOGFILE}
+
+if [ ! -f ${INSTANCE_ID_FILE} ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not read ${INSTANCE_ID_FILE}" | tee -a ${LOGFILE}
+	exit 1
+fi
+INSTANCE_ID=`cat ${INSTANCE_ID_FILE}`
+if [ "X${INSTANCE_ID}" = "X" ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Unknown Instance Id in ${INSTANCE_ID_FILE}" | tee -a ${LOGFILE}
+	exit 1
+fi
+
+CUK_PARAMETER="cuk=${INSTANCE_ID}"
+EXTRA_PARAMETER="extra=openstack-auto-v1"
+
+REGISTER_RESULT=`curl -s -S -X PUT -H "x-auth-token: R=${K2HR3_USER_ROLE_TOKEN}" "${K2HR3_API_HOST_URI}/${K2HR3_ROLE_NAME}?${CUK_PARAMETER}&${EXTRA_PARAMETER}" 2>&1`
+if [ $? -ne 0 ];then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not register to role member with curl error" | tee -a ${LOGFILE}
+	exit 1
+fi
+REGISTER_RESULT_VALUE=`echo ${REGISTER_RESULT} | python -m json.tool | grep result | cut -d':' -f2,2 | sed 's/^[ ,]\+\|[ ,]\+$//g' | tr '[:lower:]' '[:upper:]'`
+if [ "X${REGISTER_RESULT_VALUE}" != "XTRUE" ]; then
+	REGISTER_RESULT_MSG=`echo ${REGISTER_RESULT} | python -m json.tool | grep message | cut -d':' -f2,2 | sed 's/^[ ,]\+\|[ ,]\+$//g'`
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Failed to put access for registering by ${REGISTER_RESULT_MSG}" | tee -a ${LOGFILE}
+	exit 1
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Set this host to k2hr3 role(${K2HR3_ROLE_NAME})" | tee -a ${LOGFILE}
+
+echo "${K2HR3_ROLE_NAME}" > ${K2HR3_ROLE_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put k2hr3 role name(${K2HR3_ROLE_NAME}) to ${K2HR3_ROLE_FILE}" | tee -a ${LOGFILE}
+	exit 1
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create k2hr3 role(${K2HR3_ROLE_NAME}) file(${K2HR3_ROLE_FILE})" | tee -a ${LOGFILE}
+
+chmod 444 ${K2HR3_ROLE_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_ROLE_FILE}, but continue..." | tee -a ${LOGFILE}
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize host information for k2hr3" | tee -a ${LOGFILE}
+
+exit 0
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

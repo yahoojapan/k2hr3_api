@@ -1,0 +1,840 @@
+#
+# K2HR3 REST API
+#
+# Copyright 2017 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Fri Jul 21 2017
+# REVISION:
+#
+################################################################
+# 
+# Build following key tree on k2hdkc
+# 
+# This data file is for k2hdkclinetool command file.
+# k2hdkclinetool makes resource/policy/role keys for testing
+# template engine with expanding.
+# 
+# [NOTE]
+# The keys build by this file should not use another testing,
+# because reference and some sub keys are not correct.
+# 
+################################################################
+# RESOURCE
+################################################################
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01
+# 	=>"	{{#!k2hr3template}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01###
+# 		k2hr3_entest_str_res_01_keys_key={{=%k2hr3_entest_str_res_01_keys_key%}}
+# 		k2hr3_entest_str_res_01_keys_arr[0]={{=%k2hr3_entest_str_res_01_keys_arr%[0]}}
+# 		k2hr3_entest_str_res_01_keys_arr[1]={{=%k2hr3_entest_str_res_01_keys_arr%[1]}}
+# 		k2hr3_entest_str_res_01_keys_obj.k2hr3_entest_str_res_01_keys_obj_val00={{=%k2hr3_entest_str_res_01_keys_obj%{'k2hr3_entest_str_res_01_keys_obj_key00'}+'_dummy'}}
+# 		k2hr3_entest_str_res_01_keys_obj.k2hr3_entest_str_res_01_keys_obj_val01={{=%k2hr3_entest_str_res_01_keys_obj%{'k2hr3_entest_str_res_01_keys_obj_key01'}+'_dummy'}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###
+# 		k2hr3_entest_str_res_03_keys_key={{=%k2hr3_entest_str_res_03_keys_key%}}
+# 		k2hr3_entest_str_res_03_keys_arr[0]={{=%k2hr3_entest_str_res_03_keys_arr%[0]}}
+# 		k2hr3_entest_str_res_03_keys_arr[1]={{=%k2hr3_entest_str_res_03_keys_arr%[1]}}
+# 		k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val00={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key00'}+'_dummy'}}
+# 		k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val01={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key01'}+'_dummy'}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/host(ip)###
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[1]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[2]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[3]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[1]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[2]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[3]}}"
+# 	  "
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/keys
+# 		=>{	k2hr3_entest_str_res_01_keys_key: k2hr3_entest_str_res_01_keys_val
+# 			k2hr3_entest_str_res_01_keys_arr: [	"k2hr3_entest_str_res_01_keys_arr_val00",
+# 												"k2hr3_entest_str_res_01_keys_arr_val01"],
+# 			k2hr3_entest_str_res_01_keys_obj: {	"k2hr3_entest_str_res_01_keys_obj_key00": "k2hr3_entest_str_res_01_keys_obj_val00",
+# 												"k2hr3_entest_str_res_01_keys_obj_key01": "k2hr3_entest_str_res_01_keys_obj_val01"}
+# 		  }
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/@
+# 		=>[	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 ]
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01
+# 	=>{	k2hr3_entest_obj_res_01_value_key: k2hr3_entest_obj_res_01_value_val }
+# 
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/keys
+# 		=>{	k2hr3_entest_obj_res_01_keys_key: k2hr3_entest_obj_res_01_keys_val
+# 			k2hr3_entest_obj_res_01_keys_arr: [	"k2hr3_entest_obj_res_01_keys_arr_val00",
+# 												"k2hr3_entest_obj_res_01_keys_arr_val01"],
+# 			k2hr3_entest_obj_res_01_keys_obj: {	"k2hr3_entest_obj_res_01_keys_obj_key00": "k2hr3_entest_obj_res_01_keys_obj_val00",
+# 												"k2hr3_entest_obj_res_01_keys_obj_key01": "k2hr3_entest_obj_res_01_keys_obj_val01"}
+# 		  }
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/@
+# 		=>[	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 ]
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
+# 	=>"	{{#!k2hr3template}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02###
+# 		k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key%}}
+# 		k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr[0]={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr%[0]}}
+# 		k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr[1]={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr%[1]}}
+# 		k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj.k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val00={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj%{'k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key00'}+'_dummy'}}
+# 		k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj.k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val01={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj%{'k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key01'}+'_dummy'}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###
+# 		k2hr3_entest_str_res_03_keys_key={{=%k2hr3_entest_str_res_03_keys_key%}}
+# 		k2hr3_entest_str_res_03_keys_arr[0]={{=%k2hr3_entest_str_res_03_keys_arr%[0]}}
+# 		k2hr3_entest_str_res_03_keys_arr[1]={{=%k2hr3_entest_str_res_03_keys_arr%[1]}}
+# 		k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val00={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key00'}+'_dummy'}}
+# 		k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val01={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key01'}+'_dummy'}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/host(ip)###
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[1]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[2]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[3]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[1]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[2]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[3]}}
+# 	  "
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/keys
+# 		=>{	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_val,
+# 			k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr:	[	"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr_val00",
+# 																		"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr_val01"],
+# 			k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj:	{	"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key00": "k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val00",
+# 																		"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key01": "k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val01"}
+# 		  }
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/@
+# 		=>[	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 ]
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
+# 	=>{	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_value_key: k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_value_val }
+# 
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/keys
+# 		=>{	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key: k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_val,
+# 			k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr: [	"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr_val00",
+# 																		"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr_val01"],
+# 			k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj: {	"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_key00": "k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_val00",
+# 																		"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_key01": "k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_val01"}
+# 		  }
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/@
+# 		=>[	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 ]
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03
+# 	=>"	{{#!k2hr3template}}
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###
+# 		###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/host(ip)###
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name%[1]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip%[0]}}
+# 		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip%[1]}}
+# 	  "
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/keys
+# 		=>{	k2hr3_entest_str_res_03_keys_key: k2hr3_entest_str_res_03_keys_val,
+# 			k2hr3_entest_str_res_03_keys_arr: [	"k2hr3_entest_str_res_03_keys_arr_val00",
+# 												"k2hr3_entest_str_res_03_keys_arr_val01"],
+# 			k2hr3_entest_str_res_03_keys_obj: {	"k2hr3_entest_str_res_03_keys_obj_key00": "k2hr3_entest_str_res_03_keys_obj_val00",
+# 												"k2hr3_entest_str_res_03_keys_obj_key01": "k2hr3_entest_str_res_03_keys_obj_val01"}
+# 		  }
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03
+# 	=>{	k2hr3_entest_obj_res_03_value_key: k2hr3_entest_obj_res_03_value_val}
+# 
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03/keys
+# 		=>{	k2hr3_entest_obj_res_03_keys_key: k2hr3_entest_obj_res_03_keys_val,
+# 			k2hr3_entest_obj_res_03_keys_arr: [	"k2hr3_entest_obj_res_03_keys_arr_val00",
+# 												"k2hr3_entest_obj_res_03_keys_arr_val01"],
+# 			k2hr3_entest_obj_res_03_keys_obj: {	"k2hr3_entest_obj_res_03_keys_obj_key00": "k2hr3_entest_obj_res_03_keys_obj_val00",
+# 												"k2hr3_entest_obj_res_03_keys_obj_key01": "k2hr3_entest_obj_res_03_keys_obj_val01"}
+# 		  }
+# 
+################################################################
+# POLICY
+################################################################
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01]
+# 
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01]
+# 
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02]
+# 
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02]
+# 
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03]
+# 
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/effect
+# 		=> allow
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/action
+# 		=> [yrn:yahoo::::action:read]
+# 	yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/resource
+# 		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03]
+# 
+################################################################
+# ROLE
+################################################################
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/@
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/@
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/@
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/@
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/policies
+#		=> [yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03]
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp<\s>0
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.2.0<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.2.1<\s>0
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
+################################################################
+# SERVICE AND ETC
+################################################################
+# yrn:yahoo::::service:testservice
+#   yrn:yahoo::::service:testservice:owner
+#   	=> yrn:yahoo:::__TENANT_NAME_SUB__
+#   yrn:yahoo::::service:testservice:tenant
+#     yrn:yahoo:::__TENANT_NAME_SUB__
+#     yrn:yahoo:::__TENANT_NAME_MAIN__
+#   yrn:yahoo::::service:testservice:verify
+#   	=> http://__LOCAL_HOST_NAME__:3000/v1/debug/verify
+#
+###
+# yrn:yahoo:::__TENANT_NAME_SUB__
+#   yrn:yahoo:::__TENANT_NAME_SUB__:resource
+#       =>enable
+#   yrn:yahoo:::__TENANT_NAME_SUB__:policy
+#       =>enable
+#   yrn:yahoo:::__TENANT_NAME_SUB__:service
+#       =>enable
+#     yrn:yahoo::::service:testservice
+#   yrn:yahoo:::__TENANT_NAME_SUB__:role
+#   	=> enable
+#     yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner
+#       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/id
+#        	=> [31100,31100,33301,33301]
+#       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/policies
+#        	=> []
+#       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/reference
+#        	=> 0
+#       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts
+#         yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/name
+#             => enable
+#         yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip
+#             => enable
+#           yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#               => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31100,31100,33301,33301]}
+#   yrn:yahoo:::__TENANT_NAME_SUB__:policy
+#   	=> enable
+#   yrn:yahoo:::__TENANT_NAME_SUB__:resource
+#   	=> enable
+#   yrn:yahoo:::__TENANT_NAME_SUB__:service
+#   	=> enable
+#     yrn:yahoo::::service:testservice
+#
+###
+# yrn:yahoo:::__TENANT_NAME_MAIN__:service
+#   yrn:yahoo::::service:testservice
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role
+#   yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant
+#     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/@
+#         => ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role"]
+#     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/id
+#         => [30111,30111,30300,30300]
+#     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/policies
+#         => []
+#     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/reference
+#         => 0
+#     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts
+#       yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/name
+#           => enable
+#       yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip
+#           => enable
+#         yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#             => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[30111,30111,30300,30300]}
+#
+###
+# yrn:yahoo:testservice
+#   yrn:yahoo:testservice:
+#     yrn:yahoo:testservice::__TENANT_NAME_MAIN__
+#       yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role
+#           => enable
+#         yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/id
+#               => [31111,31111,33300,33300]
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/policies
+#               => ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy"]
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/reference
+#               => 0
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts
+#             yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/name
+#                 => enable
+#             yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip
+#                 => enable
+#               yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#                   => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31111,31111,33300,33300]}
+#       yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy
+#           => enable
+#         yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/effect
+#               => allow
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/condition
+#               => []
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/action
+#               => ["yrn:yahoo::::action:read"]
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/resource
+#               => ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource"]
+#           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/reference
+#               => 0
+#      yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource
+#          => enable
+#        yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource
+#            => "test service in tenant resource data for debug"
+#          yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/type
+#              => string
+#          yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/keys
+#              => {"test_service_key":"test_service_value"}
+#          yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/reference
+#              => 0
+#
+################################################################
+# IAAS & its IP in ROLE
+################################################################
+#### IAAS Key
+# yrn:yahoo:::
+# 	yrn:yahoo::::iaas
+# 		yrn:yahoo::::iaas:openstack
+#			=> enable
+# 			yrn:yahoo::::iaas:openstack:auto-test-cuk
+#				=> enable
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk
+#
+#### IP Key under Role
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip
+# 			yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk
+#				=> {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":[11111,11111,11111,11111]}
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk
+#				=> {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":[22222,22222,22222,22222]}
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk
+#				=> {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":[33333,33333,33333,33333]}
+#
+
+################################################################
+# Clean keys
+################################################################
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 all
+#rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 all
+#rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 all
+#rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 all
+#rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 all
+
+################################################################
+# Make yrn Tree
+################################################################
+ss yrn yrn:yahoo
+ss yrn:yahoo yrn:yahoo:
+ss yrn:yahoo: yrn:yahoo::
+ss yrn:yahoo:: yrn:yahoo:::
+#ss yrn:yahoo::: yrn:yahoo::::user enable
+ss yrn:yahoo::: yrn:yahoo::::keystone enable
+ss yrn:yahoo::: yrn:yahoo::::service enable
+#ss yrn:yahoo::: yrn:yahoo::::token
+ss yrn:yahoo::::token yrn:yahoo::::token:user enable
+ss yrn:yahoo::::token yrn:yahoo::::token:role enable
+ss yrn:yahoo::: yrn:yahoo::::action
+ss yrn:yahoo::::action yrn:yahoo::::action:read enable
+ss yrn:yahoo::::action yrn:yahoo::::action:write enable
+
+ss yrn:yahoo:: yrn:yahoo:::__TENANT_NAME_MAIN__
+ss yrn:yahoo:::__TENANT_NAME_MAIN__ yrn:yahoo:::__TENANT_NAME_MAIN__:resource enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__ yrn:yahoo:::__TENANT_NAME_MAIN__:policy enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__ yrn:yahoo:::__TENANT_NAME_MAIN__:role enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__ yrn:yahoo:::__TENANT_NAME_MAIN__:service enable
+
+################################################################
+# RESOURCE
+################################################################
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 {{#!k2hr3template}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01###;k2hr3_entest_str_res_01_keys_key={{=%k2hr3_entest_str_res_01_keys_key%}};k2hr3_entest_str_res_01_keys_arr[0]={{=%k2hr3_entest_str_res_01_keys_arr%[0]}};k2hr3_entest_str_res_01_keys_arr[1]={{=%k2hr3_entest_str_res_01_keys_arr%[1]}};k2hr3_entest_str_res_01_keys_obj.k2hr3_entest_str_res_01_keys_obj_val00={{=%k2hr3_entest_str_res_01_keys_obj%{'k2hr3_entest_str_res_01_keys_obj_key00'}+'_dummy'}};k2hr3_entest_str_res_01_keys_obj.k2hr3_entest_str_res_01_keys_obj_val01={{=%k2hr3_entest_str_res_01_keys_obj%{'k2hr3_entest_str_res_01_keys_obj_key01'}+'_dummy'}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###;k2hr3_entest_str_res_03_keys_key={{=%k2hr3_entest_str_res_03_keys_key%}};k2hr3_entest_str_res_03_keys_arr[0]={{=%k2hr3_entest_str_res_03_keys_arr%[0]}};k2hr3_entest_str_res_03_keys_arr[1]={{=%k2hr3_entest_str_res_03_keys_arr%[1]}};k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val00={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key00'}+'_dummy'}};k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val01={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key01'}+'_dummy'}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/host(ip)###;yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[1]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[2]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name%[3]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[1]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[2]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip%[3]}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/keys {"k2hr3_entest_str_res_01_keys_key":"k2hr3_entest_str_res_01_keys_val","k2hr3_entest_str_res_01_keys_arr":["k2hr3_entest_str_res_01_keys_arr_val00","k2hr3_entest_str_res_01_keys_arr_val01"],"k2hr3_entest_str_res_01_keys_obj":{"k2hr3_entest_str_res_01_keys_obj_key00":"k2hr3_entest_str_res_01_keys_obj_val00","k2hr3_entest_str_res_01_keys_obj_key01":"k2hr3_entest_str_res_01_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/type string
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 {"k2hr3_entest_obj_res_01_value_key":"k2hr3_entest_obj_res_01_value_val"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/keys {"k2hr3_entest_obj_res_01_keys_key":"k2hr3_entest_obj_res_01_keys_val","k2hr3_entest_obj_res_01_keys_arr":["k2hr3_entest_obj_res_01_keys_arr_val00","k2hr3_entest_obj_res_01_keys_arr_val01"],"k2hr3_entest_obj_res_01_keys_obj":{"k2hr3_entest_obj_res_01_keys_obj_key00":"k2hr3_entest_obj_res_01_keys_obj_val00","k2hr3_entest_obj_res_01_keys_obj_key01":"k2hr3_entest_obj_res_01_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/type object
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 {{#!k2hr3template}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02###;k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key%}};k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr[0]={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr%[0]}};k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr[1]={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr%[1]}};k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj.k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val00={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj%{'k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key00'}+'_dummy'}};k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj.k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val01={{=%k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj%{'k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key01'}+'_dummy'}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###;k2hr3_entest_str_res_03_keys_key={{=%k2hr3_entest_str_res_03_keys_key%}};k2hr3_entest_str_res_03_keys_arr[0]={{=%k2hr3_entest_str_res_03_keys_arr%[0]}};k2hr3_entest_str_res_03_keys_arr[1]={{=%k2hr3_entest_str_res_03_keys_arr%[1]}};k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val00={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key00'}+'_dummy'}};k2hr3_entest_str_res_03_keys_obj.k2hr3_entest_obj_res_03_keys_obj_val01={{=%k2hr3_entest_str_res_03_keys_obj%{'k2hr3_entest_str_res_03_keys_obj_key01'}+'_dummy'}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/host(ip)###;yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[1]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[2]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name%[3]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[1]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[2]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[2]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip[3]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip%[3]}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/keys {"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key":"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_val","k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr":["k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr_val00","k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr_val01"],"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj":{"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key00":"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val00","k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_key01":"k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/type string
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 {"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_value_key":"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_value_val"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/keys {"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key":"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_val","k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr":["k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr_val00","k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr_val01"],"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj":{"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_key00":"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_val00","k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_key01":"k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/type object
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 {{#!k2hr3template}};###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03###;###yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/host(ip)###;yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name%[1]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip[0]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip%[0]}};yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip[1]={{=%yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip%[1]}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/keys {"k2hr3_entest_str_res_03_keys_key":"k2hr3_entest_str_res_03_keys_val","k2hr3_entest_str_res_03_keys_arr":["k2hr3_entest_str_res_03_keys_arr_val00","k2hr3_entest_str_res_03_keys_arr_val01"],"k2hr3_entest_str_res_03_keys_obj":{"k2hr3_entest_str_res_03_keys_obj_key00":"k2hr3_entest_str_res_03_keys_obj_val00","k2hr3_entest_str_res_03_keys_obj_key01":"k2hr3_entest_str_res_03_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/type string
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03 {"k2hr3_entest_obj_res_03_value_key":"k2hr3_entest_obj_res_03_value_val"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03/keys {"k2hr3_entest_obj_res_03_keys_key":"k2hr3_entest_obj_res_03_keys_val","k2hr3_entest_obj_res_03_keys_arr":["k2hr3_entest_obj_res_03_keys_arr_val00","k2hr3_entest_obj_res_03_keys_arr_val01"],"k2hr3_entest_obj_res_03_keys_obj":{"k2hr3_entest_obj_res_03_keys_obj_key00":"k2hr3_entest_obj_res_03_keys_obj_val00","k2hr3_entest_obj_res_03_keys_obj_key01":"k2hr3_entest_obj_res_03_keys_obj_val01"}}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03/type object
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03 yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03/reference 0
+
+################################################################
+# POLICY
+################################################################
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_str_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/action ["yrn:yahoo::::action:read","yrn:yahoo::::action:write"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/condition []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/effect allow
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/resource ["yrn:yahoo:::__TENANT_NAME_MAIN__:resource:k2hr3_entest_obj_res_03"]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03 yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03/reference 0
+
+################################################################
+# ROLE
+################################################################
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_01"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11111,11111,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11111,11111,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.0 * " {"ip":"127.0.1.0","hostname":null,"port":0,"extra":null,"id":[11111,11111,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.1 * " {"ip":"127.0.1.1","hostname":null,"port":0,"extra":null,"id":[11111,11111,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[11111,11111,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/id [11111,11111,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_01"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11122,11122,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11122,11122,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.0 * " {"ip":"127.0.2.0","hostname":null,"port":0,"extra":null,"id":[11122,11122,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.1 * " {"ip":"127.0.2.1","hostname":null,"port":0,"extra":null,"id":[11122,11122,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[11122,11122,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/id [11122,11122,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_02"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22211,22211,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22211,22211,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.0 * " {"ip":"127.1.1.0","hostname":null,"port":0,"extra":null,"id":[22211,22211,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.1 * " {"ip":"127.1.1.1","hostname":null,"port":0,"extra":null,"id":[22211,22211,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[22211,22211,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/id [22211,22211,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_02"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/@ ["yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22222,22222,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22222,22222,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.0 * " {"ip":"127.1.2.0","hostname":null,"port":0,"extra":null,"id":[22222,22222,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.1 * " {"ip":"127.1.2.1","hostname":null,"port":0,"extra":null,"id":[22222,22222,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[22222,22222,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/id [22222,22222,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_str_pol_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33311,33311,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33311,33311,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":[33311,33311,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":[33311,33311,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[33311,33311,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/id [33311,33311,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/policies ["yrn:yahoo:::__TENANT_NAME_MAIN__:policy:k2hr3_entest_obj_pol_03"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33322,33322,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33322,33322,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":[33321,33321,11101,11101]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":[33322,33322,11100,11100]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":[33322,33322,22200,22200]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[33322,33322,33300,33300]}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/id [33322,33322,11111,11111]
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/reference 0
+
+################################################################
+# SERVICE AND ETC
+################################################################
+#
+# service : yrn:yahoo::::service:testservice
+#
+ss yrn:yahoo::::service yrn:yahoo::::service:testservice
+ss yrn:yahoo::::service:testservice yrn:yahoo::::service:testservice:owner yrn:yahoo:::__TENANT_NAME_SUB__
+ss yrn:yahoo::::service:testservice yrn:yahoo::::service:testservice:tenant
+ss yrn:yahoo::::service:testservice:tenant yrn:yahoo:::__TENANT_NAME_SUB__
+ss yrn:yahoo::::service:testservice:tenant yrn:yahoo:::__TENANT_NAME_MAIN__
+ss yrn:yahoo::::service:testservice yrn:yahoo::::service:testservice:verify http://__LOCAL_HOST_NAME__:3000/v1/debug/verify
+
+#
+# service owner tenant : yrn:yahoo:::__TENANT_NAME_SUB__
+#
+ss yrn:yahoo:: yrn:yahoo:::__TENANT_NAME_SUB__
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:resource enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:policy enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:service enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__:service yrn:yahoo::::service:testservice
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:role enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/id [31100,31100,33301,33301]
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/policies []
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/reference 0
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":[31101,31101,33302,33302]}
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31100,31100,33301,33301]}
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:policy enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:resource enable
+ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:service enable
+
+#
+# service tenant : yrn:yahoo:::__TENANT_NAME_MAIN__
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:service yrn:yahoo::::service:testservice
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/@ ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role"]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/id [30111,30111,30300,30300]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/policies []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/reference 0
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/127.1.0.1 * " {"ip":"127.1.0.1","hostname":null,"port":0,"extra":null,"id":[30112,30112,30302,30302]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[30111,30111,30300,30300]}
+
+#
+# service in tenant : yrn:yahoo:testservice::__TENANT_NAME_MAIN__
+#
+ss yrn:yahoo yrn:yahoo:testservice
+ss yrn:yahoo:testservice yrn:yahoo:testservice:
+ss yrn:yahoo:testservice: yrn:yahoo:testservice::__TENANT_NAME_MAIN__
+
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__ yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/policies ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy"]
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/reference 0
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/name enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip "yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31111,31111,33300,33300]}
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/id [31111,31111,33300,33300]
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/reference 0
+
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__ yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/effect allow
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/condition []
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/action ["yrn:yahoo::::action:read"]
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/resource ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource"]
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy/reference 0
+
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__ yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource enable
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource "test service in tenant resource data for debug"
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/type string
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/keys {"test_service_key":"test_service_value"}
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource yrn:yahoo:testservice::__TENANT_NAME_MAIN__:resource:test_service_resource/reference 0
+
+################################################################
+# IAAS & its IP in ROLE
+################################################################
+#
+# yrn:yahoo::::iaas
+#
+ss yrn:yahoo:::                yrn:yahoo::::iaas                         enable
+ss yrn:yahoo::::iaas           yrn:yahoo::::iaas:openstack               enable
+ss yrn:yahoo::::iaas:openstack yrn:yahoo::::iaas:openstack:auto-test-cuk enable
+ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk"
+ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk"
+ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk"
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__                               yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/policies []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts     yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk"     {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":[11111,11111,11111,11111]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk" {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":[22222,22222,22222,22222]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk" {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":[33333,33333,33333,33333]}
+
+exit
+################################################################
+# END OF COMMAND
+################################################################
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

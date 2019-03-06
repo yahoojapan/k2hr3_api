@@ -1,0 +1,6831 @@
+----------------------------------------------------------------
+var names = statement_print_test_00,formula_variable_00,formula_variable_01,formula_variable_02,formula_calculate_not_00,formula_calculate_not_01,formula_calculate_inc_00,formula_calculate_dec_00,formula_calculate_set_00,formula_calculate_set_01,formula_calculate_plus_00,formula_calculate_plus_01,formula_calculate_plus_02,formula_calculate_plus_03,formula_calculate_sub_00,formula_calculate_sub_01,formula_calculate_div_00,formula_calculate_div_01,formula_calculate_mul_00,formula_calculate_mul_01,formula_calculate_rem_00,formula_calculate_rem_01,formula_calculate_lshift_00,formula_calculate_lshift_01,formula_calculate_rshift_00,formula_calculate_rshift_01,formula_calculate_amp_00,formula_calculate_amp_01,formula_calculate_amp_02,formula_calculate_amp_03,formula_calculate_vartbar_00,formula_calculate_vartbar_01,formula_calculate_vartbar_02,formula_calculate_vartbar_03,formula_cond_and_00,formula_cond_and_01,formula_cond_and_02,formula_cond_and_03,formula_cond_and_04,formula_cond_and_05,formula_cond_or_00,formula_cond_or_01,formula_cond_or_02,formula_cond_or_03,formula_cond_or_04,formula_cond_or_05,formula_cond_less_02,formula_cond_less_01,formula_cond_less_00,formula_cond_great_02,formula_cond_great_01,formula_cond_great_00,formula_cond_lesseq_02,formula_cond_lesseq_01,formula_cond_lesseq_00,formula_cond_greateq_02,formula_cond_greateq_01,formula_cond_greateq_00,formula_cond_eq_00,formula_cond_eq_01,formula_cond_eq_02,formula_cond_eq_03,formula_cond_eq_04,formula_cond_eq_05,formula_cond_noteq_00,formula_cond_noteq_01,formula_cond_noteq_02,formula_cond_noteq_03,formula_cond_noteq_04,formula_cond_noteq_05,formula_syntax_if_00,formula_syntax_if_01,formula_syntax_if_02,formula_syntax_if_03,formula_syntax_if_04,formula_syntax_if_05,formula_syntax_while_04,formula_syntax_while_00,formula_syntax_while_01,formula_syntax_while_02,formula_syntax_while_03,formula_syntax_while_05,formula_syntax_do_04,formula_syntax_do_00,formula_syntax_do_01,formula_syntax_do_02,formula_syntax_do_03,formula_syntax_do_05,formula_syntax_for_04,formula_syntax_for_00,formula_syntax_for_01,formula_syntax_for_02,formula_syntax_for_03,formula_syntax_for_05,tmp_for_counter00,tmp_foreach_value_00,formula_syntax_foreach_00,formula_syntax_foreach_01,formula_syntax_foreach_02,formula_syntax_foreach_03,formula_syntax_foreach_04,tmp_priority_data00
+----------------------------------------------------------------
+RESULT
+----------------------------------------------------------------
+result        = succeed
+input string  = #
+# K2HR3 REST API
+#
+# Copyright 2017 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Wed Jul 14 2017
+# REVISION:
+#
+
+#
+# This file is test template file for k2hr3template.js
+#
+# This file has all basically pattern for k2hr3 template engine.
+#
+
+############################################################
+#### Statement : Static
+############################################################
+##
+## Test > Statement > Static
+##
+**** STATIC: "This line is test for static statement in escaped statement." ===> "{ This line is test for static statement in escaped statement. }"
+{{{ This line is test for static statement in escaped statement. }}}
+
+##
+## Test > Statement > Comment
+##
+**** COMMENT: "# This line is test for comment statement." ===> ""
+{{# This line is test for comment statement. }}
+
+############################################################
+#### Statement : Print
+############################################################
+##
+## Test > Statement > Print
+##
+**** PRINT: "= %statement_print_test_00%" ===> "value_00"
+{{= %statement_print_test_00% }}
+
+############################################################
+#### Formula : Variable
+############################################################
+##
+## Test > Formula > Variable
+##
+**** VARIABLE: "= %formula_variable_00%"(value_name_00) ===> "value_name_00"
+{{= %formula_variable_00% }}
+
+**** VARIABLE: "= %formula_variable_01%[0]"(value_01[0]) ===> "value_01[0]"
+{{= %formula_variable_01%[0] }}
+
+**** VARIABLE: "= %formula_variable_02%{%formula_variable_00%}"(value_02{value_name_00}) ===> "value_02{value_name_00}"
+{{= %formula_variable_02%{%formula_variable_00%} }}
+
+**** VARIABLE: "= null" ===> ""
+{{= null }}
+
+**** VARIABLE: "= true" ===> "true"
+{{= true }}
+
+**** VARIABLE: "= false" ===> "false"
+{{= false }}
+
+**** VARIABLE: "= 1" ===> "1"
+{{= 1 }}
+
+**** VARIABLE: "= 0xff" ===> "255"
+{{= 0xff }}
+
+**** VARIABLE: "= 0o11" ===> "9"
+{{= 0o11 }}
+
+**** VARIABLE: "= 0b11" ===> "3"
+{{= 0b11 }}
+
+**** VARIABLE: "= 'formula_variable_static_squote_00'" ===> "formula_variable_static_squote_00"
+{{= 'formula_variable_static_squote_00' }}
+
+**** VARIABLE: "= 'formula_variable_static_squote_""01'" ===> "formula_variable_static_squote_""01"
+{{= 'formula_variable_static_squote_""01' }}
+
+**** VARIABLE: "= "formula_variable_static_squote_10"" ===> "formula_variable_static_squote_10"
+{{= "formula_variable_static_squote_10" }}
+
+**** VARIABLE: "= "formula_variable_static_squote_''11"" ===> "formula_variable_static_squote_''11"
+{{= "formula_variable_static_squote_''11" }}
+
+############################################################
+#### Formula : Calculate
+############################################################
+##
+## Test > Formula > Calculate > NOT
+##
+**** NOT: "= !true" ===> "false"
+{{= !true }}
+
+**** NOT: "= !false" ===> "true"
+{{= !false }}
+
+**** NOT: "= !%formula_calculate_not_00%"(!true) ===> "false"
+{{= !%formula_calculate_not_00% }}
+
+**** NOT: "= !%formula_calculate_not_01%"(!false) ===> "true"
+{{= !%formula_calculate_not_01% }}
+
+##
+## Test > Formula > Calculate > INCREMENT
+##
+**** INCREMENT: "= ++0" ===> "1"
+{{= ++0 }}
+
+**** INCREMENT: "= ++%formula_calculate_inc_00%"(++0) ===> "1"
+{{= ++%formula_calculate_inc_00% }}
+
+**** INCREMENT: "= 0++" ===> "0"
+{{= 0++ }}
+
+**** INCREMENT: "= %formula_calculate_inc_00%++"(1++) ===> "1"
+{{= %formula_calculate_inc_00%++ }}
+
+##
+## Test > Formula > Calculate > DECREMENT
+##
+**** DECREMENT: "= --1" ===> "0"
+{{= --1 }}
+
+**** DECREMENT: "= --%formula_calculate_dec_00%"(--2) ===> "1"
+{{= --%formula_calculate_dec_00% }}
+
+**** DECREMENT: "= 1--" ===> "1"
+{{= 1-- }}
+
+**** DECREMENT: "= %formula_calculate_dec_00%--"(1--) ===> 1
+{{= %formula_calculate_dec_00%-- }}
+
+##
+## Test > Formula > Calculate > SET
+##
+**** SET: "= %formula_calculate_set_00% = null" ===> ""
+{{= %formula_calculate_set_00% = null }}
+
+**** SET: "= %formula_calculate_set_00% = true" ===> "true"
+{{= %formula_calculate_set_00% = true }}
+
+**** SET: "= %formula_calculate_set_00% = false" ===> "false"
+{{= %formula_calculate_set_00% = false }}
+
+**** SET: "= %formula_calculate_set_00% = 1" ===> "1"
+{{= %formula_calculate_set_00% = 1 }}
+
+**** SET: "= %formula_calculate_set_00% = x11" ===> "17"
+{{= %formula_calculate_set_00% = x11 }}
+
+**** SET: "= %formula_calculate_set_00% = 0x12" ===> "18"
+{{= %formula_calculate_set_00% = 0x12 }}
+
+**** SET: "= %formula_calculate_set_00% = 0o11" ===> "9"
+{{= %formula_calculate_set_00% = 0o11 }}
+
+**** SET: "= %formula_calculate_set_00% = 0b11" ===> "3"
+{{= %formula_calculate_set_00% = 0b11 }}
+
+**** SET: "= %formula_calculate_set_00% = 'squate string'" ===> "squate string"
+{{= %formula_calculate_set_00% = 'squate string' }}
+
+**** SET: "= %formula_calculate_set_00% = "dquate string"" ===> "dquate string"
+{{= %formula_calculate_set_00% = "dquate string" }}
+
+**** SET: "= %formula_calculate_set_00% = %formula_calculate_set_01%"(100) ===> "100"
+{{= %formula_calculate_set_00% = %formula_calculate_set_01% }}
+
+##
+## Test > Formula > Calculate > PLUS
+##
+**** PLUS: "= 1 + 1" ===> "2"
+{{= 1 + 1 }}
+
+**** PLUS: "= 1 + x1" ===> "2"
+{{= 1 + x1 }}
+
+**** PLUS: "= 1 + 0x1" ===> "2"
+{{= 1 + 0x1 }}
+
+**** PLUS: "= 1 + 0o1" ===> "2"
+{{= 1 + 0o1 }}
+
+**** PLUS: "= 1 + 0b1" ===> "2"
+{{= 1 + 0b1 }}
+
+**** PLUS: "= x1 + 1" ===> "2"
+{{= x1 + 1 }}
+
+**** PLUS: "= 0x1 + 1" ===> "2"
+{{= 0x1 + 1 }}
+
+**** PLUS: "= 0o1 + 1" ===> "2"
+{{= 0o1 + 1 }}
+
+**** PLUS: "= 0b1 + 1" ===> "2"
+{{= 0b1 + 1 }}
+
+**** PLUS: "= %formula_calculate_plus_00% + 1" ===> "11"
+{{= %formula_calculate_plus_00% + 1 }}
+
+**** PLUS: "= %formula_calculate_plus_00% + x1" ===> "11"
+{{= %formula_calculate_plus_00% + x1 }}
+
+**** PLUS: "= %formula_calculate_plus_00% + 0x1" ===> "11"
+{{= %formula_calculate_plus_00% + 0x1 }}
+
+**** PLUS: "= %formula_calculate_plus_00% + 0o1" ===> "11"
+{{= %formula_calculate_plus_00% + 0o1 }}
+
+**** PLUS: "= %formula_calculate_plus_00% + 0b1" ===> "11"
+{{= %formula_calculate_plus_00% + 0b1 }}
+
+**** PLUS: "= 1 + %formula_calculate_plus_01%" ===> "21"
+{{= 1 + %formula_calculate_plus_01% }}
+
+**** PLUS: "= x1 + %formula_calculate_plus_01%" ===> "21"
+{{= x1 + %formula_calculate_plus_01% }}
+
+**** PLUS: "= 0x1 + %formula_calculate_plus_01%" ===> "21"
+{{= 0x1 + %formula_calculate_plus_01% }}
+
+**** PLUS: "= 0o1 + %formula_calculate_plus_01%" ===> "21"
+{{= 0o1 + %formula_calculate_plus_01% }}
+
+**** PLUS: "= 0b1 + %formula_calculate_plus_01%" ===> "21"
+{{= 0b1 + %formula_calculate_plus_01% }}
+
+**** PLUS: "= %formula_calculate_plus_00% + %formula_calculate_plus_00%" ===> "20"
+{{= %formula_calculate_plus_00% + %formula_calculate_plus_00% }}
+
+**** PLUS: "= %formula_calculate_plus_00% + %formula_calculate_plus_01%" ===> "30"
+{{= %formula_calculate_plus_00% + %formula_calculate_plus_01% }}
+
+**** PLUS: "= 'test' + 'string'" ===> "teststring"
+{{= 'test' + 'string' }}
+
+**** PLUS: "= 'test' + "string"" ===> "teststring"
+{{= 'test' + "string" }}
+
+**** PLUS: "= "test" + 'string'" ===> "teststring"
+{{= "test" + 'string' }}
+
+**** PLUS: "= "test" + "string"" ===> "teststring"
+{{= "test" + "string" }}
+
+**** PLUS: "= %formula_calculate_plus_02% + 'string'" ===> "teststring"
+{{= %formula_calculate_plus_02% + 'string' }}
+
+**** PLUS: "= %formula_calculate_plus_02% + "string"" ===> "teststring"
+{{= %formula_calculate_plus_02% + "string" }}
+
+**** PLUS: "= 'test' + %formula_calculate_plus_03%" ===> "teststring"
+{{= 'test' + %formula_calculate_plus_03% }}
+
+**** PLUS: "= "test" + %formula_calculate_plus_03%" ===> "teststring"
+{{= "test" + %formula_calculate_plus_03% }}
+
+**** PLUS: "= %formula_calculate_plus_02% + %formula_calculate_plus_02%" ===> "testtest"
+{{= %formula_calculate_plus_02% + %formula_calculate_plus_02% }}
+
+**** PLUS: "= %formula_calculate_plus_02% + %formula_calculate_plus_03%" ===> "teststring"
+{{= %formula_calculate_plus_02% + %formula_calculate_plus_03% }}
+
+**** PLUS: "= null + null" ===> ""
+{{= null + null }}
+
+**** PLUS: "= null + 'string'" ===> "string"
+{{= null + 'string' }}
+
+**** PLUS: "= null + 1" ===> "01"
+{{= null + 1 }}
+
+**** PLUS: "= 'test' + null" ===> "test"
+{{= 'test' + null }}
+
+**** PLUS: "= 1 + null" ===> "1"
+{{= 1 + null }}
+
+**** PLUS: "= 'test' + 1" ===> "test1"
+{{= 'test' + 1 }}
+
+##
+## Test > Formula > Calculate > SUB
+##
+**** SUB: "= 2 - 1" ===> "1"
+{{= 2 - 1 }}
+
+**** SUB: "= 2 - x1" ===> "1"
+{{= 2 - x1 }}
+
+**** SUB: "= 2 - 0x1" ===> "1"
+{{= 2 - 0x1 }}
+
+**** SUB: "= 2 - 0o1" ===> "1"
+{{= 2 - 0o1 }}
+
+**** SUB: "= 2 - 0b1" ===> "1"
+{{= 2 - 0b1 }}
+
+**** SUB: "= x2 - 1" ===> "1"
+{{= x2 - 1 }}
+
+**** SUB: "= 0x2 - 1" ===> "1"
+{{= 0x2 - 1 }}
+
+**** SUB: "= 0o2 - 1" ===> "1"
+{{= 0o2 - 1 }}
+
+**** SUB: "= 0b1 - 1" ===> "0"
+{{= 0b1 - 1 }}
+
+**** SUB: "= 0 - 1" ===> "-1"
+{{= 0 - 1 }}
+
+**** SUB: "= %formula_calculate_sub_00% - 1" ===> "99"
+{{= %formula_calculate_sub_00% - 1 }}
+
+**** SUB: "= 200 - %formula_calculate_sub_00%" ===> "100"
+{{= 200 - %formula_calculate_sub_00% }}
+
+**** SUB: "= %formula_calculate_sub_00% - %formula_calculate_sub_01%" ===> "90"
+{{= %formula_calculate_sub_00% - %formula_calculate_sub_01% }}
+
+**** SUB: "= %formula_calculate_sub_01% - %formula_calculate_sub_00%" ===> "-90"
+{{= %formula_calculate_sub_01% - %formula_calculate_sub_00% }}
+
+##
+## Test > Formula > Calculate > DIV
+##
+**** DIV: "= 2 / 1" ===> "2"
+{{= 2 / 1 }}
+
+**** DIV: "= 2 / x1" ===> "2"
+{{= 2 / x1 }}
+
+**** DIV: "= 2 / 0x1" ===> "2"
+{{= 2 / 0x1 }}
+
+**** DIV: "= 2 / 0o1" ===> "2"
+{{= 2 / 0o1 }}
+
+**** DIV: "= 2 / 0b1" ===> "2"
+{{= 2 / 0b1 }}
+
+**** DIV: "= x2 / 1" ===> "2"
+{{= x2 / 1 }}
+
+**** DIV: "= 0x2 / 1" ===> "2"
+{{= 0x2 / 1 }}
+
+**** DIV: "= 0o2 / 1" ===> "2"
+{{= 0o2 / 1 }}
+
+**** DIV: "= 0b1 / 1" ===> "1"
+{{= 0b1 / 1 }}
+
+**** DIV: "= 0 / 1" ===> "0"
+{{= 0 / 1 }}
+
+**** DIV: "= %formula_calculate_div_00% / 10" ===> "10"
+{{= %formula_calculate_div_00% / 10 }}
+
+**** DIV: "= 200 / %formula_calculate_div_00%" ===> "2"
+{{= 200 / %formula_calculate_div_00% }}
+
+**** DIV: "= %formula_calculate_div_00% / %formula_calculate_div_01%" ===> "10"
+{{= %formula_calculate_div_00% / %formula_calculate_div_01% }}
+
+**** DIV: "= %formula_calculate_div_01% / %formula_calculate_div_00%" ===> "0.1"
+{{= %formula_calculate_div_01% / %formula_calculate_div_00% }}
+
+##
+## Test > Formula > Calculate > MUL
+##
+**** MUL: "= 2 * 1" ===> "2"
+{{= 2 * 1 }}
+
+**** MUL: "= 2 * x1" ===> "2"
+{{= 2 * x1 }}
+
+**** MUL: "= 2 * 0x1" ===> "2"
+{{= 2 * 0x1 }}
+
+**** MUL: "= 2 * 0o1" ===> "2"
+{{= 2 * 0o1 }}
+
+**** MUL: "= 2 * 0b1" ===> "2"
+{{= 2 * 0b1 }}
+
+**** MUL: "= x2 * 1" ===> "2"
+{{= x2 * 1 }}
+
+**** MUL: "= 0x2 * 1" ===> "2"
+{{= 0x2 * 1 }}
+
+**** MUL: "= 0o2 * 1" ===> "2"
+{{= 0o2 * 1 }}
+
+**** MUL: "= 0b1 * 1" ===> "1"
+{{= 0b1 * 1 }}
+
+**** MUL: "= 0 * 1" ===> "0"
+{{= 0 * 1 }}
+
+**** MUL: "= %formula_calculate_mul_00% * 10" ===> "50"
+{{= %formula_calculate_mul_00% * 10 }}
+
+**** MUL: "= 20 * %formula_calculate_mul_00%" ===> "100"
+{{= 20 * %formula_calculate_mul_00% }}
+
+**** MUL: "= %formula_calculate_mul_00% * %formula_calculate_mul_01%" ===> "100"
+{{= %formula_calculate_mul_00% * %formula_calculate_mul_01% }}
+
+**** MUL: "= %formula_calculate_mul_01% * %formula_calculate_mul_00%" ===> "100"
+{{= %formula_calculate_mul_01% * %formula_calculate_mul_00% }}
+
+##
+## Test > Formula > Calculate > REM
+##
+**** REM: "= 35 % 6" ===> "5"
+{{= 35 % 6 }}
+
+**** REM: "= 35 % x6" ===> "5"
+{{= 35 % x6 }}
+
+**** REM: "= 35 % 0x6" ===> "5"
+{{= 35 % 0x6 }}
+
+**** REM: "= 35 % 0o6" ===> "5"
+{{= 35 % 0o6 }}
+
+**** REM: "= 35 % 0b110" ===> "5"
+{{= 35 % 0b110 }}
+
+**** REM: "= x23 % 6" ===> "5"
+{{= x23 % 6 }}
+
+**** REM: "= 0x23 % 6" ===> "5"
+{{= 0x23 % 6 }}
+
+**** REM: "= 0o65 % 6" ===> "5"
+{{= 0o65 % 6 }}
+
+**** REM: "= 0b100011 % 6" ===> "5"
+{{= 0b100011 % 6 }}
+
+**** REM: "= 6 % 35" ===> "6"
+{{= 6 % 35 }}
+
+**** REM: "= %formula_calculate_rem_00% % 6" ===> "5"
+{{= %formula_calculate_rem_00% % 6 }}
+
+**** REM: "= 35 % %formula_calculate_rem_01%" ===> "5"
+{{= 35 % %formula_calculate_rem_01% }}
+
+**** REM: "= %formula_calculate_rem_00% % %formula_calculate_rem_01%" ===> "5"
+{{= %formula_calculate_rem_00% % %formula_calculate_rem_01% }}
+
+**** REM: "= %formula_calculate_rem_01% % %formula_calculate_rem_00%" ===> "6"
+{{= %formula_calculate_rem_01% % %formula_calculate_rem_00% }}
+
+##
+## Test > Formula > Calculate > LSHIFT
+##
+**** LSHIFT: "= 10 << 4" ===> "160"
+{{= 10 << 4 }}
+
+**** LSHIFT: "= 10 << x4" ===> "160"
+{{= 10 << x4 }}
+
+**** LSHIFT: "= 10 << 0x4" ===> "160"
+{{= 10 << 0x4 }}
+
+**** LSHIFT: "= 10 << 0o4" ===> "160"
+{{= 10 << 0o4 }}
+
+**** LSHIFT: "= 10 << 0b100" ===> "160"
+{{= 10 << 0b100 }}
+
+**** LSHIFT: "= xa << 4" ===> "160"
+{{= xa << 4 }}
+
+**** LSHIFT: "= 0xa << 4" ===> "160"
+{{= 0xa << 4 }}
+
+**** LSHIFT: "= 0o12 << 4" ===> "160"
+{{= 0o12 << 4 }}
+
+**** LSHIFT: "= 0b1010 << 4" ===> "160"
+{{= 0b1010 << 4 }}
+
+**** LSHIFT: "= %formula_calculate_lshift_00% << 4" ===> "160"
+{{= %formula_calculate_lshift_00% << 4 }}
+
+**** LSHIFT: "= 10 << %formula_calculate_lshift_01%" ===> "160"
+{{= 10 << %formula_calculate_lshift_01% }}
+
+**** LSHIFT: "= %formula_calculate_lshift_00% << %formula_calculate_lshift_01%" ===> "160"
+{{= %formula_calculate_lshift_00% << %formula_calculate_lshift_01% }}
+
+##
+## Test > Formula > Calculate > RSHIFT
+##
+**** RSHIFT: "= 43690 >> 4" ===> "2730"
+{{= 43690 >> 4 }}
+
+**** RSHIFT: "= 43690 >> x4" ===> "2730"
+{{= 43690 >> x4 }}
+
+**** RSHIFT: "= 43690 >> 0x4" ===> "2730"
+{{= 43690 >> 0x4 }}
+
+**** RSHIFT: "= 43690 >> 0o4" ===> "2730"
+{{= 43690 >> 0o4 }}
+
+**** RSHIFT: "= 43690 >> 0b100" ===> "2730"
+{{= 43690 >> 0b100 }}
+
+**** RSHIFT: "= xaaaa >> 4" ===> "2730"
+{{= xaaaa >> 4 }}
+
+**** RSHIFT: "= 0xaaaa >> 4" ===> "2730"
+{{= 0xaaaa >> 4 }}
+
+**** RSHIFT: "= 0o125252 >> 4" ===> "2730"
+{{= 0o125252 >> 4 }}
+
+**** RSHIFT: "= 0b1010101010101010 >> 4" ===> "2730"
+{{= 0b1010101010101010 >> 4 }}
+
+**** RSHIFT: "= %formula_calculate_rshift_00% >> 4" ===> "2730"
+{{= %formula_calculate_rshift_00% >> 4 }}
+
+**** RSHIFT: "= 43690 >> %formula_calculate_rshift_01%" ===> "2730"
+{{= 43690 >> %formula_calculate_rshift_01% }}
+
+**** RSHIFT: "= %formula_calculate_rshift_00% >> %formula_calculate_rshift_01%" ===> "2730"
+{{= %formula_calculate_rshift_00% >> %formula_calculate_rshift_01% }}
+
+##
+## Test > Formula > Calculate > AMP
+##
+**** AMP: "= 65535 & 43690" ===> "43690"
+{{= 65535 & 43690 }}
+
+**** AMP: "= 65535 & xaaaa" ===> "43690"
+{{= 65535 & xaaaa }}
+
+**** AMP: "= 65535 & 0xaaaa" ===> "43690"
+{{= 65535 & 0xaaaa }}
+
+**** AMP: "= 65535 & 0o125252" ===> "43690"
+{{= 65535 & 0o125252 }}
+
+**** AMP: "= 65535 & 0b1010101010101010" ===> "43690"
+{{= 65535 & 0b1010101010101010 }}
+
+**** AMP: "= xffff & 43690" ===> "43690"
+{{= xffff & 43690 }}
+
+**** AMP: "= 0xffff & 43690" ===> "43690"
+{{= 0xffff & 43690 }}
+
+**** AMP: "= 0o177777 & 43690" ===> "43690"
+{{= 0o177777 & 43690 }}
+
+**** AMP: "= 0b1111111111111111 & 43690" ===> "43690"
+{{= 0b1111111111111111 & 43690 }}
+
+**** AMP: "= %formula_calculate_amp_00% & 43690" ===> "43690"
+{{= %formula_calculate_amp_00% & 43690 }}
+
+**** AMP: "= 65535 & %formula_calculate_amp_01%" ===> "43690"
+{{= 65535 & %formula_calculate_amp_01% }}
+
+**** AMP: "= %formula_calculate_amp_00% & %formula_calculate_amp_01%" ===> "43690"
+{{= %formula_calculate_amp_00% & %formula_calculate_amp_01% }}
+
+**** AMP: "= true & true" ===> "1"
+{{= true & true }}
+
+**** AMP: "= true & false" ===> "0"
+{{= true & false }}
+
+**** AMP: "= false & true" ===> "0"
+{{= false & true }}
+
+**** AMP: "= false & false" ===> "0"
+{{= false & false }}
+
+**** AMP: "= %formula_calculate_amp_02% & true" ===> "1"
+{{= %formula_calculate_amp_02% & true }}
+
+**** AMP: "= %formula_calculate_amp_02% & false" ===> "0"
+{{= %formula_calculate_amp_02% & false }}
+
+**** AMP: "= true & %formula_calculate_amp_02%" ===> "1"
+{{= true & %formula_calculate_amp_02% }}
+
+**** AMP: "= false & %formula_calculate_amp_02%" ===> "0"
+{{= false & %formula_calculate_amp_02% }}
+
+**** AMP: "= %formula_calculate_amp_03% & true" ===> "0"
+{{= %formula_calculate_amp_03% & true }}
+
+**** AMP: "= %formula_calculate_amp_03% & false" ===> "0"
+{{= %formula_calculate_amp_03% & false }}
+
+**** AMP: "= true & %formula_calculate_amp_03%" ===> "0"
+{{= true & %formula_calculate_amp_03% }}
+
+**** AMP: "= false & %formula_calculate_amp_03%" ===> "0"
+{{= false & %formula_calculate_amp_03% }}
+
+**** AMP: "= %formula_calculate_amp_02% & %formula_calculate_amp_03%" ===> "0"
+{{= %formula_calculate_amp_02% & %formula_calculate_amp_03% }}
+
+##
+## Test > Formula > Calculate > VARTBAR
+##
+**** VARBAR: "= 21845 | 43690" ===> "65535"
+{{= 21845 | 43690 }}
+
+**** VARBAR: "= 21845 | xaaaa" ===> "65535"
+{{= 21845 | xaaaa }}
+
+**** VARBAR: "= 21845 | 0xaaaa" ===> "65535"
+{{= 21845 | 0xaaaa }}
+
+**** VARBAR: "= 21845 | 0o125252" ===> "65535"
+{{= 21845 | 0o125252 }}
+
+**** VARBAR: "= 21845 | 0b1010101010101010" ===> "65535"
+{{= 21845 | 0b1010101010101010 }}
+
+**** VARBAR: "= x5555 | 43690" ===> "65535"
+{{= x5555 | 43690 }}
+
+**** VARBAR: "= 0x5555 | 43690" ===> "65535"
+{{= 0x5555 | 43690 }}
+
+**** VARBAR: "= 0o52525 | 43690" ===> "65535"
+{{= 0o52525 | 43690 }}
+
+**** VARBAR: "= 0b101010101010101 | 43690" ===> "65535"
+{{= 0b101010101010101 | 43690 }}
+
+**** VARBAR: "= %formula_calculate_vartbar_00% | 43690" ===> "65535"
+{{= %formula_calculate_vartbar_00% | 43690 }}
+
+**** VARBAR: "= 21845 | %formula_calculate_vartbar_01%" ===> "65535"
+{{= 21845 | %formula_calculate_vartbar_01% }}
+
+**** VARBAR: "= %formula_calculate_vartbar_00% | %formula_calculate_vartbar_01%" ===> "65535"
+{{= %formula_calculate_vartbar_00% | %formula_calculate_vartbar_01% }}
+
+**** VARBAR: "= true | true" ===> "1"
+{{= true | true }}
+
+**** VARBAR: "= true | false" ===> "1"
+{{= true | false }}
+
+**** VARBAR: "= false | true" ===> "1"
+{{= false | true }}
+
+**** VARBAR: "= false | false" ===> "0"
+{{= false | false }}
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | true" ===> "1"
+{{= %formula_calculate_vartbar_02% | true }}
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | false" ===> "1"
+{{= %formula_calculate_vartbar_02% | false }}
+
+**** VARBAR: "= true | %formula_calculate_vartbar_02%" ===> "1"
+{{= true | %formula_calculate_vartbar_02% }}
+
+**** VARBAR: "= false | %formula_calculate_vartbar_02%" ===> "1"
+{{= false | %formula_calculate_vartbar_02% }}
+
+**** VARBAR: "= %formula_calculate_vartbar_03% | true" ===> "1"
+{{= %formula_calculate_vartbar_03% | true }}
+
+**** VARBAR: "= %formula_calculate_vartbar_03% | false" ===> "0"
+{{= %formula_calculate_vartbar_03% | false }}
+
+**** VARBAR: "= true | %formula_calculate_vartbar_03%" ===> "1"
+{{= true | %formula_calculate_vartbar_03% }}
+
+**** VARBAR: "= false | %formula_calculate_vartbar_03%" ===> "0"
+{{= false | %formula_calculate_vartbar_03% }}
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | %formula_calculate_vartbar_03%" ===> "1"
+{{= %formula_calculate_vartbar_02% | %formula_calculate_vartbar_03% }}
+
+############################################################
+#### Formula : Condition
+############################################################
+##
+## Test > Formula > Condition > AND
+##
+**** AND: "= null && null" ===> "false"
+{{= null && null }}
+
+**** AND: "= null && true" ===> "false"
+{{= null && true }}
+
+**** AND: "= null && false" ===> "false"
+{{= null && false }}
+
+**** AND: "= null && 0" ===> "false"
+{{= null && 0 }}
+
+**** AND: "= null && 1" ===> "false"
+{{= null && 1 }}
+
+**** AND: "= null && 'string'" ===> "false"
+{{= null && 'string' }}
+
+**** AND: "= null && %formula_cond_and_00%" ===> "false"
+{{= null && %formula_cond_and_00% }}
+
+**** AND: "= null && %formula_cond_and_01%" ===> "false"
+{{= null && %formula_cond_and_01% }}
+
+**** AND: "= null && %formula_cond_and_02%" ===> "false"
+{{= null && %formula_cond_and_02% }}
+
+**** AND: "= null && %formula_cond_and_03%" ===> "false"
+{{= null && %formula_cond_and_03% }}
+
+**** AND: "= null && %formula_cond_and_04%" ===> "false"
+{{= null && %formula_cond_and_04% }}
+
+**** AND: "= null && %formula_cond_and_05%" ===> "false"
+{{= null && %formula_cond_and_05% }}
+
+**** AND: "= true && null" ===> "false"
+{{= true && null }}
+
+**** AND: "= false && null" ===> "false"
+{{= false && null }}
+
+**** AND: "= 0 && null" ===> "false"
+{{= 0 && null }}
+
+**** AND: "= 1 && null" ===> "false"
+{{= 1 && null }}
+
+**** AND: "= 'string' && null" ===> "false"
+{{= 'string' && null }}
+
+**** AND: "= %formula_cond_and_00% && null" ===> "false"
+{{= %formula_cond_and_00% && null }}
+
+**** AND: "= %formula_cond_and_01% && null" ===> "false"
+{{= %formula_cond_and_01% && null }}
+
+**** AND: "= %formula_cond_and_02% && null" ===> "false"
+{{= %formula_cond_and_02% && null }}
+
+**** AND: "= %formula_cond_and_03% && null" ===> "false"
+{{= %formula_cond_and_03% && null }}
+
+**** AND: "= %formula_cond_and_04% && null" ===> "false"
+{{= %formula_cond_and_04% && null }}
+
+**** AND: "= %formula_cond_and_05% && null" ===> "false"
+{{= %formula_cond_and_05% && null }}
+
+**** AND: "= true && true" ===> "true"
+{{= true && true }}
+
+**** AND: "= true && false" ===> "false"
+{{= true && false }}
+
+**** AND: "= true && 0" ===> "false"
+{{= true && 0 }}
+
+**** AND: "= true && 1" ===> "true"
+{{= true && 1 }}
+
+**** AND: "= true && 'string'" ===> "true"
+{{= true && 'string' }}
+
+**** AND: "= true && %formula_cond_and_00%" ===> "false"
+{{= true && %formula_cond_and_00% }}
+
+**** AND: "= true && %formula_cond_and_01%" ===> "true"
+{{= true && %formula_cond_and_01% }}
+
+**** AND: "= true && %formula_cond_and_02%" ===> "false"
+{{= true && %formula_cond_and_02% }}
+
+**** AND: "= true && %formula_cond_and_03%" ===> "false"
+{{= true && %formula_cond_and_03% }}
+
+**** AND: "= true && %formula_cond_and_04%" ===> "true"
+{{= true && %formula_cond_and_04% }}
+
+**** AND: "= true && %formula_cond_and_05%" ===> "true"
+{{= true && %formula_cond_and_05% }}
+
+**** AND: "= true && true" ===> "true"
+{{= true && true }}
+
+**** AND: "= false && true" ===> "false"
+{{= false && true }}
+
+**** AND: "= 0 && true" ===> "false"
+{{= 0 && true }}
+
+**** AND: "= 1 && true" ===> "true"
+{{= 1 && true }}
+
+**** AND: "= 'string' && true" ===> "true"
+{{= 'string' && true }}
+
+**** AND: "= %formula_cond_and_00% && true" ===> "false"
+{{= %formula_cond_and_00% && true }}
+
+**** AND: "= %formula_cond_and_01% && true" ===> "true"
+{{= %formula_cond_and_01% && true }}
+
+**** AND: "= %formula_cond_and_02% && true" ===> "false"
+{{= %formula_cond_and_02% && true }}
+
+**** AND: "= %formula_cond_and_03% && true" ===> "false"
+{{= %formula_cond_and_03% && true }}
+
+**** AND: "= %formula_cond_and_04% && true" ===> "true"
+{{= %formula_cond_and_04% && true }}
+
+**** AND: "= %formula_cond_and_05% && true" ===> "true"
+{{= %formula_cond_and_05% && true }}
+
+**** AND: "= false && true" ===> "false"
+{{= false && true }}
+
+**** AND: "= false && false" ===> "false"
+{{= false && false }}
+
+**** AND: "= false && 0" ===> "false"
+{{= false && 0 }}
+
+**** AND: "= false && 1" ===> "false"
+{{= false && 1 }}
+
+**** AND: "= false && 'string'" ===> "false"
+{{= false && 'string' }}
+
+**** AND: "= false && %formula_cond_and_00%" ===> "false"
+{{= false && %formula_cond_and_00% }}
+
+**** AND: "= false && %formula_cond_and_01%" ===> "false"
+{{= false && %formula_cond_and_01% }}
+
+**** AND: "= false && %formula_cond_and_02%" ===> "false"
+{{= false && %formula_cond_and_02% }}
+
+**** AND: "= false && %formula_cond_and_03%" ===> "false"
+{{= false && %formula_cond_and_03% }}
+
+**** AND: "= false && %formula_cond_and_04%" ===> "false"
+{{= false && %formula_cond_and_04% }}
+
+**** AND: "= false && %formula_cond_and_05%" ===> "false"
+{{= false && %formula_cond_and_05% }}
+
+**** AND: "= true && false" ===> "false"
+{{= true && false }}
+
+**** AND: "= false && false" ===> "false"
+{{= false && false }}
+
+**** AND: "= 0 && false" ===> "false"
+{{= 0 && false }}
+
+**** AND: "= 1 && false" ===> "false"
+{{= 1 && false }}
+
+**** AND: "= 'string' && false" ===> "false"
+{{= 'string' && false }}
+
+**** AND: "= %formula_cond_and_00% && false" ===> "false"
+{{= %formula_cond_and_00% && false }}
+
+**** AND: "= %formula_cond_and_01% && false" ===> "false"
+{{= %formula_cond_and_01% && false }}
+
+**** AND: "= %formula_cond_and_02% && false" ===> "false"
+{{= %formula_cond_and_02% && false }}
+
+**** AND: "= %formula_cond_and_03% && false" ===> "false"
+{{= %formula_cond_and_03% && false }}
+
+**** AND: "= %formula_cond_and_04% && false" ===> "false"
+{{= %formula_cond_and_04% && false }}
+
+**** AND: "= %formula_cond_and_05% && false" ===> "false"
+{{= %formula_cond_and_05% && false }}
+
+**** AND: "= 0 && true" ===> "false"
+{{= 0 && true }}
+
+**** AND: "= 0 && false" ===> "false"
+{{= 0 && false }}
+
+**** AND: "= 0 && 0" ===> "false"
+{{= 0 && 0 }}
+
+**** AND: "= 0 && 1" ===> "false"
+{{= 0 && 1 }}
+
+**** AND: "= 0 && 'string'" ===> "false"
+{{= 0 && 'string' }}
+
+**** AND: "= 0 && %formula_cond_and_00%" ===> "false"
+{{= 0 && %formula_cond_and_00% }}
+
+**** AND: "= 0 && %formula_cond_and_01%" ===> "false"
+{{= 0 && %formula_cond_and_01% }}
+
+**** AND: "= 0 && %formula_cond_and_02%" ===> "false"
+{{= 0 && %formula_cond_and_02% }}
+
+**** AND: "= 0 && %formula_cond_and_03%" ===> "false"
+{{= 0 && %formula_cond_and_03% }}
+
+**** AND: "= 0 && %formula_cond_and_04%" ===> "false"
+{{= 0 && %formula_cond_and_04% }}
+
+**** AND: "= 0 && %formula_cond_and_05%" ===> "false"
+{{= 0 && %formula_cond_and_05% }}
+
+**** AND: "= true && 0" ===> "false"
+{{= true && 0 }}
+
+**** AND: "= false && 0" ===> "false"
+{{= false && 0 }}
+
+**** AND: "= 0 && 0" ===> "false"
+{{= 0 && 0 }}
+
+**** AND: "= 1 && 0" ===> "false"
+{{= 1 && 0 }}
+
+**** AND: "= 'string' && 0" ===> "false"
+{{= 'string' && 0 }}
+
+**** AND: "= %formula_cond_and_00% && 0" ===> "false"
+{{= %formula_cond_and_00% && 0 }}
+
+**** AND: "= %formula_cond_and_01% && 0" ===> "false"
+{{= %formula_cond_and_01% && 0 }}
+
+**** AND: "= %formula_cond_and_02% && 0" ===> "false"
+{{= %formula_cond_and_02% && 0 }}
+
+**** AND: "= %formula_cond_and_03% && 0" ===> "false"
+{{= %formula_cond_and_03% && 0 }}
+
+**** AND: "= %formula_cond_and_04% && 0" ===> "false"
+{{= %formula_cond_and_04% && 0 }}
+
+**** AND: "= %formula_cond_and_05% && 0" ===> "false"
+{{= %formula_cond_and_05% && 0 }}
+
+**** AND: "= 1 && true" ===> "true"
+{{= 1 && true }}
+
+**** AND: "= 1 && false" ===> "false"
+{{= 1 && false }}
+
+**** AND: "= 1 && 0" ===> "false"
+{{= 1 && 0 }}
+
+**** AND: "= 1 && 1" ===> "true"
+{{= 1 && 1 }}
+
+**** AND: "= 1 && 'string'" ===> "true"
+{{= 1 && 'string' }}
+
+**** AND: "= 1 && %formula_cond_and_00%" ===> "false"
+{{= 1 && %formula_cond_and_00% }}
+
+**** AND: "= 1 && %formula_cond_and_01%" ===> "true"
+{{= 1 && %formula_cond_and_01% }}
+
+**** AND: "= 1 && %formula_cond_and_02%" ===> "false"
+{{= 1 && %formula_cond_and_02% }}
+
+**** AND: "= 1 && %formula_cond_and_03%" ===> "false"
+{{= 1 && %formula_cond_and_03% }}
+
+**** AND: "= 1 && %formula_cond_and_04%" ===> "true"
+{{= 1 && %formula_cond_and_04% }}
+
+**** AND: "= 1 && %formula_cond_and_05%" ===> "true"
+{{= 1 && %formula_cond_and_05% }}
+
+**** AND: "= true && 1" ===> "true"
+{{= true && 1 }}
+
+**** AND: "= false && 1" ===> "false"
+{{= false && 1 }}
+
+**** AND: "= 0 && 1" ===> "false"
+{{= 0 && 1 }}
+
+**** AND: "= 1 && 1" ===> "true"
+{{= 1 && 1 }}
+
+**** AND: "= 'string' && 1" ===> "true"
+{{= 'string' && 1 }}
+
+**** AND: "= %formula_cond_and_00% && 1" ===> "false"
+{{= %formula_cond_and_00% && 1 }}
+
+**** AND: "= %formula_cond_and_01% && 1" ===> "true"
+{{= %formula_cond_and_01% && 1 }}
+
+**** AND: "= %formula_cond_and_02% && 1" ===> "false"
+{{= %formula_cond_and_02% && 1 }}
+
+**** AND: "= %formula_cond_and_03% && 1" ===> "false"
+{{= %formula_cond_and_03% && 1 }}
+
+**** AND: "= %formula_cond_and_04% && 1" ===> "true"
+{{= %formula_cond_and_04% && 1 }}
+
+**** AND: "= %formula_cond_and_05% && 1" ===> "true"
+{{= %formula_cond_and_05% && 1 }}
+
+**** AND: "= 'string' && true" ===> "true"
+{{= 'string' && true }}
+
+**** AND: "= 'string' && false" ===> "false"
+{{= 'string' && false }}
+
+**** AND: "= 'string' && 0" ===> "false"
+{{= 'string' && 0 }}
+
+**** AND: "= 'string' && 1" ===> "true"
+{{= 'string' && 1 }}
+
+**** AND: "= 'string' && 'string'" ===> "true"
+{{= 'string' && 'string' }}
+
+**** AND: "= 'string' && %formula_cond_and_00%" ===> "false"
+{{= 'string' && %formula_cond_and_00% }}
+
+**** AND: "= 'string' && %formula_cond_and_01%" ===> "true"
+{{= 'string' && %formula_cond_and_01% }}
+
+**** AND: "= 'string' && %formula_cond_and_02%" ===> "false"
+{{= 'string' && %formula_cond_and_02% }}
+
+**** AND: "= 'string' && %formula_cond_and_03%" ===> "false"
+{{= 'string' && %formula_cond_and_03% }}
+
+**** AND: "= 'string' && %formula_cond_and_04%" ===> "true"
+{{= 'string' && %formula_cond_and_04% }}
+
+**** AND: "= 'string' && %formula_cond_and_05%" ===> "true"
+{{= 'string' && %formula_cond_and_05% }}
+
+**** AND: "= true && 'string'" ===> "true"
+{{= true && 'string' }}
+
+**** AND: "= false && 'string'" ===> "false"
+{{= false && 'string' }}
+
+**** AND: "= 0 && 'string'" ===> "false"
+{{= 0 && 'string' }}
+
+**** AND: "= 1 && 'string'" ===> "true"
+{{= 1 && 'string' }}
+
+**** AND: "= 'string' && 'string'" ===> "true"
+{{= 'string' && 'string' }}
+
+**** AND: "= %formula_cond_and_00% && 'string'" ===> "false"
+{{= %formula_cond_and_00% && 'string' }}
+
+**** AND: "= %formula_cond_and_01% && 'string'" ===> "true"
+{{= %formula_cond_and_01% && 'string' }}
+
+**** AND: "= %formula_cond_and_02% && 'string'" ===> "false"
+{{= %formula_cond_and_02% && 'string' }}
+
+**** AND: "= %formula_cond_and_03% && 'string'" ===> "false"
+{{= %formula_cond_and_03% && 'string' }}
+
+**** AND: "= %formula_cond_and_04% && 'string'" ===> "true"
+{{= %formula_cond_and_04% && 'string' }}
+
+**** AND: "= %formula_cond_and_05% && 'string'" ===> "true"
+{{= %formula_cond_and_05% && 'string' }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_00%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_00% }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_01%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_01% }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_02%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_02% }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_03%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_03% }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_04%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_04% }}
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_05%" ===> "false"
+{{= %formula_cond_and_00% && %formula_cond_and_05% }}
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_01%" ===> "true"
+{{= %formula_cond_and_01% && %formula_cond_and_01% }}
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_02%" ===> "false"
+{{= %formula_cond_and_01% && %formula_cond_and_02% }}
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_03%" ===> "false"
+{{= %formula_cond_and_01% && %formula_cond_and_03% }}
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_04%" ===> "true"
+{{= %formula_cond_and_01% && %formula_cond_and_04% }}
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_05%" ===> "true"
+{{= %formula_cond_and_01% && %formula_cond_and_05% }}
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_02%" ===> "false"
+{{= %formula_cond_and_02% && %formula_cond_and_02% }}
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_03%" ===> "false"
+{{= %formula_cond_and_02% && %formula_cond_and_03% }}
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_04%" ===> "false"
+{{= %formula_cond_and_02% && %formula_cond_and_04% }}
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_05%" ===> "false"
+{{= %formula_cond_and_02% && %formula_cond_and_05% }}
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_03%" ===> "false"
+{{= %formula_cond_and_03% && %formula_cond_and_03% }}
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_04%" ===> "false"
+{{= %formula_cond_and_03% && %formula_cond_and_04% }}
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_05%" ===> "false"
+{{= %formula_cond_and_03% && %formula_cond_and_05% }}
+
+**** AND: "= %formula_cond_and_04% && %formula_cond_and_04%" ===> "true"
+{{= %formula_cond_and_04% && %formula_cond_and_04% }}
+
+**** AND: "= %formula_cond_and_04% && %formula_cond_and_05%" ===> "true"
+{{= %formula_cond_and_04% && %formula_cond_and_05% }}
+
+**** AND: "= %formula_cond_and_05% && %formula_cond_and_05%" ===> "true"
+{{= %formula_cond_and_05% && %formula_cond_and_05% }}
+
+##
+## Test > Formula > Condition > OR
+##
+**** OR: "= null || null" ===> "false"
+{{= null || null }}
+
+**** OR: "= null || true" ===> "true"
+{{= null || true }}
+
+**** OR: "= null || false" ===> "false"
+{{= null || false }}
+
+**** OR: "= null || 0" ===> "false"
+{{= null || 0 }}
+
+**** OR: "= null || 1" ===> "true"
+{{= null || 1 }}
+
+**** OR: "= null || 'string'" ===> "true"
+{{= null || 'string' }}
+
+**** OR: "= null || %formula_cond_or_00%" ===> "false"
+{{= null || %formula_cond_or_00% }}
+
+**** OR: "= null || %formula_cond_or_01%" ===> "true"
+{{= null || %formula_cond_or_01% }}
+
+**** OR: "= null || %formula_cond_or_02%" ===> "false"
+{{= null || %formula_cond_or_02% }}
+
+**** OR: "= null || %formula_cond_or_03%" ===> "false"
+{{= null || %formula_cond_or_03% }}
+
+**** OR: "= null || %formula_cond_or_04%" ===> "true"
+{{= null || %formula_cond_or_04% }}
+
+**** OR: "= null || %formula_cond_or_05%" ===> "true"
+{{= null || %formula_cond_or_05% }}
+
+**** OR: "= true || null" ===> "true"
+{{= true || null }}
+
+**** OR: "= false || null" ===> "false"
+{{= false || null }}
+
+**** OR: "= 0 || null" ===> "false"
+{{= 0 || null }}
+
+**** OR: "= 1 || null" ===> "true"
+{{= 1 || null }}
+
+**** OR: "= 'string' || null" ===> "true"
+{{= 'string' || null }}
+
+**** OR: "= %formula_cond_or_00% || null" ===> "false"
+{{= %formula_cond_or_00% || null }}
+
+**** OR: "= %formula_cond_or_01% || null" ===> "true"
+{{= %formula_cond_or_01% || null }}
+
+**** OR: "= %formula_cond_or_02% || null" ===> "false"
+{{= %formula_cond_or_02% || null }}
+
+**** OR: "= %formula_cond_or_03% || null" ===> "false"
+{{= %formula_cond_or_03% || null }}
+
+**** OR: "= %formula_cond_or_04% || null" ===> "true"
+{{= %formula_cond_or_04% || null }}
+
+**** OR: "= %formula_cond_or_05% || null" ===> "true"
+{{= %formula_cond_or_05% || null }}
+
+**** OR: "= true || true" ===> "true"
+{{= true || true }}
+
+**** OR: "= true || false" ===> "true"
+{{= true || false }}
+
+**** OR: "= true || 0" ===> "true"
+{{= true || 0 }}
+
+**** OR: "= true || 1" ===> "true"
+{{= true || 1 }}
+
+**** OR: "= true || 'string'" ===> "true"
+{{= true || 'string' }}
+
+**** OR: "= true || %formula_cond_or_00%" ===> "true"
+{{= true || %formula_cond_or_00% }}
+
+**** OR: "= true || %formula_cond_or_01%" ===> "true"
+{{= true || %formula_cond_or_01% }}
+
+**** OR: "= true || %formula_cond_or_02%" ===> "true"
+{{= true || %formula_cond_or_02% }}
+
+**** OR: "= true || %formula_cond_or_03%" ===> "true"
+{{= true || %formula_cond_or_03% }}
+
+**** OR: "= true || %formula_cond_or_04%" ===> "true"
+{{= true || %formula_cond_or_04% }}
+
+**** OR: "= true || %formula_cond_or_05%" ===> "true"
+{{= true || %formula_cond_or_05% }}
+
+**** OR: "= true || true" ===> "true"
+{{= true || true }}
+
+**** OR: "= false || true" ===> "true"
+{{= false || true }}
+
+**** OR: "= 0 || true" ===> "true"
+{{= 0 || true }}
+
+**** OR: "= 1 || true" ===> "true"
+{{= 1 || true }}
+
+**** OR: "= 'string' || true" ===> "true"
+{{= 'string' || true }}
+
+**** OR: "= %formula_cond_or_00% || true" ===> "true"
+{{= %formula_cond_or_00% || true }}
+
+**** OR: "= %formula_cond_or_01% || true" ===> "true"
+{{= %formula_cond_or_01% || true }}
+
+**** OR: "= %formula_cond_or_02% || true" ===> "true"
+{{= %formula_cond_or_02% || true }}
+
+**** OR: "= %formula_cond_or_03% || true" ===> "true"
+{{= %formula_cond_or_03% || true }}
+
+**** OR: "= %formula_cond_or_04% || true" ===> "true"
+{{= %formula_cond_or_04% || true }}
+
+**** OR: "= %formula_cond_or_05% || true" ===> "true"
+{{= %formula_cond_or_05% || true }}
+
+**** OR: "= false || true" ===> "true"
+{{= false || true }}
+
+**** OR: "= false || false" ===> "false"
+{{= false || false }}
+
+**** OR: "= false || 0" ===> "false"
+{{= false || 0 }}
+
+**** OR: "= false || 1" ===> "true"
+{{= false || 1 }}
+
+**** OR: "= false || 'string'" ===> "true"
+{{= false || 'string' }}
+
+**** OR: "= false || %formula_cond_or_00%" ===> "false"
+{{= false || %formula_cond_or_00% }}
+
+**** OR: "= false || %formula_cond_or_01%" ===> "true"
+{{= false || %formula_cond_or_01% }}
+
+**** OR: "= false || %formula_cond_or_02%" ===> "false"
+{{= false || %formula_cond_or_02% }}
+
+**** OR: "= false || %formula_cond_or_03%" ===> "false"
+{{= false || %formula_cond_or_03% }}
+
+**** OR: "= false || %formula_cond_or_04%" ===> "true"
+{{= false || %formula_cond_or_04% }}
+
+**** OR: "= false || %formula_cond_or_05%" ===> "true"
+{{= false || %formula_cond_or_05% }}
+
+**** OR: "= true || false" ===> "true"
+{{= true || false }}
+
+**** OR: "= false || false" ===> "false"
+{{= false || false }}
+
+**** OR: "= 0 || false" ===> "false"
+{{= 0 || false }}
+
+**** OR: "= 1 || false" ===> "true"
+{{= 1 || false }}
+
+**** OR: "= 'string' || false" ===> "true"
+{{= 'string' || false }}
+
+**** OR: "= %formula_cond_or_00% || false" ===> "false"
+{{= %formula_cond_or_00% || false }}
+
+**** OR: "= %formula_cond_or_01% || false" ===> "true"
+{{= %formula_cond_or_01% || false }}
+
+**** OR: "= %formula_cond_or_02% || false" ===> "false"
+{{= %formula_cond_or_02% || false }}
+
+**** OR: "= %formula_cond_or_03% || false" ===> "false"
+{{= %formula_cond_or_03% || false }}
+
+**** OR: "= %formula_cond_or_04% || false" ===> "true"
+{{= %formula_cond_or_04% || false }}
+
+**** OR: "= %formula_cond_or_05% || false" ===> "true"
+{{= %formula_cond_or_05% || false }}
+
+**** OR: "= 0 || true" ===> "true"
+{{= 0 || true }}
+
+**** OR: "= 0 || false" ===> "false"
+{{= 0 || false }}
+
+**** OR: "= 0 || 0" ===> "false"
+{{= 0 || 0 }}
+
+**** OR: "= 0 || 1" ===> "true"
+{{= 0 || 1 }}
+
+**** OR: "= 0 || 'string'" ===> "true"
+{{= 0 || 'string' }}
+
+**** OR: "= 0 || %formula_cond_or_00%" ===> "false"
+{{= 0 || %formula_cond_or_00% }}
+
+**** OR: "= 0 || %formula_cond_or_01%" ===> "true"
+{{= 0 || %formula_cond_or_01% }}
+
+**** OR: "= 0 || %formula_cond_or_02%" ===> "false"
+{{= 0 || %formula_cond_or_02% }}
+
+**** OR: "= 0 || %formula_cond_or_03%" ===> "false"
+{{= 0 || %formula_cond_or_03% }}
+
+**** OR: "= 0 || %formula_cond_or_04%" ===> "true"
+{{= 0 || %formula_cond_or_04% }}
+
+**** OR: "= 0 || %formula_cond_or_05%" ===> "true"
+{{= 0 || %formula_cond_or_05% }}
+
+**** OR: "= true || 0" ===> "true"
+{{= true || 0 }}
+
+**** OR: "= false || 0" ===> "false"
+{{= false || 0 }}
+
+**** OR: "= 0 || 0" ===> "false"
+{{= 0 || 0 }}
+
+**** OR: "= 1 || 0" ===> "true"
+{{= 1 || 0 }}
+
+**** OR: "= 'string' || 0" ===> "true"
+{{= 'string' || 0 }}
+
+**** OR: "= %formula_cond_or_00% || 0" ===> "false"
+{{= %formula_cond_or_00% || 0 }}
+
+**** OR: "= %formula_cond_or_01% || 0" ===> "true"
+{{= %formula_cond_or_01% || 0 }}
+
+**** OR: "= %formula_cond_or_02% || 0" ===> "false"
+{{= %formula_cond_or_02% || 0 }}
+
+**** OR: "= %formula_cond_or_03% || 0" ===> "false"
+{{= %formula_cond_or_03% || 0 }}
+
+**** OR: "= %formula_cond_or_04% || 0" ===> "true"
+{{= %formula_cond_or_04% || 0 }}
+
+**** OR: "= %formula_cond_or_05% || 0" ===> "true"
+{{= %formula_cond_or_05% || 0 }}
+
+**** OR: "= 1 || true" ===> "true"
+{{= 1 || true }}
+
+**** OR: "= 1 || false" ===> "true"
+{{= 1 || false }}
+
+**** OR: "= 1 || 0" ===> "true"
+{{= 1 || 0 }}
+
+**** OR: "= 1 || 1" ===> "true"
+{{= 1 || 1 }}
+
+**** OR: "= 1 || 'string'" ===> "true"
+{{= 1 || 'string' }}
+
+**** OR: "= 1 || %formula_cond_or_00%" ===> "true"
+{{= 1 || %formula_cond_or_00% }}
+
+**** OR: "= 1 || %formula_cond_or_01%" ===> "true"
+{{= 1 || %formula_cond_or_01% }}
+
+**** OR: "= 1 || %formula_cond_or_02%" ===> "true"
+{{= 1 || %formula_cond_or_02% }}
+
+**** OR: "= 1 || %formula_cond_or_03%" ===> "true"
+{{= 1 || %formula_cond_or_03% }}
+
+**** OR: "= 1 || %formula_cond_or_04%" ===> "true"
+{{= 1 || %formula_cond_or_04% }}
+
+**** OR: "= 1 || %formula_cond_or_05%" ===> "true"
+{{= 1 || %formula_cond_or_05% }}
+
+**** OR: "= true || 1" ===> "true"
+{{= true || 1 }}
+
+**** OR: "= false || 1" ===> "true"
+{{= false || 1 }}
+
+**** OR: "= 0 || 1" ===> "true"
+{{= 0 || 1 }}
+
+**** OR: "= 1 || 1" ===> "true"
+{{= 1 || 1 }}
+
+**** OR: "= 'string' || 1" ===> "true"
+{{= 'string' || 1 }}
+
+**** OR: "= %formula_cond_or_00% || 1" ===> "true"
+{{= %formula_cond_or_00% || 1 }}
+
+**** OR: "= %formula_cond_or_01% || 1" ===> "true"
+{{= %formula_cond_or_01% || 1 }}
+
+**** OR: "= %formula_cond_or_02% || 1" ===> "true"
+{{= %formula_cond_or_02% || 1 }}
+
+**** OR: "= %formula_cond_or_03% || 1" ===> "true"
+{{= %formula_cond_or_03% || 1 }}
+
+**** OR: "= %formula_cond_or_04% || 1" ===> "true"
+{{= %formula_cond_or_04% || 1 }}
+
+**** OR: "= %formula_cond_or_05% || 1" ===> "true"
+{{= %formula_cond_or_05% || 1 }}
+
+**** OR: "= 'string' || true" ===> "true"
+{{= 'string' || true }}
+
+**** OR: "= 'string' || false" ===> "true"
+{{= 'string' || false }}
+
+**** OR: "= 'string' || 0" ===> "true"
+{{= 'string' || 0 }}
+
+**** OR: "= 'string' || 1" ===> "true"
+{{= 'string' || 1 }}
+
+**** OR: "= 'string' || 'string'" ===> "true"
+{{= 'string' || 'string' }}
+
+**** OR: "= 'string' || %formula_cond_or_00%" ===> "true"
+{{= 'string' || %formula_cond_or_00% }}
+
+**** OR: "= 'string' || %formula_cond_or_01%" ===> "true"
+{{= 'string' || %formula_cond_or_01% }}
+
+**** OR: "= 'string' || %formula_cond_or_02%" ===> "true"
+{{= 'string' || %formula_cond_or_02% }}
+
+**** OR: "= 'string' || %formula_cond_or_03%" ===> "true"
+{{= 'string' || %formula_cond_or_03% }}
+
+**** OR: "= 'string' || %formula_cond_or_04%" ===> "true"
+{{= 'string' || %formula_cond_or_04% }}
+
+**** OR: "= 'string' || %formula_cond_or_05%" ===> "true"
+{{= 'string' || %formula_cond_or_05% }}
+
+**** OR: "= true || 'string'" ===> "true"
+{{= true || 'string' }}
+
+**** OR: "= false || 'string'" ===> "true"
+{{= false || 'string' }}
+
+**** OR: "= 0 || 'string'" ===> "true"
+{{= 0 || 'string' }}
+
+**** OR: "= 1 || 'string'" ===> "true"
+{{= 1 || 'string' }}
+
+**** OR: "= 'string' || 'string'" ===> "true"
+{{= 'string' || 'string' }}
+
+**** OR: "= %formula_cond_or_00% || 'string'" ===> "true"
+{{= %formula_cond_or_00% || 'string' }}
+
+**** OR: "= %formula_cond_or_01% || 'string'" ===> "true"
+{{= %formula_cond_or_01% || 'string' }}
+
+**** OR: "= %formula_cond_or_02% || 'string'" ===> "true"
+{{= %formula_cond_or_02% || 'string' }}
+
+**** OR: "= %formula_cond_or_03% || 'string'" ===> "true"
+{{= %formula_cond_or_03% || 'string' }}
+
+**** OR: "= %formula_cond_or_04% || 'string'" ===> "true"
+{{= %formula_cond_or_04% || 'string' }}
+
+**** OR: "= %formula_cond_or_05% || 'string'" ===> "true"
+{{= %formula_cond_or_05% || 'string' }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_00%" ===> "false"
+{{= %formula_cond_or_00% || %formula_cond_or_00% }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_01%" ===> "true"
+{{= %formula_cond_or_00% || %formula_cond_or_01% }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_02%" ===> "false"
+{{= %formula_cond_or_00% || %formula_cond_or_02% }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_03%" ===> "false"
+{{= %formula_cond_or_00% || %formula_cond_or_03% }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_04%" ===> "true"
+{{= %formula_cond_or_00% || %formula_cond_or_04% }}
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_00% || %formula_cond_or_05% }}
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_01%" ===> "true"
+{{= %formula_cond_or_01% || %formula_cond_or_01% }}
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_02%" ===> "true"
+{{= %formula_cond_or_01% || %formula_cond_or_02% }}
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_03%" ===> "true"
+{{= %formula_cond_or_01% || %formula_cond_or_03% }}
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_04%" ===> "true"
+{{= %formula_cond_or_01% || %formula_cond_or_04% }}
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_01% || %formula_cond_or_05% }}
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_02%" ===> "false"
+{{= %formula_cond_or_02% || %formula_cond_or_02% }}
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_03%" ===> "false"
+{{= %formula_cond_or_02% || %formula_cond_or_03% }}
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_04%" ===> "true"
+{{= %formula_cond_or_02% || %formula_cond_or_04% }}
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_02% || %formula_cond_or_05% }}
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_03%" ===> "false"
+{{= %formula_cond_or_03% || %formula_cond_or_03% }}
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_04%" ===> "true"
+{{= %formula_cond_or_03% || %formula_cond_or_04% }}
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_03% || %formula_cond_or_05% }}
+
+**** OR: "= %formula_cond_or_04% || %formula_cond_or_04%" ===> "true"
+{{= %formula_cond_or_04% || %formula_cond_or_04% }}
+
+**** OR: "= %formula_cond_or_04% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_04% || %formula_cond_or_05% }}
+
+**** OR: "= %formula_cond_or_05% || %formula_cond_or_05%" ===> "true"
+{{= %formula_cond_or_05% || %formula_cond_or_05% }}
+
+##
+## Test > Formula > Condition > LESS
+##
+**** LESS: "= 1 < 2" ===> "true"
+{{= 1 < 2 }}
+
+**** LESS: "= 1 < 1" ===> "false"
+{{= 1 < 1 }}
+
+**** LESS: "= 1 < 0" ===> "false"
+{{= 1 < 0 }}
+
+**** LESS: "= 1 < %formula_cond_less_02%" ===> "true"
+{{= 1 < %formula_cond_less_02% }}
+
+**** LESS: "= 1 < %formula_cond_less_01%" ===> "false"
+{{= 1 < %formula_cond_less_01% }}
+
+**** LESS: "= 1 < %formula_cond_less_00%" ===> "false"
+{{= 1 < %formula_cond_less_00% }}
+
+**** LESS: "= 0 < 1" ===> "true"
+{{= 0 < 1 }}
+
+**** LESS: "= 1 < 1" ===> "false"
+{{= 1 < 1 }}
+
+**** LESS: "= 2 < 1" ===> "false"
+{{= 2 < 1 }}
+
+**** LESS: "= %formula_cond_less_00% < 1" ===> "true"
+{{= %formula_cond_less_00% < 1 }}
+
+**** LESS: "= %formula_cond_less_01% < 1" ===> "false"
+{{= %formula_cond_less_01% < 1 }}
+
+**** LESS: "= %formula_cond_less_02% < 1" ===> "false"
+{{= %formula_cond_less_02% < 1 }}
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_00%" ===> "false"
+{{= %formula_cond_less_00% < %formula_cond_less_00% }}
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_01%" ===> "true"
+{{= %formula_cond_less_00% < %formula_cond_less_01% }}
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_02%" ===> "true"
+{{= %formula_cond_less_00% < %formula_cond_less_02% }}
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_00%" ===> "false"
+{{= %formula_cond_less_01% < %formula_cond_less_00% }}
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_01%" ===> "false"
+{{= %formula_cond_less_01% < %formula_cond_less_01% }}
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_02%" ===> "true"
+{{= %formula_cond_less_01% < %formula_cond_less_02% }}
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_00%" ===> "false"
+{{= %formula_cond_less_02% < %formula_cond_less_00% }}
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_01%" ===> "false"
+{{= %formula_cond_less_02% < %formula_cond_less_01% }}
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_02%" ===> "false"
+{{= %formula_cond_less_02% < %formula_cond_less_02% }}
+
+##
+## Test > Formula > Condition > GREAT
+##
+**** GREAT: "= 1 > 2" ===> "false"
+{{= 1 > 2 }}
+
+**** GREAT: "= 1 > 1" ===> "false"
+{{= 1 > 1 }}
+
+**** GREAT: "= 1 > 0" ===> "true"
+{{= 1 > 0 }}
+
+**** GREAT: "= 1 > %formula_cond_great_02%" ===> "false"
+{{= 1 > %formula_cond_great_02% }}
+
+**** GREAT: "= 1 > %formula_cond_great_01%" ===> "false"
+{{= 1 > %formula_cond_great_01% }}
+
+**** GREAT: "= 1 > %formula_cond_great_00%" ===> "true"
+{{= 1 > %formula_cond_great_00% }}
+
+**** GREAT: "= 0 > 1" ===> "false"
+{{= 0 > 1 }}
+
+**** GREAT: "= 1 > 1" ===> "false"
+{{= 1 > 1 }}
+
+**** GREAT: "= 2 > 1" ===> "true"
+{{= 2 > 1 }}
+
+**** GREAT: "= %formula_cond_great_00% > 1" ===> "false"
+{{= %formula_cond_great_00% > 1 }}
+
+**** GREAT: "= %formula_cond_great_01% > 1" ===> "false"
+{{= %formula_cond_great_01% > 1 }}
+
+**** GREAT: "= %formula_cond_great_02% > 1" ===> "true"
+{{= %formula_cond_great_02% > 1 }}
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_00%" ===> "false"
+{{= %formula_cond_great_00% > %formula_cond_great_00% }}
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_01%" ===> "false"
+{{= %formula_cond_great_00% > %formula_cond_great_01% }}
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_02%" ===> "false"
+{{= %formula_cond_great_00% > %formula_cond_great_02% }}
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_00%" ===> "true"
+{{= %formula_cond_great_01% > %formula_cond_great_00% }}
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_01%" ===> "false"
+{{= %formula_cond_great_01% > %formula_cond_great_01% }}
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_02%" ===> "false"
+{{= %formula_cond_great_01% > %formula_cond_great_02% }}
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_00%" ===> "true"
+{{= %formula_cond_great_02% > %formula_cond_great_00% }}
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_01%" ===> "true"
+{{= %formula_cond_great_02% > %formula_cond_great_01% }}
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_02%" ===> "false"
+{{= %formula_cond_great_02% > %formula_cond_great_02% }}
+
+##
+## Test > Formula > Condition > LESSEQ
+##
+**** LESSEQ: "= 1 <= 2" ===> "true"
+{{= 1 <= 2 }}
+
+**** LESSEQ: "= 1 <= 1" ===> "true"
+{{= 1 <= 1 }}
+
+**** LESSEQ: "= 1 <= 0" ===> "false"
+{{= 1 <= 0 }}
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_02%" ===> "true"
+{{= 1 <= %formula_cond_lesseq_02% }}
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_01%" ===> "true"
+{{= 1 <= %formula_cond_lesseq_01% }}
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_00%" ===> "false"
+{{= 1 <= %formula_cond_lesseq_00% }}
+
+**** LESSEQ: "= 0 <= 1" ===> "true"
+{{= 0 <= 1 }}
+
+**** LESSEQ: "= 1 <= 1" ===> "true"
+{{= 1 <= 1 }}
+
+**** LESSEQ: "= 2 <= 1" ===> "false"
+{{= 2 <= 1 }}
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= 1" ===> "true"
+{{= %formula_cond_lesseq_00% <= 1 }}
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= 1" ===> "true"
+{{= %formula_cond_lesseq_01% <= 1 }}
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= 1" ===> "false"
+{{= %formula_cond_lesseq_02% <= 1 }}
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_00%" ===> "true"
+{{= %formula_cond_lesseq_00% <= %formula_cond_lesseq_00% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_01%" ===> "true"
+{{= %formula_cond_lesseq_00% <= %formula_cond_lesseq_01% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_02%" ===> "true"
+{{= %formula_cond_lesseq_00% <= %formula_cond_lesseq_02% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_00%" ===> "false"
+{{= %formula_cond_lesseq_01% <= %formula_cond_lesseq_00% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_01%" ===> "true"
+{{= %formula_cond_lesseq_01% <= %formula_cond_lesseq_01% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_02%" ===> "true"
+{{= %formula_cond_lesseq_01% <= %formula_cond_lesseq_02% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_00%" ===> "false"
+{{= %formula_cond_lesseq_02% <= %formula_cond_lesseq_00% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_01%" ===> "false"
+{{= %formula_cond_lesseq_02% <= %formula_cond_lesseq_01% }}
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_02%" ===> "true"
+{{= %formula_cond_lesseq_02% <= %formula_cond_lesseq_02% }}
+
+##
+## Test > Formula > Condition > GREATEQ
+##
+**** GREATEQ: "= 1 >= 2" ===> "false"
+{{= 1 >= 2 }}
+
+**** GREATEQ: "= 1 >= 1" ===> "true"
+{{= 1 >= 1 }}
+
+**** GREATEQ: "= 1 >= 0" ===> "true"
+{{= 1 >= 0 }}
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_02%" ===> "false"
+{{= 1 >= %formula_cond_greateq_02% }}
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_01%" ===> "true"
+{{= 1 >= %formula_cond_greateq_01% }}
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_00%" ===> "true"
+{{= 1 >= %formula_cond_greateq_00% }}
+
+**** GREATEQ: "= 0 >= 1" ===> "false"
+{{= 0 >= 1 }}
+
+**** GREATEQ: "= 1 >= 1" ===> "true"
+{{= 1 >= 1 }}
+
+**** GREATEQ: "= 2 >= 1" ===> "true"
+{{= 2 >= 1 }}
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= 1" ===> "false"
+{{= %formula_cond_greateq_00% >= 1 }}
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= 1" ===> "true"
+{{= %formula_cond_greateq_01% >= 1 }}
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= 1" ===> "true"
+{{= %formula_cond_greateq_02% >= 1 }}
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_00%" ===> "true"
+{{= %formula_cond_greateq_00% >= %formula_cond_greateq_00% }}
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_01%" ===> "false"
+{{= %formula_cond_greateq_00% >= %formula_cond_greateq_01% }}
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_02%" ===> "false"
+{{= %formula_cond_greateq_00% >= %formula_cond_greateq_02% }}
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_00%" ===> "true"
+{{= %formula_cond_greateq_01% >= %formula_cond_greateq_00% }}
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_01%" ===> "true"
+{{= %formula_cond_greateq_01% >= %formula_cond_greateq_01% }}
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_02%" ===> "false"
+{{= %formula_cond_greateq_01% >= %formula_cond_greateq_02% }}
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_00%" ===> "true"
+{{= %formula_cond_greateq_02% >= %formula_cond_greateq_00% }}
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_01%" ===> "true"
+{{= %formula_cond_greateq_02% >= %formula_cond_greateq_01% }}
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_02%" ===> "true"
+{{= %formula_cond_greateq_02% >= %formula_cond_greateq_02% }}
+
+##
+## Test > Formula > Condition > EQ
+##
+**** EQ: "= null == null" ===> "true"
+{{= null == null }}
+
+**** EQ: "= null == true" ===> "false"
+{{= null == true }}
+
+**** EQ: "= null == false" ===> "true"
+{{= null == false }}
+
+**** EQ: "= null == 0" ===> "true"
+{{= null == 0 }}
+
+**** EQ: "= null == 1" ===> "false"
+{{= null == 1 }}
+
+**** EQ: "= null == 'string'" ===> "false"
+{{= null == 'string' }}
+
+**** EQ: "= null == %formula_cond_eq_00%" ===> "true"
+{{= null == %formula_cond_eq_00% }}
+
+**** EQ: "= null == %formula_cond_eq_01%" ===> "false"
+{{= null == %formula_cond_eq_01% }}
+
+**** EQ: "= null == %formula_cond_eq_02%" ===> "true"
+{{= null == %formula_cond_eq_02% }}
+
+**** EQ: "= null == %formula_cond_eq_03%" ===> "true"
+{{= null == %formula_cond_eq_03% }}
+
+**** EQ: "= null == %formula_cond_eq_04%" ===> "false"
+{{= null == %formula_cond_eq_04% }}
+
+**** EQ: "= null == %formula_cond_eq_05%" ===> "false"
+{{= null == %formula_cond_eq_05% }}
+
+**** EQ: "= true == null" ===> "false"
+{{= true == null }}
+
+**** EQ: "= false == null" ===> "true"
+{{= false == null }}
+
+**** EQ: "= 0 == null" ===> "true"
+{{= 0 == null }}
+
+**** EQ: "= 1 == null" ===> "false"
+{{= 1 == null }}
+
+**** EQ: "= 'string' == null" ===> "false"
+{{= 'string' == null }}
+
+**** EQ: "= %formula_cond_eq_00% == null" ===> "true"
+{{= %formula_cond_eq_00% == null }}
+
+**** EQ: "= %formula_cond_eq_01% == null" ===> "false"
+{{= %formula_cond_eq_01% == null }}
+
+**** EQ: "= %formula_cond_eq_02% == null" ===> "true"
+{{= %formula_cond_eq_02% == null }}
+
+**** EQ: "= %formula_cond_eq_03% == null" ===> "true"
+{{= %formula_cond_eq_03% == null }}
+
+**** EQ: "= %formula_cond_eq_04% == null" ===> "false"
+{{= %formula_cond_eq_04% == null }}
+
+**** EQ: "= %formula_cond_eq_05% == null" ===> "false"
+{{= %formula_cond_eq_05% == null }}
+
+**** EQ: "= true == null" ===> "false"
+{{= true == null }}
+
+**** EQ: "= true == true" ===> "true"
+{{= true == true }}
+
+**** EQ: "= true == false" ===> "false"
+{{= true == false }}
+
+**** EQ: "= true == 0" ===> "false"
+{{= true == 0 }}
+
+**** EQ: "= true == 1" ===> "true"
+{{= true == 1 }}
+
+**** EQ: "= true == 'string'" ===> "true"
+{{= true == 'string' }}
+
+**** EQ: "= true == %formula_cond_eq_00%" ===> "false"
+{{= true == %formula_cond_eq_00% }}
+
+**** EQ: "= true == %formula_cond_eq_01%" ===> "true"
+{{= true == %formula_cond_eq_01% }}
+
+**** EQ: "= true == %formula_cond_eq_02%" ===> "false"
+{{= true == %formula_cond_eq_02% }}
+
+**** EQ: "= true == %formula_cond_eq_03%" ===> "false"
+{{= true == %formula_cond_eq_03% }}
+
+**** EQ: "= true == %formula_cond_eq_04%" ===> "true"
+{{= true == %formula_cond_eq_04% }}
+
+**** EQ: "= true == %formula_cond_eq_05%" ===> "true"
+{{= true == %formula_cond_eq_05% }}
+
+**** EQ: "= true == true" ===> "true"
+{{= true == true }}
+
+**** EQ: "= false == true" ===> "false"
+{{= false == true }}
+
+**** EQ: "= 0 == true" ===> "false"
+{{= 0 == true }}
+
+**** EQ: "= 1 == true" ===> "true"
+{{= 1 == true }}
+
+**** EQ: "= 'string' == true" ===> "true"
+{{= 'string' == true }}
+
+**** EQ: "= %formula_cond_eq_00% == true" ===> "false"
+{{= %formula_cond_eq_00% == true }}
+
+**** EQ: "= %formula_cond_eq_01% == true" ===> "true"
+{{= %formula_cond_eq_01% == true }}
+
+**** EQ: "= %formula_cond_eq_02% == true" ===> "false"
+{{= %formula_cond_eq_02% == true }}
+
+**** EQ: "= %formula_cond_eq_03% == true" ===> "false"
+{{= %formula_cond_eq_03% == true }}
+
+**** EQ: "= %formula_cond_eq_04% == true" ===> "true"
+{{= %formula_cond_eq_04% == true }}
+
+**** EQ: "= %formula_cond_eq_05% == true" ===> "true"
+{{= %formula_cond_eq_05% == true }}
+
+**** EQ: "= false == null" ===> "true"
+{{= false == null }}
+
+**** EQ: "= false == true" ===> "false"
+{{= false == true }}
+
+**** EQ: "= false == false" ===> "true"
+{{= false == false }}
+
+**** EQ: "= false == 0" ===> "true"
+{{= false == 0 }}
+
+**** EQ: "= false == 1" ===> "false"
+{{= false == 1 }}
+
+**** EQ: "= false == 'string'" ===> "false"
+{{= false == 'string' }}
+
+**** EQ: "= false == %formula_cond_eq_00%" ===> "true"
+{{= false == %formula_cond_eq_00% }}
+
+**** EQ: "= false == %formula_cond_eq_01%" ===> "false"
+{{= false == %formula_cond_eq_01% }}
+
+**** EQ: "= false == %formula_cond_eq_02%" ===> "true"
+{{= false == %formula_cond_eq_02% }}
+
+**** EQ: "= false == %formula_cond_eq_03%" ===> "true"
+{{= false == %formula_cond_eq_03% }}
+
+**** EQ: "= false == %formula_cond_eq_04%" ===> "false"
+{{= false == %formula_cond_eq_04% }}
+
+**** EQ: "= false == %formula_cond_eq_05%" ===> "false"
+{{= false == %formula_cond_eq_05% }}
+
+**** EQ: "= true == false" ===> "false"
+{{= true == false }}
+
+**** EQ: "= false == false" ===> "true"
+{{= false == false }}
+
+**** EQ: "= 0 == false" ===> "true"
+{{= 0 == false }}
+
+**** EQ: "= 1 == false" ===> "false"
+{{= 1 == false }}
+
+**** EQ: "= 'string' == false" ===> "false"
+{{= 'string' == false }}
+
+**** EQ: "= %formula_cond_eq_00% == false" ===> "true"
+{{= %formula_cond_eq_00% == false }}
+
+**** EQ: "= %formula_cond_eq_01% == false" ===> "false"
+{{= %formula_cond_eq_01% == false }}
+
+**** EQ: "= %formula_cond_eq_02% == false" ===> "true"
+{{= %formula_cond_eq_02% == false }}
+
+**** EQ: "= %formula_cond_eq_03% == false" ===> "true"
+{{= %formula_cond_eq_03% == false }}
+
+**** EQ: "= %formula_cond_eq_04% == false" ===> "false"
+{{= %formula_cond_eq_04% == false }}
+
+**** EQ: "= %formula_cond_eq_05% == false" ===> "false"
+{{= %formula_cond_eq_05% == false }}
+
+**** EQ: "= 0 == null" ===> "true"
+{{= 0 == null }}
+
+**** EQ: "= 0 == true" ===> "false"
+{{= 0 == true }}
+
+**** EQ: "= 0 == false" ===> "true"
+{{= 0 == false }}
+
+**** EQ: "= 0 == 0" ===> "true"
+{{= 0 == 0 }}
+
+**** EQ: "= 0 == 1" ===> "false"
+{{= 0 == 1 }}
+
+**** EQ: "= 0 == 'string'" ===> "false"
+{{= 0 == 'string' }}
+
+**** EQ: "= 0 == %formula_cond_eq_00%" ===> "true"
+{{= 0 == %formula_cond_eq_00% }}
+
+**** EQ: "= 0 == %formula_cond_eq_01%" ===> "false"
+{{= 0 == %formula_cond_eq_01% }}
+
+**** EQ: "= 0 == %formula_cond_eq_02%" ===> "true"
+{{= 0 == %formula_cond_eq_02% }}
+
+**** EQ: "= 0 == %formula_cond_eq_03%" ===> "true"
+{{= 0 == %formula_cond_eq_03% }}
+
+**** EQ: "= 0 == %formula_cond_eq_04%" ===> "false"
+{{= 0 == %formula_cond_eq_04% }}
+
+**** EQ: "= 0 == %formula_cond_eq_05%" ===> "false"
+{{= 0 == %formula_cond_eq_05% }}
+
+**** EQ: "= true == 0" ===> "false"
+{{= true == 0 }}
+
+**** EQ: "= false == 0" ===> "true"
+{{= false == 0 }}
+
+**** EQ: "= 0 == 0" ===> "true"
+{{= 0 == 0 }}
+
+**** EQ: "= 1 == 0" ===> "false"
+{{= 1 == 0 }}
+
+**** EQ: "= 'string' == 0" ===> "false"
+{{= 'string' == 0 }}
+
+**** EQ: "= %formula_cond_eq_00% == 0" ===> "true"
+{{= %formula_cond_eq_00% == 0 }}
+
+**** EQ: "= %formula_cond_eq_01% == 0" ===> "false"
+{{= %formula_cond_eq_01% == 0 }}
+
+**** EQ: "= %formula_cond_eq_02% == 0" ===> "true"
+{{= %formula_cond_eq_02% == 0 }}
+
+**** EQ: "= %formula_cond_eq_03% == 0" ===> "true"
+{{= %formula_cond_eq_03% == 0 }}
+
+**** EQ: "= %formula_cond_eq_04% == 0" ===> "false"
+{{= %formula_cond_eq_04% == 0 }}
+
+**** EQ: "= %formula_cond_eq_05% == 0" ===> "false"
+{{= %formula_cond_eq_05% == 0 }}
+
+**** EQ: "= 1 == null" ===> "false"
+{{= 1 == null }}
+
+**** EQ: "= 1 == true" ===> "true"
+{{= 1 == true }}
+
+**** EQ: "= 1 == false" ===> "false"
+{{= 1 == false }}
+
+**** EQ: "= 1 == 0" ===> "false"
+{{= 1 == 0 }}
+
+**** EQ: "= 1 == 1" ===> "true"
+{{= 1 == 1 }}
+
+**** EQ: "= 1 == 'string'" ===> "false"
+{{= 1 == 'string' }}
+
+**** EQ: "= 1 == %formula_cond_eq_00%" ===> "false"
+{{= 1 == %formula_cond_eq_00% }}
+
+**** EQ: "= 1 == %formula_cond_eq_01%" ===> "true"
+{{= 1 == %formula_cond_eq_01% }}
+
+**** EQ: "= 1 == %formula_cond_eq_02%" ===> "false"
+{{= 1 == %formula_cond_eq_02% }}
+
+**** EQ: "= 1 == %formula_cond_eq_03%" ===> "false"
+{{= 1 == %formula_cond_eq_03% }}
+
+**** EQ: "= 1 == %formula_cond_eq_04%" ===> "true"
+{{= 1 == %formula_cond_eq_04% }}
+
+**** EQ: "= 1 == %formula_cond_eq_05%" ===> "false"
+{{= 1 == %formula_cond_eq_05% }}
+
+**** EQ: "= true == 1" ===> "true"
+{{= true == 1 }}
+
+**** EQ: "= false == 1" ===> "false"
+{{= false == 1 }}
+
+**** EQ: "= 0 == 1" ===> "false"
+{{= 0 == 1 }}
+
+**** EQ: "= 1 == 1" ===> "true"
+{{= 1 == 1 }}
+
+**** EQ: "= 'string' == 1" ===> "false"
+{{= 'string' == 1 }}
+
+**** EQ: "= %formula_cond_eq_00% == 1" ===> "false"
+{{= %formula_cond_eq_00% == 1 }}
+
+**** EQ: "= %formula_cond_eq_01% == 1" ===> "true"
+{{= %formula_cond_eq_01% == 1 }}
+
+**** EQ: "= %formula_cond_eq_02% == 1" ===> "false"
+{{= %formula_cond_eq_02% == 1 }}
+
+**** EQ: "= %formula_cond_eq_03% == 1" ===> "false"
+{{= %formula_cond_eq_03% == 1 }}
+
+**** EQ: "= %formula_cond_eq_04% == 1" ===> "true"
+{{= %formula_cond_eq_04% == 1 }}
+
+**** EQ: "= %formula_cond_eq_05% == 1" ===> "false"
+{{= %formula_cond_eq_05% == 1 }}
+
+**** EQ: "= 'string' == null" ===> "false"
+{{= 'string' == null }}
+
+**** EQ: "= 'string' == true" ===> "true"
+{{= 'string' == true }}
+
+**** EQ: "= 'string' == false" ===> "false"
+{{= 'string' == false }}
+
+**** EQ: "= 'string' == 0" ===> "false"
+{{= 'string' == 0 }}
+
+**** EQ: "= 'string' == 1" ===> "false"
+{{= 'string' == 1 }}
+
+**** EQ: "= 'string' == 'string'" ===> "true"
+{{= 'string' == 'string' }}
+
+**** EQ: "= 'string' == %formula_cond_eq_00%" ===> "false"
+{{= 'string' == %formula_cond_eq_00% }}
+
+**** EQ: "= 'string' == %formula_cond_eq_01%" ===> "true"
+{{= 'string' == %formula_cond_eq_01% }}
+
+**** EQ: "= 'string' == %formula_cond_eq_02%" ===> "false"
+{{= 'string' == %formula_cond_eq_02% }}
+
+**** EQ: "= 'string' == %formula_cond_eq_03%" ===> "false"
+{{= 'string' == %formula_cond_eq_03% }}
+
+**** EQ: "= 'string' == %formula_cond_eq_04%" ===> "false"
+{{= 'string' == %formula_cond_eq_04% }}
+
+**** EQ: "= 'string' == %formula_cond_eq_05%" ===> "true"
+{{= 'string' == %formula_cond_eq_05% }}
+
+**** EQ: "= true == 'string'" ===> "true"
+{{= true == 'string' }}
+
+**** EQ: "= false == 'string'" ===> "false"
+{{= false == 'string' }}
+
+**** EQ: "= 0 == 'string'" ===> "false"
+{{= 0 == 'string' }}
+
+**** EQ: "= 1 == 'string'" ===> "false"
+{{= 1 == 'string' }}
+
+**** EQ: "= 'string' == 'string'" ===> "true"
+{{= 'string' == 'string' }}
+
+**** EQ: "= %formula_cond_eq_00% == 'string'" ===> "false"
+{{= %formula_cond_eq_00% == 'string' }}
+
+**** EQ: "= %formula_cond_eq_01% == 'string'" ===> "true"
+{{= %formula_cond_eq_01% == 'string' }}
+
+**** EQ: "= %formula_cond_eq_02% == 'string'" ===> "false"
+{{= %formula_cond_eq_02% == 'string' }}
+
+**** EQ: "= %formula_cond_eq_03% == 'string'" ===> "false"
+{{= %formula_cond_eq_03% == 'string' }}
+
+**** EQ: "= %formula_cond_eq_04% == 'string'" ===> "false"
+{{= %formula_cond_eq_04% == 'string' }}
+
+**** EQ: "= %formula_cond_eq_05% == 'string'" ===> "true"
+{{= %formula_cond_eq_05% == 'string' }}
+
+##
+## Test > Formula > Condition > NOTEQ
+##
+**** NOTEQ: "= null != null" ===> "false"
+{{= null != null }}
+
+**** NOTEQ: "= null != true" ===> "true"
+{{= null != true }}
+
+**** NOTEQ: "= null != false" ===> "false"
+{{= null != false }}
+
+**** NOTEQ: "= null != 0" ===> "false"
+{{= null != 0 }}
+
+**** NOTEQ: "= null != 1" ===> "true"
+{{= null != 1 }}
+
+**** NOTEQ: "= null != 'string'" ===> "true"
+{{= null != 'string' }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_00%" ===> "false"
+{{= null != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_01%" ===> "true"
+{{= null != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_02%" ===> "false"
+{{= null != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_03%" ===> "false"
+{{= null != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_04%" ===> "true"
+{{= null != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= null != %formula_cond_noteq_05%" ===> "true"
+{{= null != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != null" ===> "true"
+{{= true != null }}
+
+**** NOTEQ: "= false != null" ===> "false"
+{{= false != null }}
+
+**** NOTEQ: "= 0 != null" ===> "false"
+{{= 0 != null }}
+
+**** NOTEQ: "= 1 != null" ===> "true"
+{{= 1 != null }}
+
+**** NOTEQ: "= 'string' != null" ===> "true"
+{{= 'string' != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != null" ===> "false"
+{{= %formula_cond_noteq_00% != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != null" ===> "true"
+{{= %formula_cond_noteq_01% != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != null" ===> "false"
+{{= %formula_cond_noteq_02% != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != null" ===> "false"
+{{= %formula_cond_noteq_03% != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != null" ===> "true"
+{{= %formula_cond_noteq_04% != null }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != null" ===> "true"
+{{= %formula_cond_noteq_05% != null }}
+
+**** NOTEQ: "= true != null" ===> "true"
+{{= true != null }}
+
+**** NOTEQ: "= true != true" ===> "false"
+{{= true != true }}
+
+**** NOTEQ: "= true != false" ===> "true"
+{{= true != false }}
+
+**** NOTEQ: "= true != 0" ===> "true"
+{{= true != 0 }}
+
+**** NOTEQ: "= true != 1" ===> "false"
+{{= true != 1 }}
+
+**** NOTEQ: "= true != 'string'" ===> "false"
+{{= true != 'string' }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_00%" ===> "true"
+{{= true != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_01%" ===> "false"
+{{= true != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_02%" ===> "true"
+{{= true != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_03%" ===> "true"
+{{= true != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_04%" ===> "false"
+{{= true != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= true != %formula_cond_noteq_05%" ===> "false"
+{{= true != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != true" ===> "false"
+{{= true != true }}
+
+**** NOTEQ: "= false != true" ===> "true"
+{{= false != true }}
+
+**** NOTEQ: "= 0 != true" ===> "true"
+{{= 0 != true }}
+
+**** NOTEQ: "= 1 != true" ===> "false"
+{{= 1 != true }}
+
+**** NOTEQ: "= 'string' != true" ===> "false"
+{{= 'string' != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != true" ===> "true"
+{{= %formula_cond_noteq_00% != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != true" ===> "false"
+{{= %formula_cond_noteq_01% != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != true" ===> "true"
+{{= %formula_cond_noteq_02% != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != true" ===> "true"
+{{= %formula_cond_noteq_03% != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != true" ===> "false"
+{{= %formula_cond_noteq_04% != true }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != true" ===> "false"
+{{= %formula_cond_noteq_05% != true }}
+
+**** NOTEQ: "= false != null" ===> "false"
+{{= false != null }}
+
+**** NOTEQ: "= false != true" ===> "true"
+{{= false != true }}
+
+**** NOTEQ: "= false != false" ===> "false"
+{{= false != false }}
+
+**** NOTEQ: "= false != 0" ===> "false"
+{{= false != 0 }}
+
+**** NOTEQ: "= false != 1" ===> "true"
+{{= false != 1 }}
+
+**** NOTEQ: "= false != 'string'" ===> "true"
+{{= false != 'string' }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_00%" ===> "false"
+{{= false != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_01%" ===> "true"
+{{= false != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_02%" ===> "false"
+{{= false != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_03%" ===> "false"
+{{= false != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_04%" ===> "true"
+{{= false != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= false != %formula_cond_noteq_05%" ===> "true"
+{{= false != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != false" ===> "true"
+{{= true != false }}
+
+**** NOTEQ: "= false != false" ===> "false"
+{{= false != false }}
+
+**** NOTEQ: "= 0 != false" ===> "false"
+{{= 0 != false }}
+
+**** NOTEQ: "= 1 != false" ===> "true"
+{{= 1 != false }}
+
+**** NOTEQ: "= 'string' != false" ===> "true"
+{{= 'string' != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != false" ===> "false"
+{{= %formula_cond_noteq_00% != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != false" ===> "true"
+{{= %formula_cond_noteq_01% != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != false" ===> "false"
+{{= %formula_cond_noteq_02% != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != false" ===> "false"
+{{= %formula_cond_noteq_03% != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != false" ===> "true"
+{{= %formula_cond_noteq_04% != false }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != false" ===> "true"
+{{= %formula_cond_noteq_05% != false }}
+
+**** NOTEQ: "= 0 != null" ===> "false"
+{{= 0 != null }}
+
+**** NOTEQ: "= 0 != true" ===> "true"
+{{= 0 != true }}
+
+**** NOTEQ: "= 0 != false" ===> "false"
+{{= 0 != false }}
+
+**** NOTEQ: "= 0 != 0" ===> "false"
+{{= 0 != 0 }}
+
+**** NOTEQ: "= 0 != 1" ===> "true"
+{{= 0 != 1 }}
+
+**** NOTEQ: "= 0 != 'string'" ===> "true"
+{{= 0 != 'string' }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_00%" ===> "false"
+{{= 0 != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_01%" ===> "true"
+{{= 0 != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_02%" ===> "false"
+{{= 0 != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_03%" ===> "false"
+{{= 0 != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_04%" ===> "true"
+{{= 0 != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_05%" ===> "true"
+{{= 0 != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != 0" ===> "true"
+{{= true != 0 }}
+
+**** NOTEQ: "= false != 0" ===> "false"
+{{= false != 0 }}
+
+**** NOTEQ: "= 0 != 0" ===> "false"
+{{= 0 != 0 }}
+
+**** NOTEQ: "= 1 != 0" ===> "true"
+{{= 1 != 0 }}
+
+**** NOTEQ: "= 'string' != 0" ===> "true"
+{{= 'string' != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 0" ===> "false"
+{{= %formula_cond_noteq_00% != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 0" ===> "true"
+{{= %formula_cond_noteq_01% != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 0" ===> "false"
+{{= %formula_cond_noteq_02% != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 0" ===> "false"
+{{= %formula_cond_noteq_03% != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 0" ===> "true"
+{{= %formula_cond_noteq_04% != 0 }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 0" ===> "true"
+{{= %formula_cond_noteq_05% != 0 }}
+
+**** NOTEQ: "= 1 != null" ===> "true"
+{{= 1 != null }}
+
+**** NOTEQ: "= 1 != true" ===> "false"
+{{= 1 != true }}
+
+**** NOTEQ: "= 1 != false" ===> "true"
+{{= 1 != false }}
+
+**** NOTEQ: "= 1 != 0" ===> "true"
+{{= 1 != 0 }}
+
+**** NOTEQ: "= 1 != 1" ===> "false"
+{{= 1 != 1 }}
+
+**** NOTEQ: "= 1 != 'string'" ===> "true"
+{{= 1 != 'string' }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_00%" ===> "true"
+{{= 1 != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_01%" ===> "false"
+{{= 1 != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_02%" ===> "true"
+{{= 1 != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_03%" ===> "true"
+{{= 1 != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_04%" ===> "false"
+{{= 1 != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_05%" ===> "true"
+{{= 1 != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != 1" ===> "false"
+{{= true != 1 }}
+
+**** NOTEQ: "= false != 1" ===> "true"
+{{= false != 1 }}
+
+**** NOTEQ: "= 0 != 1" ===> "true"
+{{= 0 != 1 }}
+
+**** NOTEQ: "= 1 != 1" ===> "false"
+{{= 1 != 1 }}
+
+**** NOTEQ: "= 'string' != 1" ===> "true"
+{{= 'string' != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 1" ===> "true"
+{{= %formula_cond_noteq_00% != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 1" ===> "false"
+{{= %formula_cond_noteq_01% != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 1" ===> "true"
+{{= %formula_cond_noteq_02% != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 1" ===> "true"
+{{= %formula_cond_noteq_03% != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 1" ===> "false"
+{{= %formula_cond_noteq_04% != 1 }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 1" ===> "true"
+{{= %formula_cond_noteq_05% != 1 }}
+
+**** NOTEQ: "= 'string' != null" ===> "true"
+{{= 'string' != null }}
+
+**** NOTEQ: "= 'string' != true" ===> "false"
+{{= 'string' != true }}
+
+**** NOTEQ: "= 'string' != false" ===> "true"
+{{= 'string' != false }}
+
+**** NOTEQ: "= 'string' != 0" ===> "true"
+{{= 'string' != 0 }}
+
+**** NOTEQ: "= 'string' != 1" ===> "true"
+{{= 'string' != 1 }}
+
+**** NOTEQ: "= 'string' != 'string'" ===> "false"
+{{= 'string' != 'string' }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_00%" ===> "true"
+{{= 'string' != %formula_cond_noteq_00% }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_01%" ===> "false"
+{{= 'string' != %formula_cond_noteq_01% }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_02%" ===> "true"
+{{= 'string' != %formula_cond_noteq_02% }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_03%" ===> "true"
+{{= 'string' != %formula_cond_noteq_03% }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_04%" ===> "true"
+{{= 'string' != %formula_cond_noteq_04% }}
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_05%" ===> "false"
+{{= 'string' != %formula_cond_noteq_05% }}
+
+**** NOTEQ: "= true != 'string'" ===> "false"
+{{= true != 'string' }}
+
+**** NOTEQ: "= false != 'string'" ===> "true"
+{{= false != 'string' }}
+
+**** NOTEQ: "= 0 != 'string'" ===> "true"
+{{= 0 != 'string' }}
+
+**** NOTEQ: "= 1 != 'string'" ===> "true"
+{{= 1 != 'string' }}
+
+**** NOTEQ: "= 'string' != 'string'" ===> "false"
+{{= 'string' != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 'string'" ===> "true"
+{{= %formula_cond_noteq_00% != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 'string'" ===> "false"
+{{= %formula_cond_noteq_01% != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 'string'" ===> "true"
+{{= %formula_cond_noteq_02% != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 'string'" ===> "true"
+{{= %formula_cond_noteq_03% != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 'string'" ===> "true"
+{{= %formula_cond_noteq_04% != 'string' }}
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 'string'" ===> "false"
+{{= %formula_cond_noteq_05% != 'string' }}
+
+############################################################
+#### Formula : Syntax
+############################################################
+##
+## Test > Formula > Syntax > IF/ELIF/ELSE/ENDIF
+##
+**** IF/ELIF/ELSE/ENDIF "if null"
+****                    "elif false"
+****                    "endif"
+****                                    ===> ""
+{{ if null }}
+    condition true in if statement, thus come here.
+{{ elif false }}
+    condition false in elif statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if true"
+****                    "elif false"
+****                    "elif true"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if true }}
+    condition true in if statement, thus come here.
+{{ elif false }}
+    condition false in elif statement, thus not come here.
+{{ elif true }}
+    condition true in elif statement, but not come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if null"
+****                    "elif false"
+****                    "elif true"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in elif statement, thus come here."
+{{ if null }}
+    condition false in if statement, thus not come here.
+{{ elif false }}
+    condition false in elif statement, thus not come here.
+{{ elif true }}
+    condition true in elif statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if %formula_syntax_if_00% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if %formula_syntax_if_01% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if %formula_syntax_if_02% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if %formula_syntax_if_03% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if %formula_syntax_if_04% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if %formula_syntax_if_05% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if null == %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if null == %formula_syntax_if_00% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if true == %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if true == %formula_syntax_if_01% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if false == %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if false == %formula_syntax_if_02% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 0 == %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if 0 == %formula_syntax_if_03% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 1 == %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if 1 == %formula_syntax_if_04% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 'string' == %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if 'string' == %formula_syntax_if_05% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if null != %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if null != %formula_syntax_if_00% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if true != %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if true != %formula_syntax_if_01% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if false != %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if false != %formula_syntax_if_02% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 0 != %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if 0 != %formula_syntax_if_03% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 1 != %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if 1 != %formula_syntax_if_04% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 'string' != %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if 'string' != %formula_syntax_if_05% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 0 <= %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if 0 <= %formula_syntax_if_03% }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if 0 < %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if 0 < %formula_syntax_if_03% }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1) < 1"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+{{ if %formula_syntax_if_04% < 1 }}
+    condition true in if statement, thus come here.
+{{ else }}
+    in else statement, thus come here.
+{{ endif }}
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1) <= 1"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+{{ if %formula_syntax_if_04% <= 1 }}
+    condition false in if statement, thus not come here.
+{{ else }}
+    in else statement, thus not come here.
+{{ endif }}
+
+##
+## Test > Formula > Syntax > WHILE/DONE
+##
+**** WHILE/DONE "while null"
+****            "done"
+****                                    ===> ""
+{{ while null }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while true"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while true }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** WHILE/DONE "while false"
+****            "done"
+****                                    ===> ""
+{{ while false }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while 0"
+****            "done"
+****                                    ===> ""
+{{ while 0 }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while 1"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while 1 }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** WHILE/DONE "while 'string'"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while 'string' }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_00%(null)"
+****            "done"
+****                                    ===> ""
+{{ while %formula_syntax_while_00% }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_01%(true)"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while %formula_syntax_while_01% }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_02%(false)"
+****            "done"
+****                                    ===> ""
+{{ while %formula_syntax_while_02% }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_03%(0)"
+****            "done"
+****                                    ===> ""
+{{ while %formula_syntax_while_03% }}
+    condition false in while statement, thus not come here.
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_04%(1)"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while %formula_syntax_while_04% }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** WHILE/DONE "while %formula_syntax_while_05%('string')"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+{{ while %formula_syntax_while_05% }}
+    condition true in while statement, thus come here.
+    {{ if 1 == %formula_syntax_while_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+##
+## Test > Formula > Syntax > DO/WHILE
+##
+**** DO/WHILE "do"
+****          "while null"
+****                                    ===> "condition false in do...while statement, thus come here once."
+{{ do }}
+    condition false in do...while statement, thus come here once.
+{{ while null }}
+
+**** DO/WHILE "do"
+****          "while true"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while true }}
+
+**** DO/WHILE "do"
+****          "while false"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+{{ do }}
+    condition false in do...while statement, thus come here onece.
+{{ while false }}
+
+**** DO/WHILE "do"
+****          "while 0"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+{{ do }}
+    condition false in do...while statement, thus come here onece.
+{{ while 0 }}
+
+**** DO/WHILE "do"
+****          "while 1"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while 1 }}
+
+**** DO/WHILE "do"
+****          "while 'string'"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while 'string' }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_00%(null)"
+****                                    ===> "condition false in do...while statement, thus come here once."
+{{ do }}
+    condition false in do...while statement, thus come here once.
+{{ while %formula_syntax_do_00% }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_01%(true)"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while %formula_syntax_do_01% }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_02%(false)"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+{{ do }}
+    condition false in do...while statement, thus come here onece.
+{{ while %formula_syntax_do_02% }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_03%(0)"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+{{ do }}
+    condition false in do...while statement, thus come here onece.
+{{ while %formula_syntax_do_03% }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_04%(1)"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while %formula_syntax_do_04% }}
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_05%('string')"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ do }}
+    condition true in do...while statement, thus come here onece.
+    {{ if 1 == %formula_syntax_do_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ while %formula_syntax_do_05% }}
+
+##
+## Test > Formula > Syntax > FOR/DONE
+##
+**** FOR/DONE "for ; null ; "
+****          "done"
+****                                    ===> ""
+{{ for ; null ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; true ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; true ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for ; false ; "
+****          "done"
+****                                    ===> ""
+{{ for ; false ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; 0 ; "
+****          "done"
+****                                    ===> ""
+{{ for ; 0 ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; 1 ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; 1 ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for ; 'string' ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; 'string' ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_00%(null) ; "
+****          "done"
+****                                    ===> ""
+{{ for ; %formula_syntax_for_00% ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_01%(true) ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; %formula_syntax_for_01% ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_02%(false) ; "
+****          "done"
+****                                    ===> ""
+{{ for ; %formula_syntax_for_02% ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_03%(0) ; "
+****          "done"
+****                                    ===> ""
+{{ for ; %formula_syntax_for_03% ; }}
+    condition false in for statement, thus not come here.
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_04%(1) ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; %formula_syntax_for_04% ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for ; %formula_syntax_for_05%('string') ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+{{ for ; %formula_syntax_for_05% ; }}
+    condition true in for statement, thus come here onece.
+    {{ if 1 == %formula_syntax_for_04% }}
+        condition true in if statement, thus stop loop.
+        {{ break }}
+    {{ endif }}
+{{ done }}
+
+**** FOR/DONE "for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < 2 ; ++%tmp_for_counter00%"
+****          "done"
+****                                    ===> "condition true(2 times) = 0 in for statement, thus come here."
+****                                         "condition true(2 times) = 1 in for statement, thus come here."
+{{ for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < 2 ; ++%tmp_for_counter00% }}
+    condition true(2 times) = {{= %tmp_for_counter00% }} in for statement, thus come here.
+{{ done }}
+
+##
+## Test > Formula > Syntax > FOREACH/DONE
+##
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_00%"
+****              "done"
+****                                    ===> ""
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_00% }}
+    foreach value {{= %tmp_foreach_value_00% }} is not exists in foreach statement, thus not come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01%"
+****              "done"
+****                                    ===> "foreach value (null) in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01% }}
+    foreach value {{= %tmp_foreach_value_00% }}(null) in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02%"
+****              "done"
+****                                    ===> "foreach value true in foreach statement, thus come here."
+****                                         "foreach value false in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02% }}
+    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_03%"
+****              "done"
+****                                    ===> "foreach value 0 in foreach statement, thus come here."
+****                                         "foreach value 1 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_03% }}
+    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%"
+****              "done"
+****                                    ===> "foreach value string00 in foreach statement, thus come here."
+****                                         "foreach value string01 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04% }}
+    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%" + "continue"
+****              "done"
+****                                    ===> "foreach value string01 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04% }}
+	{{ if 'string00' == %tmp_foreach_value_00% }}
+		{{ continue }}
+	{{ endif }}
+    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+{{ done }}
+
+############################################################
+#### Formula : Priority
+############################################################
+##
+## Test > Priority
+##
+**** PRIORITY "%tmp_priority_data00% = 0 && 1 + 2 & 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "false"
+{{ %tmp_priority_data00% = 0 && 1 + 2 & 1 }}
+{{= %tmp_priority_data00% }}
+
+**** PRIORITY "%tmp_priority_data00% = 1 + 2 & 1 && 0"
+****          "= %tmp_priority_data00%"
+****                                    ===> "false"
+{{ %tmp_priority_data00% = 1 + 2 & 1 && 0 }}
+{{= %tmp_priority_data00% }}
+
+**** PRIORITY "%tmp_priority_data00% = 0++ & 1 + 2"
+****          "= %tmp_priority_data00% }}"
+****                                    ===> "0"
+{{ %tmp_priority_data00% = 0++ & 1 + 2 }}
+{{= %tmp_priority_data00% }}
+
+**** PRIORITY "%tmp_priority_data00% = ++0 & 1 + 2"
+****          "= %tmp_priority_data00% }}"
+****                                    ===> "1"
+{{ %tmp_priority_data00% = ++0 & 1 + 2 }}
+{{= %tmp_priority_data00% }}
+
+**** PRIORITY "%tmp_priority_data00% = 1 + 3 * 2 * 3 + 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "20"
+{{ %tmp_priority_data00% = 1 + 3 * 2 * 3 + 1 }}
+{{= %tmp_priority_data00% }}
+
+**** PRIORITY "%tmp_priority_data00% = 2 * 3 + 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "7"
+{{ %tmp_priority_data00% = 2 * 3 + 1 }}
+{{= %tmp_priority_data00% }}
+
+############################################################
+#### TEST END
+############################################################
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#
+
+output string = #
+# K2HR3 REST API
+#
+# Copyright 2017 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Wed Jul 14 2017
+# REVISION:
+#
+
+#
+# This file is test template file for k2hr3template.js
+#
+# This file has all basically pattern for k2hr3 template engine.
+#
+
+############################################################
+#### Statement : Static
+############################################################
+##
+## Test > Statement > Static
+##
+**** STATIC: "This line is test for static statement in escaped statement." ===> "{ This line is test for static statement in escaped statement. }"
+{{ This line is test for static statement in escaped statement. }}
+
+##
+## Test > Statement > Comment
+##
+**** COMMENT: "# This line is test for comment statement." ===> ""
+
+
+############################################################
+#### Statement : Print
+############################################################
+##
+## Test > Statement > Print
+##
+**** PRINT: "= %statement_print_test_00%" ===> "value_00"
+value_00
+
+############################################################
+#### Formula : Variable
+############################################################
+##
+## Test > Formula > Variable
+##
+**** VARIABLE: "= %formula_variable_00%"(value_name_00) ===> "value_name_00"
+value_name_00
+
+**** VARIABLE: "= %formula_variable_01%[0]"(value_01[0]) ===> "value_01[0]"
+value_01[0]
+
+**** VARIABLE: "= %formula_variable_02%{%formula_variable_00%}"(value_02{value_name_00}) ===> "value_02{value_name_00}"
+value_02{value_name_00}
+
+**** VARIABLE: "= null" ===> ""
+
+
+**** VARIABLE: "= true" ===> "true"
+true
+
+**** VARIABLE: "= false" ===> "false"
+false
+
+**** VARIABLE: "= 1" ===> "1"
+1
+
+**** VARIABLE: "= 0xff" ===> "255"
+255
+
+**** VARIABLE: "= 0o11" ===> "9"
+9
+
+**** VARIABLE: "= 0b11" ===> "3"
+3
+
+**** VARIABLE: "= 'formula_variable_static_squote_00'" ===> "formula_variable_static_squote_00"
+formula_variable_static_squote_00
+
+**** VARIABLE: "= 'formula_variable_static_squote_""01'" ===> "formula_variable_static_squote_""01"
+formula_variable_static_squote_""01
+
+**** VARIABLE: "= "formula_variable_static_squote_10"" ===> "formula_variable_static_squote_10"
+formula_variable_static_squote_10
+
+**** VARIABLE: "= "formula_variable_static_squote_''11"" ===> "formula_variable_static_squote_''11"
+formula_variable_static_squote_''11
+
+############################################################
+#### Formula : Calculate
+############################################################
+##
+## Test > Formula > Calculate > NOT
+##
+**** NOT: "= !true" ===> "false"
+false
+
+**** NOT: "= !false" ===> "true"
+true
+
+**** NOT: "= !%formula_calculate_not_00%"(!true) ===> "false"
+false
+
+**** NOT: "= !%formula_calculate_not_01%"(!false) ===> "true"
+true
+
+##
+## Test > Formula > Calculate > INCREMENT
+##
+**** INCREMENT: "= ++0" ===> "1"
+1
+
+**** INCREMENT: "= ++%formula_calculate_inc_00%"(++0) ===> "1"
+1
+
+**** INCREMENT: "= 0++" ===> "0"
+0
+
+**** INCREMENT: "= %formula_calculate_inc_00%++"(1++) ===> "1"
+1
+
+##
+## Test > Formula > Calculate > DECREMENT
+##
+**** DECREMENT: "= --1" ===> "0"
+0
+
+**** DECREMENT: "= --%formula_calculate_dec_00%"(--2) ===> "1"
+1
+
+**** DECREMENT: "= 1--" ===> "1"
+1
+
+**** DECREMENT: "= %formula_calculate_dec_00%--"(1--) ===> 1
+1
+
+##
+## Test > Formula > Calculate > SET
+##
+**** SET: "= %formula_calculate_set_00% = null" ===> ""
+
+
+**** SET: "= %formula_calculate_set_00% = true" ===> "true"
+true
+
+**** SET: "= %formula_calculate_set_00% = false" ===> "false"
+false
+
+**** SET: "= %formula_calculate_set_00% = 1" ===> "1"
+1
+
+**** SET: "= %formula_calculate_set_00% = x11" ===> "17"
+17
+
+**** SET: "= %formula_calculate_set_00% = 0x12" ===> "18"
+18
+
+**** SET: "= %formula_calculate_set_00% = 0o11" ===> "9"
+9
+
+**** SET: "= %formula_calculate_set_00% = 0b11" ===> "3"
+3
+
+**** SET: "= %formula_calculate_set_00% = 'squate string'" ===> "squate string"
+squate string
+
+**** SET: "= %formula_calculate_set_00% = "dquate string"" ===> "dquate string"
+dquate string
+
+**** SET: "= %formula_calculate_set_00% = %formula_calculate_set_01%"(100) ===> "100"
+100
+
+##
+## Test > Formula > Calculate > PLUS
+##
+**** PLUS: "= 1 + 1" ===> "2"
+2
+
+**** PLUS: "= 1 + x1" ===> "2"
+2
+
+**** PLUS: "= 1 + 0x1" ===> "2"
+2
+
+**** PLUS: "= 1 + 0o1" ===> "2"
+2
+
+**** PLUS: "= 1 + 0b1" ===> "2"
+2
+
+**** PLUS: "= x1 + 1" ===> "2"
+2
+
+**** PLUS: "= 0x1 + 1" ===> "2"
+2
+
+**** PLUS: "= 0o1 + 1" ===> "2"
+2
+
+**** PLUS: "= 0b1 + 1" ===> "2"
+2
+
+**** PLUS: "= %formula_calculate_plus_00% + 1" ===> "11"
+11
+
+**** PLUS: "= %formula_calculate_plus_00% + x1" ===> "11"
+11
+
+**** PLUS: "= %formula_calculate_plus_00% + 0x1" ===> "11"
+11
+
+**** PLUS: "= %formula_calculate_plus_00% + 0o1" ===> "11"
+11
+
+**** PLUS: "= %formula_calculate_plus_00% + 0b1" ===> "11"
+11
+
+**** PLUS: "= 1 + %formula_calculate_plus_01%" ===> "21"
+21
+
+**** PLUS: "= x1 + %formula_calculate_plus_01%" ===> "21"
+21
+
+**** PLUS: "= 0x1 + %formula_calculate_plus_01%" ===> "21"
+21
+
+**** PLUS: "= 0o1 + %formula_calculate_plus_01%" ===> "21"
+21
+
+**** PLUS: "= 0b1 + %formula_calculate_plus_01%" ===> "21"
+21
+
+**** PLUS: "= %formula_calculate_plus_00% + %formula_calculate_plus_00%" ===> "20"
+20
+
+**** PLUS: "= %formula_calculate_plus_00% + %formula_calculate_plus_01%" ===> "30"
+30
+
+**** PLUS: "= 'test' + 'string'" ===> "teststring"
+teststring
+
+**** PLUS: "= 'test' + "string"" ===> "teststring"
+teststring
+
+**** PLUS: "= "test" + 'string'" ===> "teststring"
+teststring
+
+**** PLUS: "= "test" + "string"" ===> "teststring"
+teststring
+
+**** PLUS: "= %formula_calculate_plus_02% + 'string'" ===> "teststring"
+teststring
+
+**** PLUS: "= %formula_calculate_plus_02% + "string"" ===> "teststring"
+teststring
+
+**** PLUS: "= 'test' + %formula_calculate_plus_03%" ===> "teststring"
+teststring
+
+**** PLUS: "= "test" + %formula_calculate_plus_03%" ===> "teststring"
+teststring
+
+**** PLUS: "= %formula_calculate_plus_02% + %formula_calculate_plus_02%" ===> "testtest"
+testtest
+
+**** PLUS: "= %formula_calculate_plus_02% + %formula_calculate_plus_03%" ===> "teststring"
+teststring
+
+**** PLUS: "= null + null" ===> ""
+
+
+**** PLUS: "= null + 'string'" ===> "string"
+string
+
+**** PLUS: "= null + 1" ===> "01"
+01
+
+**** PLUS: "= 'test' + null" ===> "test"
+test
+
+**** PLUS: "= 1 + null" ===> "1"
+1
+
+**** PLUS: "= 'test' + 1" ===> "test1"
+test1
+
+##
+## Test > Formula > Calculate > SUB
+##
+**** SUB: "= 2 - 1" ===> "1"
+1
+
+**** SUB: "= 2 - x1" ===> "1"
+1
+
+**** SUB: "= 2 - 0x1" ===> "1"
+1
+
+**** SUB: "= 2 - 0o1" ===> "1"
+1
+
+**** SUB: "= 2 - 0b1" ===> "1"
+1
+
+**** SUB: "= x2 - 1" ===> "1"
+1
+
+**** SUB: "= 0x2 - 1" ===> "1"
+1
+
+**** SUB: "= 0o2 - 1" ===> "1"
+1
+
+**** SUB: "= 0b1 - 1" ===> "0"
+0
+
+**** SUB: "= 0 - 1" ===> "-1"
+-1
+
+**** SUB: "= %formula_calculate_sub_00% - 1" ===> "99"
+99
+
+**** SUB: "= 200 - %formula_calculate_sub_00%" ===> "100"
+100
+
+**** SUB: "= %formula_calculate_sub_00% - %formula_calculate_sub_01%" ===> "90"
+90
+
+**** SUB: "= %formula_calculate_sub_01% - %formula_calculate_sub_00%" ===> "-90"
+-90
+
+##
+## Test > Formula > Calculate > DIV
+##
+**** DIV: "= 2 / 1" ===> "2"
+2
+
+**** DIV: "= 2 / x1" ===> "2"
+2
+
+**** DIV: "= 2 / 0x1" ===> "2"
+2
+
+**** DIV: "= 2 / 0o1" ===> "2"
+2
+
+**** DIV: "= 2 / 0b1" ===> "2"
+2
+
+**** DIV: "= x2 / 1" ===> "2"
+2
+
+**** DIV: "= 0x2 / 1" ===> "2"
+2
+
+**** DIV: "= 0o2 / 1" ===> "2"
+2
+
+**** DIV: "= 0b1 / 1" ===> "1"
+1
+
+**** DIV: "= 0 / 1" ===> "0"
+0
+
+**** DIV: "= %formula_calculate_div_00% / 10" ===> "10"
+10
+
+**** DIV: "= 200 / %formula_calculate_div_00%" ===> "2"
+2
+
+**** DIV: "= %formula_calculate_div_00% / %formula_calculate_div_01%" ===> "10"
+10
+
+**** DIV: "= %formula_calculate_div_01% / %formula_calculate_div_00%" ===> "0.1"
+0.1
+
+##
+## Test > Formula > Calculate > MUL
+##
+**** MUL: "= 2 * 1" ===> "2"
+2
+
+**** MUL: "= 2 * x1" ===> "2"
+2
+
+**** MUL: "= 2 * 0x1" ===> "2"
+2
+
+**** MUL: "= 2 * 0o1" ===> "2"
+2
+
+**** MUL: "= 2 * 0b1" ===> "2"
+2
+
+**** MUL: "= x2 * 1" ===> "2"
+2
+
+**** MUL: "= 0x2 * 1" ===> "2"
+2
+
+**** MUL: "= 0o2 * 1" ===> "2"
+2
+
+**** MUL: "= 0b1 * 1" ===> "1"
+1
+
+**** MUL: "= 0 * 1" ===> "0"
+0
+
+**** MUL: "= %formula_calculate_mul_00% * 10" ===> "50"
+50
+
+**** MUL: "= 20 * %formula_calculate_mul_00%" ===> "100"
+100
+
+**** MUL: "= %formula_calculate_mul_00% * %formula_calculate_mul_01%" ===> "100"
+100
+
+**** MUL: "= %formula_calculate_mul_01% * %formula_calculate_mul_00%" ===> "100"
+100
+
+##
+## Test > Formula > Calculate > REM
+##
+**** REM: "= 35 % 6" ===> "5"
+5
+
+**** REM: "= 35 % x6" ===> "5"
+5
+
+**** REM: "= 35 % 0x6" ===> "5"
+5
+
+**** REM: "= 35 % 0o6" ===> "5"
+5
+
+**** REM: "= 35 % 0b110" ===> "5"
+5
+
+**** REM: "= x23 % 6" ===> "5"
+5
+
+**** REM: "= 0x23 % 6" ===> "5"
+5
+
+**** REM: "= 0o65 % 6" ===> "5"
+5
+
+**** REM: "= 0b100011 % 6" ===> "5"
+5
+
+**** REM: "= 6 % 35" ===> "6"
+6
+
+**** REM: "= %formula_calculate_rem_00% % 6" ===> "5"
+5
+
+**** REM: "= 35 % %formula_calculate_rem_01%" ===> "5"
+5
+
+**** REM: "= %formula_calculate_rem_00% % %formula_calculate_rem_01%" ===> "5"
+5
+
+**** REM: "= %formula_calculate_rem_01% % %formula_calculate_rem_00%" ===> "6"
+6
+
+##
+## Test > Formula > Calculate > LSHIFT
+##
+**** LSHIFT: "= 10 << 4" ===> "160"
+160
+
+**** LSHIFT: "= 10 << x4" ===> "160"
+160
+
+**** LSHIFT: "= 10 << 0x4" ===> "160"
+160
+
+**** LSHIFT: "= 10 << 0o4" ===> "160"
+160
+
+**** LSHIFT: "= 10 << 0b100" ===> "160"
+160
+
+**** LSHIFT: "= xa << 4" ===> "160"
+160
+
+**** LSHIFT: "= 0xa << 4" ===> "160"
+160
+
+**** LSHIFT: "= 0o12 << 4" ===> "160"
+160
+
+**** LSHIFT: "= 0b1010 << 4" ===> "160"
+160
+
+**** LSHIFT: "= %formula_calculate_lshift_00% << 4" ===> "160"
+160
+
+**** LSHIFT: "= 10 << %formula_calculate_lshift_01%" ===> "160"
+160
+
+**** LSHIFT: "= %formula_calculate_lshift_00% << %formula_calculate_lshift_01%" ===> "160"
+160
+
+##
+## Test > Formula > Calculate > RSHIFT
+##
+**** RSHIFT: "= 43690 >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= 43690 >> x4" ===> "2730"
+2730
+
+**** RSHIFT: "= 43690 >> 0x4" ===> "2730"
+2730
+
+**** RSHIFT: "= 43690 >> 0o4" ===> "2730"
+2730
+
+**** RSHIFT: "= 43690 >> 0b100" ===> "2730"
+2730
+
+**** RSHIFT: "= xaaaa >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= 0xaaaa >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= 0o125252 >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= 0b1010101010101010 >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= %formula_calculate_rshift_00% >> 4" ===> "2730"
+2730
+
+**** RSHIFT: "= 43690 >> %formula_calculate_rshift_01%" ===> "2730"
+2730
+
+**** RSHIFT: "= %formula_calculate_rshift_00% >> %formula_calculate_rshift_01%" ===> "2730"
+2730
+
+##
+## Test > Formula > Calculate > AMP
+##
+**** AMP: "= 65535 & 43690" ===> "43690"
+43690
+
+**** AMP: "= 65535 & xaaaa" ===> "43690"
+43690
+
+**** AMP: "= 65535 & 0xaaaa" ===> "43690"
+43690
+
+**** AMP: "= 65535 & 0o125252" ===> "43690"
+43690
+
+**** AMP: "= 65535 & 0b1010101010101010" ===> "43690"
+43690
+
+**** AMP: "= xffff & 43690" ===> "43690"
+43690
+
+**** AMP: "= 0xffff & 43690" ===> "43690"
+43690
+
+**** AMP: "= 0o177777 & 43690" ===> "43690"
+43690
+
+**** AMP: "= 0b1111111111111111 & 43690" ===> "43690"
+43690
+
+**** AMP: "= %formula_calculate_amp_00% & 43690" ===> "43690"
+43690
+
+**** AMP: "= 65535 & %formula_calculate_amp_01%" ===> "43690"
+43690
+
+**** AMP: "= %formula_calculate_amp_00% & %formula_calculate_amp_01%" ===> "43690"
+43690
+
+**** AMP: "= true & true" ===> "1"
+1
+
+**** AMP: "= true & false" ===> "0"
+0
+
+**** AMP: "= false & true" ===> "0"
+0
+
+**** AMP: "= false & false" ===> "0"
+0
+
+**** AMP: "= %formula_calculate_amp_02% & true" ===> "1"
+1
+
+**** AMP: "= %formula_calculate_amp_02% & false" ===> "0"
+0
+
+**** AMP: "= true & %formula_calculate_amp_02%" ===> "1"
+1
+
+**** AMP: "= false & %formula_calculate_amp_02%" ===> "0"
+0
+
+**** AMP: "= %formula_calculate_amp_03% & true" ===> "0"
+0
+
+**** AMP: "= %formula_calculate_amp_03% & false" ===> "0"
+0
+
+**** AMP: "= true & %formula_calculate_amp_03%" ===> "0"
+0
+
+**** AMP: "= false & %formula_calculate_amp_03%" ===> "0"
+0
+
+**** AMP: "= %formula_calculate_amp_02% & %formula_calculate_amp_03%" ===> "0"
+0
+
+##
+## Test > Formula > Calculate > VARTBAR
+##
+**** VARBAR: "= 21845 | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= 21845 | xaaaa" ===> "65535"
+65535
+
+**** VARBAR: "= 21845 | 0xaaaa" ===> "65535"
+65535
+
+**** VARBAR: "= 21845 | 0o125252" ===> "65535"
+65535
+
+**** VARBAR: "= 21845 | 0b1010101010101010" ===> "65535"
+65535
+
+**** VARBAR: "= x5555 | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= 0x5555 | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= 0o52525 | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= 0b101010101010101 | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= %formula_calculate_vartbar_00% | 43690" ===> "65535"
+65535
+
+**** VARBAR: "= 21845 | %formula_calculate_vartbar_01%" ===> "65535"
+65535
+
+**** VARBAR: "= %formula_calculate_vartbar_00% | %formula_calculate_vartbar_01%" ===> "65535"
+65535
+
+**** VARBAR: "= true | true" ===> "1"
+1
+
+**** VARBAR: "= true | false" ===> "1"
+1
+
+**** VARBAR: "= false | true" ===> "1"
+1
+
+**** VARBAR: "= false | false" ===> "0"
+0
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | true" ===> "1"
+1
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | false" ===> "1"
+1
+
+**** VARBAR: "= true | %formula_calculate_vartbar_02%" ===> "1"
+1
+
+**** VARBAR: "= false | %formula_calculate_vartbar_02%" ===> "1"
+1
+
+**** VARBAR: "= %formula_calculate_vartbar_03% | true" ===> "1"
+1
+
+**** VARBAR: "= %formula_calculate_vartbar_03% | false" ===> "0"
+0
+
+**** VARBAR: "= true | %formula_calculate_vartbar_03%" ===> "1"
+1
+
+**** VARBAR: "= false | %formula_calculate_vartbar_03%" ===> "0"
+0
+
+**** VARBAR: "= %formula_calculate_vartbar_02% | %formula_calculate_vartbar_03%" ===> "1"
+1
+
+############################################################
+#### Formula : Condition
+############################################################
+##
+## Test > Formula > Condition > AND
+##
+**** AND: "= null && null" ===> "false"
+false
+
+**** AND: "= null && true" ===> "false"
+false
+
+**** AND: "= null && false" ===> "false"
+false
+
+**** AND: "= null && 0" ===> "false"
+false
+
+**** AND: "= null && 1" ===> "false"
+false
+
+**** AND: "= null && 'string'" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_01%" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= null && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= true && null" ===> "false"
+false
+
+**** AND: "= false && null" ===> "false"
+false
+
+**** AND: "= 0 && null" ===> "false"
+false
+
+**** AND: "= 1 && null" ===> "false"
+false
+
+**** AND: "= 'string' && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && null" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_05% && null" ===> "false"
+false
+
+**** AND: "= true && true" ===> "true"
+true
+
+**** AND: "= true && false" ===> "false"
+false
+
+**** AND: "= true && 0" ===> "false"
+false
+
+**** AND: "= true && 1" ===> "true"
+true
+
+**** AND: "= true && 'string'" ===> "true"
+true
+
+**** AND: "= true && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= true && %formula_cond_and_01%" ===> "true"
+true
+
+**** AND: "= true && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= true && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= true && %formula_cond_and_04%" ===> "true"
+true
+
+**** AND: "= true && %formula_cond_and_05%" ===> "true"
+true
+
+**** AND: "= true && true" ===> "true"
+true
+
+**** AND: "= false && true" ===> "false"
+false
+
+**** AND: "= 0 && true" ===> "false"
+false
+
+**** AND: "= 1 && true" ===> "true"
+true
+
+**** AND: "= 'string' && true" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_00% && true" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && true" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_02% && true" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && true" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && true" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_05% && true" ===> "true"
+true
+
+**** AND: "= false && true" ===> "false"
+false
+
+**** AND: "= false && false" ===> "false"
+false
+
+**** AND: "= false && 0" ===> "false"
+false
+
+**** AND: "= false && 1" ===> "false"
+false
+
+**** AND: "= false && 'string'" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_01%" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= false && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= true && false" ===> "false"
+false
+
+**** AND: "= false && false" ===> "false"
+false
+
+**** AND: "= 0 && false" ===> "false"
+false
+
+**** AND: "= 1 && false" ===> "false"
+false
+
+**** AND: "= 'string' && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && false" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_05% && false" ===> "false"
+false
+
+**** AND: "= 0 && true" ===> "false"
+false
+
+**** AND: "= 0 && false" ===> "false"
+false
+
+**** AND: "= 0 && 0" ===> "false"
+false
+
+**** AND: "= 0 && 1" ===> "false"
+false
+
+**** AND: "= 0 && 'string'" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_01%" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= 0 && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= true && 0" ===> "false"
+false
+
+**** AND: "= false && 0" ===> "false"
+false
+
+**** AND: "= 0 && 0" ===> "false"
+false
+
+**** AND: "= 1 && 0" ===> "false"
+false
+
+**** AND: "= 'string' && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && 0" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_05% && 0" ===> "false"
+false
+
+**** AND: "= 1 && true" ===> "true"
+true
+
+**** AND: "= 1 && false" ===> "false"
+false
+
+**** AND: "= 1 && 0" ===> "false"
+false
+
+**** AND: "= 1 && 1" ===> "true"
+true
+
+**** AND: "= 1 && 'string'" ===> "true"
+true
+
+**** AND: "= 1 && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= 1 && %formula_cond_and_01%" ===> "true"
+true
+
+**** AND: "= 1 && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= 1 && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= 1 && %formula_cond_and_04%" ===> "true"
+true
+
+**** AND: "= 1 && %formula_cond_and_05%" ===> "true"
+true
+
+**** AND: "= true && 1" ===> "true"
+true
+
+**** AND: "= false && 1" ===> "false"
+false
+
+**** AND: "= 0 && 1" ===> "false"
+false
+
+**** AND: "= 1 && 1" ===> "true"
+true
+
+**** AND: "= 'string' && 1" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_00% && 1" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && 1" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_02% && 1" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && 1" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && 1" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_05% && 1" ===> "true"
+true
+
+**** AND: "= 'string' && true" ===> "true"
+true
+
+**** AND: "= 'string' && false" ===> "false"
+false
+
+**** AND: "= 'string' && 0" ===> "false"
+false
+
+**** AND: "= 'string' && 1" ===> "true"
+true
+
+**** AND: "= 'string' && 'string'" ===> "true"
+true
+
+**** AND: "= 'string' && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= 'string' && %formula_cond_and_01%" ===> "true"
+true
+
+**** AND: "= 'string' && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= 'string' && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= 'string' && %formula_cond_and_04%" ===> "true"
+true
+
+**** AND: "= 'string' && %formula_cond_and_05%" ===> "true"
+true
+
+**** AND: "= true && 'string'" ===> "true"
+true
+
+**** AND: "= false && 'string'" ===> "false"
+false
+
+**** AND: "= 0 && 'string'" ===> "false"
+false
+
+**** AND: "= 1 && 'string'" ===> "true"
+true
+
+**** AND: "= 'string' && 'string'" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_00% && 'string'" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && 'string'" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_02% && 'string'" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && 'string'" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && 'string'" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_05% && 'string'" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_00%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_01%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_00% && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_01%" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_04%" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_01% && %formula_cond_and_05%" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_02%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_02% && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_03%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_04%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_03% && %formula_cond_and_05%" ===> "false"
+false
+
+**** AND: "= %formula_cond_and_04% && %formula_cond_and_04%" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_04% && %formula_cond_and_05%" ===> "true"
+true
+
+**** AND: "= %formula_cond_and_05% && %formula_cond_and_05%" ===> "true"
+true
+
+##
+## Test > Formula > Condition > OR
+##
+**** OR: "= null || null" ===> "false"
+false
+
+**** OR: "= null || true" ===> "true"
+true
+
+**** OR: "= null || false" ===> "false"
+false
+
+**** OR: "= null || 0" ===> "false"
+false
+
+**** OR: "= null || 1" ===> "true"
+true
+
+**** OR: "= null || 'string'" ===> "true"
+true
+
+**** OR: "= null || %formula_cond_or_00%" ===> "false"
+false
+
+**** OR: "= null || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= null || %formula_cond_or_02%" ===> "false"
+false
+
+**** OR: "= null || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= null || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= null || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || null" ===> "true"
+true
+
+**** OR: "= false || null" ===> "false"
+false
+
+**** OR: "= 0 || null" ===> "false"
+false
+
+**** OR: "= 1 || null" ===> "true"
+true
+
+**** OR: "= 'string' || null" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || null" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_01% || null" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || null" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_03% || null" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_04% || null" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || null" ===> "true"
+true
+
+**** OR: "= true || true" ===> "true"
+true
+
+**** OR: "= true || false" ===> "true"
+true
+
+**** OR: "= true || 0" ===> "true"
+true
+
+**** OR: "= true || 1" ===> "true"
+true
+
+**** OR: "= true || 'string'" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_00%" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_02%" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_03%" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= true || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || true" ===> "true"
+true
+
+**** OR: "= false || true" ===> "true"
+true
+
+**** OR: "= 0 || true" ===> "true"
+true
+
+**** OR: "= 1 || true" ===> "true"
+true
+
+**** OR: "= 'string' || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_03% || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_04% || true" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || true" ===> "true"
+true
+
+**** OR: "= false || true" ===> "true"
+true
+
+**** OR: "= false || false" ===> "false"
+false
+
+**** OR: "= false || 0" ===> "false"
+false
+
+**** OR: "= false || 1" ===> "true"
+true
+
+**** OR: "= false || 'string'" ===> "true"
+true
+
+**** OR: "= false || %formula_cond_or_00%" ===> "false"
+false
+
+**** OR: "= false || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= false || %formula_cond_or_02%" ===> "false"
+false
+
+**** OR: "= false || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= false || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= false || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || false" ===> "true"
+true
+
+**** OR: "= false || false" ===> "false"
+false
+
+**** OR: "= 0 || false" ===> "false"
+false
+
+**** OR: "= 1 || false" ===> "true"
+true
+
+**** OR: "= 'string' || false" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || false" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_01% || false" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || false" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_03% || false" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_04% || false" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || false" ===> "true"
+true
+
+**** OR: "= 0 || true" ===> "true"
+true
+
+**** OR: "= 0 || false" ===> "false"
+false
+
+**** OR: "= 0 || 0" ===> "false"
+false
+
+**** OR: "= 0 || 1" ===> "true"
+true
+
+**** OR: "= 0 || 'string'" ===> "true"
+true
+
+**** OR: "= 0 || %formula_cond_or_00%" ===> "false"
+false
+
+**** OR: "= 0 || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= 0 || %formula_cond_or_02%" ===> "false"
+false
+
+**** OR: "= 0 || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= 0 || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= 0 || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || 0" ===> "true"
+true
+
+**** OR: "= false || 0" ===> "false"
+false
+
+**** OR: "= 0 || 0" ===> "false"
+false
+
+**** OR: "= 1 || 0" ===> "true"
+true
+
+**** OR: "= 'string' || 0" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || 0" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_01% || 0" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || 0" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_03% || 0" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_04% || 0" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || 0" ===> "true"
+true
+
+**** OR: "= 1 || true" ===> "true"
+true
+
+**** OR: "= 1 || false" ===> "true"
+true
+
+**** OR: "= 1 || 0" ===> "true"
+true
+
+**** OR: "= 1 || 1" ===> "true"
+true
+
+**** OR: "= 1 || 'string'" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_00%" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_02%" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_03%" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= 1 || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || 1" ===> "true"
+true
+
+**** OR: "= false || 1" ===> "true"
+true
+
+**** OR: "= 0 || 1" ===> "true"
+true
+
+**** OR: "= 1 || 1" ===> "true"
+true
+
+**** OR: "= 'string' || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_03% || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_04% || 1" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || 1" ===> "true"
+true
+
+**** OR: "= 'string' || true" ===> "true"
+true
+
+**** OR: "= 'string' || false" ===> "true"
+true
+
+**** OR: "= 'string' || 0" ===> "true"
+true
+
+**** OR: "= 'string' || 1" ===> "true"
+true
+
+**** OR: "= 'string' || 'string'" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_00%" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_02%" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_03%" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= 'string' || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= true || 'string'" ===> "true"
+true
+
+**** OR: "= false || 'string'" ===> "true"
+true
+
+**** OR: "= 0 || 'string'" ===> "true"
+true
+
+**** OR: "= 1 || 'string'" ===> "true"
+true
+
+**** OR: "= 'string' || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_03% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_04% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || 'string'" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_00%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_02%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_00% || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_01%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_02%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_03%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_01% || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_02%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_02% || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_03%" ===> "false"
+false
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_03% || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_04% || %formula_cond_or_04%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_04% || %formula_cond_or_05%" ===> "true"
+true
+
+**** OR: "= %formula_cond_or_05% || %formula_cond_or_05%" ===> "true"
+true
+
+##
+## Test > Formula > Condition > LESS
+##
+**** LESS: "= 1 < 2" ===> "true"
+true
+
+**** LESS: "= 1 < 1" ===> "false"
+false
+
+**** LESS: "= 1 < 0" ===> "false"
+false
+
+**** LESS: "= 1 < %formula_cond_less_02%" ===> "true"
+true
+
+**** LESS: "= 1 < %formula_cond_less_01%" ===> "false"
+false
+
+**** LESS: "= 1 < %formula_cond_less_00%" ===> "false"
+false
+
+**** LESS: "= 0 < 1" ===> "true"
+true
+
+**** LESS: "= 1 < 1" ===> "false"
+false
+
+**** LESS: "= 2 < 1" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_00% < 1" ===> "true"
+true
+
+**** LESS: "= %formula_cond_less_01% < 1" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_02% < 1" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_00%" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_01%" ===> "true"
+true
+
+**** LESS: "= %formula_cond_less_00% < %formula_cond_less_02%" ===> "true"
+true
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_00%" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_01%" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_01% < %formula_cond_less_02%" ===> "true"
+true
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_00%" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_01%" ===> "false"
+false
+
+**** LESS: "= %formula_cond_less_02% < %formula_cond_less_02%" ===> "false"
+false
+
+##
+## Test > Formula > Condition > GREAT
+##
+**** GREAT: "= 1 > 2" ===> "false"
+false
+
+**** GREAT: "= 1 > 1" ===> "false"
+false
+
+**** GREAT: "= 1 > 0" ===> "true"
+true
+
+**** GREAT: "= 1 > %formula_cond_great_02%" ===> "false"
+false
+
+**** GREAT: "= 1 > %formula_cond_great_01%" ===> "false"
+false
+
+**** GREAT: "= 1 > %formula_cond_great_00%" ===> "true"
+true
+
+**** GREAT: "= 0 > 1" ===> "false"
+false
+
+**** GREAT: "= 1 > 1" ===> "false"
+false
+
+**** GREAT: "= 2 > 1" ===> "true"
+true
+
+**** GREAT: "= %formula_cond_great_00% > 1" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_01% > 1" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_02% > 1" ===> "true"
+true
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_00%" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_01%" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_00% > %formula_cond_great_02%" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_00%" ===> "true"
+true
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_01%" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_01% > %formula_cond_great_02%" ===> "false"
+false
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_00%" ===> "true"
+true
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_01%" ===> "true"
+true
+
+**** GREAT: "= %formula_cond_great_02% > %formula_cond_great_02%" ===> "false"
+false
+
+##
+## Test > Formula > Condition > LESSEQ
+##
+**** LESSEQ: "= 1 <= 2" ===> "true"
+true
+
+**** LESSEQ: "= 1 <= 1" ===> "true"
+true
+
+**** LESSEQ: "= 1 <= 0" ===> "false"
+false
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_02%" ===> "true"
+true
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_01%" ===> "true"
+true
+
+**** LESSEQ: "= 1 <= %formula_cond_lesseq_00%" ===> "false"
+false
+
+**** LESSEQ: "= 0 <= 1" ===> "true"
+true
+
+**** LESSEQ: "= 1 <= 1" ===> "true"
+true
+
+**** LESSEQ: "= 2 <= 1" ===> "false"
+false
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= 1" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= 1" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= 1" ===> "false"
+false
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_00%" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_01%" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_00% <= %formula_cond_lesseq_02%" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_00%" ===> "false"
+false
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_01%" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_01% <= %formula_cond_lesseq_02%" ===> "true"
+true
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_00%" ===> "false"
+false
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_01%" ===> "false"
+false
+
+**** LESSEQ: "= %formula_cond_lesseq_02% <= %formula_cond_lesseq_02%" ===> "true"
+true
+
+##
+## Test > Formula > Condition > GREATEQ
+##
+**** GREATEQ: "= 1 >= 2" ===> "false"
+false
+
+**** GREATEQ: "= 1 >= 1" ===> "true"
+true
+
+**** GREATEQ: "= 1 >= 0" ===> "true"
+true
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_02%" ===> "false"
+false
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_01%" ===> "true"
+true
+
+**** GREATEQ: "= 1 >= %formula_cond_greateq_00%" ===> "true"
+true
+
+**** GREATEQ: "= 0 >= 1" ===> "false"
+false
+
+**** GREATEQ: "= 1 >= 1" ===> "true"
+true
+
+**** GREATEQ: "= 2 >= 1" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= 1" ===> "false"
+false
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= 1" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= 1" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_00%" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_01%" ===> "false"
+false
+
+**** GREATEQ: "= %formula_cond_greateq_00% >= %formula_cond_greateq_02%" ===> "false"
+false
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_00%" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_01%" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_01% >= %formula_cond_greateq_02%" ===> "false"
+false
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_00%" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_01%" ===> "true"
+true
+
+**** GREATEQ: "= %formula_cond_greateq_02% >= %formula_cond_greateq_02%" ===> "true"
+true
+
+##
+## Test > Formula > Condition > EQ
+##
+**** EQ: "= null == null" ===> "true"
+true
+
+**** EQ: "= null == true" ===> "false"
+false
+
+**** EQ: "= null == false" ===> "true"
+true
+
+**** EQ: "= null == 0" ===> "true"
+true
+
+**** EQ: "= null == 1" ===> "false"
+false
+
+**** EQ: "= null == 'string'" ===> "false"
+false
+
+**** EQ: "= null == %formula_cond_eq_00%" ===> "true"
+true
+
+**** EQ: "= null == %formula_cond_eq_01%" ===> "false"
+false
+
+**** EQ: "= null == %formula_cond_eq_02%" ===> "true"
+true
+
+**** EQ: "= null == %formula_cond_eq_03%" ===> "true"
+true
+
+**** EQ: "= null == %formula_cond_eq_04%" ===> "false"
+false
+
+**** EQ: "= null == %formula_cond_eq_05%" ===> "false"
+false
+
+**** EQ: "= true == null" ===> "false"
+false
+
+**** EQ: "= false == null" ===> "true"
+true
+
+**** EQ: "= 0 == null" ===> "true"
+true
+
+**** EQ: "= 1 == null" ===> "false"
+false
+
+**** EQ: "= 'string' == null" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_00% == null" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_01% == null" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_02% == null" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_03% == null" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_04% == null" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_05% == null" ===> "false"
+false
+
+**** EQ: "= true == null" ===> "false"
+false
+
+**** EQ: "= true == true" ===> "true"
+true
+
+**** EQ: "= true == false" ===> "false"
+false
+
+**** EQ: "= true == 0" ===> "false"
+false
+
+**** EQ: "= true == 1" ===> "true"
+true
+
+**** EQ: "= true == 'string'" ===> "true"
+true
+
+**** EQ: "= true == %formula_cond_eq_00%" ===> "false"
+false
+
+**** EQ: "= true == %formula_cond_eq_01%" ===> "true"
+true
+
+**** EQ: "= true == %formula_cond_eq_02%" ===> "false"
+false
+
+**** EQ: "= true == %formula_cond_eq_03%" ===> "false"
+false
+
+**** EQ: "= true == %formula_cond_eq_04%" ===> "true"
+true
+
+**** EQ: "= true == %formula_cond_eq_05%" ===> "true"
+true
+
+**** EQ: "= true == true" ===> "true"
+true
+
+**** EQ: "= false == true" ===> "false"
+false
+
+**** EQ: "= 0 == true" ===> "false"
+false
+
+**** EQ: "= 1 == true" ===> "true"
+true
+
+**** EQ: "= 'string' == true" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_00% == true" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_01% == true" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_02% == true" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_03% == true" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_04% == true" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_05% == true" ===> "true"
+true
+
+**** EQ: "= false == null" ===> "true"
+true
+
+**** EQ: "= false == true" ===> "false"
+false
+
+**** EQ: "= false == false" ===> "true"
+true
+
+**** EQ: "= false == 0" ===> "true"
+true
+
+**** EQ: "= false == 1" ===> "false"
+false
+
+**** EQ: "= false == 'string'" ===> "false"
+false
+
+**** EQ: "= false == %formula_cond_eq_00%" ===> "true"
+true
+
+**** EQ: "= false == %formula_cond_eq_01%" ===> "false"
+false
+
+**** EQ: "= false == %formula_cond_eq_02%" ===> "true"
+true
+
+**** EQ: "= false == %formula_cond_eq_03%" ===> "true"
+true
+
+**** EQ: "= false == %formula_cond_eq_04%" ===> "false"
+false
+
+**** EQ: "= false == %formula_cond_eq_05%" ===> "false"
+false
+
+**** EQ: "= true == false" ===> "false"
+false
+
+**** EQ: "= false == false" ===> "true"
+true
+
+**** EQ: "= 0 == false" ===> "true"
+true
+
+**** EQ: "= 1 == false" ===> "false"
+false
+
+**** EQ: "= 'string' == false" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_00% == false" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_01% == false" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_02% == false" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_03% == false" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_04% == false" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_05% == false" ===> "false"
+false
+
+**** EQ: "= 0 == null" ===> "true"
+true
+
+**** EQ: "= 0 == true" ===> "false"
+false
+
+**** EQ: "= 0 == false" ===> "true"
+true
+
+**** EQ: "= 0 == 0" ===> "true"
+true
+
+**** EQ: "= 0 == 1" ===> "false"
+false
+
+**** EQ: "= 0 == 'string'" ===> "false"
+false
+
+**** EQ: "= 0 == %formula_cond_eq_00%" ===> "true"
+true
+
+**** EQ: "= 0 == %formula_cond_eq_01%" ===> "false"
+false
+
+**** EQ: "= 0 == %formula_cond_eq_02%" ===> "true"
+true
+
+**** EQ: "= 0 == %formula_cond_eq_03%" ===> "true"
+true
+
+**** EQ: "= 0 == %formula_cond_eq_04%" ===> "false"
+false
+
+**** EQ: "= 0 == %formula_cond_eq_05%" ===> "false"
+false
+
+**** EQ: "= true == 0" ===> "false"
+false
+
+**** EQ: "= false == 0" ===> "true"
+true
+
+**** EQ: "= 0 == 0" ===> "true"
+true
+
+**** EQ: "= 1 == 0" ===> "false"
+false
+
+**** EQ: "= 'string' == 0" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_00% == 0" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_01% == 0" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_02% == 0" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_03% == 0" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_04% == 0" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_05% == 0" ===> "false"
+false
+
+**** EQ: "= 1 == null" ===> "false"
+false
+
+**** EQ: "= 1 == true" ===> "true"
+true
+
+**** EQ: "= 1 == false" ===> "false"
+false
+
+**** EQ: "= 1 == 0" ===> "false"
+false
+
+**** EQ: "= 1 == 1" ===> "true"
+true
+
+**** EQ: "= 1 == 'string'" ===> "false"
+false
+
+**** EQ: "= 1 == %formula_cond_eq_00%" ===> "false"
+false
+
+**** EQ: "= 1 == %formula_cond_eq_01%" ===> "true"
+true
+
+**** EQ: "= 1 == %formula_cond_eq_02%" ===> "false"
+false
+
+**** EQ: "= 1 == %formula_cond_eq_03%" ===> "false"
+false
+
+**** EQ: "= 1 == %formula_cond_eq_04%" ===> "true"
+true
+
+**** EQ: "= 1 == %formula_cond_eq_05%" ===> "false"
+false
+
+**** EQ: "= true == 1" ===> "true"
+true
+
+**** EQ: "= false == 1" ===> "false"
+false
+
+**** EQ: "= 0 == 1" ===> "false"
+false
+
+**** EQ: "= 1 == 1" ===> "true"
+true
+
+**** EQ: "= 'string' == 1" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_00% == 1" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_01% == 1" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_02% == 1" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_03% == 1" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_04% == 1" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_05% == 1" ===> "false"
+false
+
+**** EQ: "= 'string' == null" ===> "false"
+false
+
+**** EQ: "= 'string' == true" ===> "true"
+true
+
+**** EQ: "= 'string' == false" ===> "false"
+false
+
+**** EQ: "= 'string' == 0" ===> "false"
+false
+
+**** EQ: "= 'string' == 1" ===> "false"
+false
+
+**** EQ: "= 'string' == 'string'" ===> "true"
+true
+
+**** EQ: "= 'string' == %formula_cond_eq_00%" ===> "false"
+false
+
+**** EQ: "= 'string' == %formula_cond_eq_01%" ===> "true"
+true
+
+**** EQ: "= 'string' == %formula_cond_eq_02%" ===> "false"
+false
+
+**** EQ: "= 'string' == %formula_cond_eq_03%" ===> "false"
+false
+
+**** EQ: "= 'string' == %formula_cond_eq_04%" ===> "false"
+false
+
+**** EQ: "= 'string' == %formula_cond_eq_05%" ===> "true"
+true
+
+**** EQ: "= true == 'string'" ===> "true"
+true
+
+**** EQ: "= false == 'string'" ===> "false"
+false
+
+**** EQ: "= 0 == 'string'" ===> "false"
+false
+
+**** EQ: "= 1 == 'string'" ===> "false"
+false
+
+**** EQ: "= 'string' == 'string'" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_00% == 'string'" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_01% == 'string'" ===> "true"
+true
+
+**** EQ: "= %formula_cond_eq_02% == 'string'" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_03% == 'string'" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_04% == 'string'" ===> "false"
+false
+
+**** EQ: "= %formula_cond_eq_05% == 'string'" ===> "true"
+true
+
+##
+## Test > Formula > Condition > NOTEQ
+##
+**** NOTEQ: "= null != null" ===> "false"
+false
+
+**** NOTEQ: "= null != true" ===> "true"
+true
+
+**** NOTEQ: "= null != false" ===> "false"
+false
+
+**** NOTEQ: "= null != 0" ===> "false"
+false
+
+**** NOTEQ: "= null != 1" ===> "true"
+true
+
+**** NOTEQ: "= null != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= null != %formula_cond_noteq_00%" ===> "false"
+false
+
+**** NOTEQ: "= null != %formula_cond_noteq_01%" ===> "true"
+true
+
+**** NOTEQ: "= null != %formula_cond_noteq_02%" ===> "false"
+false
+
+**** NOTEQ: "= null != %formula_cond_noteq_03%" ===> "false"
+false
+
+**** NOTEQ: "= null != %formula_cond_noteq_04%" ===> "true"
+true
+
+**** NOTEQ: "= null != %formula_cond_noteq_05%" ===> "true"
+true
+
+**** NOTEQ: "= true != null" ===> "true"
+true
+
+**** NOTEQ: "= false != null" ===> "false"
+false
+
+**** NOTEQ: "= 0 != null" ===> "false"
+false
+
+**** NOTEQ: "= 1 != null" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != null" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_00% != null" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_01% != null" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_02% != null" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_03% != null" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_04% != null" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_05% != null" ===> "true"
+true
+
+**** NOTEQ: "= true != null" ===> "true"
+true
+
+**** NOTEQ: "= true != true" ===> "false"
+false
+
+**** NOTEQ: "= true != false" ===> "true"
+true
+
+**** NOTEQ: "= true != 0" ===> "true"
+true
+
+**** NOTEQ: "= true != 1" ===> "false"
+false
+
+**** NOTEQ: "= true != 'string'" ===> "false"
+false
+
+**** NOTEQ: "= true != %formula_cond_noteq_00%" ===> "true"
+true
+
+**** NOTEQ: "= true != %formula_cond_noteq_01%" ===> "false"
+false
+
+**** NOTEQ: "= true != %formula_cond_noteq_02%" ===> "true"
+true
+
+**** NOTEQ: "= true != %formula_cond_noteq_03%" ===> "true"
+true
+
+**** NOTEQ: "= true != %formula_cond_noteq_04%" ===> "false"
+false
+
+**** NOTEQ: "= true != %formula_cond_noteq_05%" ===> "false"
+false
+
+**** NOTEQ: "= true != true" ===> "false"
+false
+
+**** NOTEQ: "= false != true" ===> "true"
+true
+
+**** NOTEQ: "= 0 != true" ===> "true"
+true
+
+**** NOTEQ: "= 1 != true" ===> "false"
+false
+
+**** NOTEQ: "= 'string' != true" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_00% != true" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_01% != true" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_02% != true" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_03% != true" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_04% != true" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_05% != true" ===> "false"
+false
+
+**** NOTEQ: "= false != null" ===> "false"
+false
+
+**** NOTEQ: "= false != true" ===> "true"
+true
+
+**** NOTEQ: "= false != false" ===> "false"
+false
+
+**** NOTEQ: "= false != 0" ===> "false"
+false
+
+**** NOTEQ: "= false != 1" ===> "true"
+true
+
+**** NOTEQ: "= false != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= false != %formula_cond_noteq_00%" ===> "false"
+false
+
+**** NOTEQ: "= false != %formula_cond_noteq_01%" ===> "true"
+true
+
+**** NOTEQ: "= false != %formula_cond_noteq_02%" ===> "false"
+false
+
+**** NOTEQ: "= false != %formula_cond_noteq_03%" ===> "false"
+false
+
+**** NOTEQ: "= false != %formula_cond_noteq_04%" ===> "true"
+true
+
+**** NOTEQ: "= false != %formula_cond_noteq_05%" ===> "true"
+true
+
+**** NOTEQ: "= true != false" ===> "true"
+true
+
+**** NOTEQ: "= false != false" ===> "false"
+false
+
+**** NOTEQ: "= 0 != false" ===> "false"
+false
+
+**** NOTEQ: "= 1 != false" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != false" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_00% != false" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_01% != false" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_02% != false" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_03% != false" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_04% != false" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_05% != false" ===> "true"
+true
+
+**** NOTEQ: "= 0 != null" ===> "false"
+false
+
+**** NOTEQ: "= 0 != true" ===> "true"
+true
+
+**** NOTEQ: "= 0 != false" ===> "false"
+false
+
+**** NOTEQ: "= 0 != 0" ===> "false"
+false
+
+**** NOTEQ: "= 0 != 1" ===> "true"
+true
+
+**** NOTEQ: "= 0 != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_00%" ===> "false"
+false
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_01%" ===> "true"
+true
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_02%" ===> "false"
+false
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_03%" ===> "false"
+false
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_04%" ===> "true"
+true
+
+**** NOTEQ: "= 0 != %formula_cond_noteq_05%" ===> "true"
+true
+
+**** NOTEQ: "= true != 0" ===> "true"
+true
+
+**** NOTEQ: "= false != 0" ===> "false"
+false
+
+**** NOTEQ: "= 0 != 0" ===> "false"
+false
+
+**** NOTEQ: "= 1 != 0" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != 0" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 0" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 0" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 0" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 0" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 0" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 0" ===> "true"
+true
+
+**** NOTEQ: "= 1 != null" ===> "true"
+true
+
+**** NOTEQ: "= 1 != true" ===> "false"
+false
+
+**** NOTEQ: "= 1 != false" ===> "true"
+true
+
+**** NOTEQ: "= 1 != 0" ===> "true"
+true
+
+**** NOTEQ: "= 1 != 1" ===> "false"
+false
+
+**** NOTEQ: "= 1 != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_00%" ===> "true"
+true
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_01%" ===> "false"
+false
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_02%" ===> "true"
+true
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_03%" ===> "true"
+true
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_04%" ===> "false"
+false
+
+**** NOTEQ: "= 1 != %formula_cond_noteq_05%" ===> "true"
+true
+
+**** NOTEQ: "= true != 1" ===> "false"
+false
+
+**** NOTEQ: "= false != 1" ===> "true"
+true
+
+**** NOTEQ: "= 0 != 1" ===> "true"
+true
+
+**** NOTEQ: "= 1 != 1" ===> "false"
+false
+
+**** NOTEQ: "= 'string' != 1" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 1" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 1" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 1" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 1" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 1" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 1" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != null" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != true" ===> "false"
+false
+
+**** NOTEQ: "= 'string' != false" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != 0" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != 1" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != 'string'" ===> "false"
+false
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_00%" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_01%" ===> "false"
+false
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_02%" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_03%" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_04%" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != %formula_cond_noteq_05%" ===> "false"
+false
+
+**** NOTEQ: "= true != 'string'" ===> "false"
+false
+
+**** NOTEQ: "= false != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= 0 != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= 1 != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= 'string' != 'string'" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_00% != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_01% != 'string'" ===> "false"
+false
+
+**** NOTEQ: "= %formula_cond_noteq_02% != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_03% != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_04% != 'string'" ===> "true"
+true
+
+**** NOTEQ: "= %formula_cond_noteq_05% != 'string'" ===> "false"
+false
+
+############################################################
+#### Formula : Syntax
+############################################################
+##
+## Test > Formula > Syntax > IF/ELIF/ELSE/ENDIF
+##
+**** IF/ELIF/ELSE/ENDIF "if null"
+****                    "elif false"
+****                    "endif"
+****                                    ===> ""
+
+
+**** IF/ELIF/ELSE/ENDIF "if true"
+****                    "elif false"
+****                    "elif true"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if null"
+****                    "elif false"
+****                    "elif true"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in elif statement, thus come here."
+
+    condition true in elif statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if null == %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if true == %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if false == %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 0 == %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 1 == %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 'string' == %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if null != %formula_syntax_if_00%(null)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if true != %formula_syntax_if_01%(true)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if false != %formula_syntax_if_02%(false)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 0 != %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 1 != %formula_syntax_if_04%(1)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 'string' != %formula_syntax_if_05%('string')"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 0 <= %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition true in if statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if 0 < %formula_syntax_if_03%(0)"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1) < 1"
+****                    "else"
+****                    "endif"
+****                                    ===> "in else statement, thus come here."
+
+    in else statement, thus come here.
+
+
+**** IF/ELIF/ELSE/ENDIF "if %formula_syntax_if_04%(1) <= 1"
+****                    "else"
+****                    "endif"
+****                                    ===> "condition true in if statement, thus come here."
+
+    condition false in if statement, thus not come here.
+
+
+##
+## Test > Formula > Syntax > WHILE/DONE
+##
+**** WHILE/DONE "while null"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while true"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** WHILE/DONE "while false"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while 0"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while 1"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** WHILE/DONE "while 'string'"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** WHILE/DONE "while %formula_syntax_while_00%(null)"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while %formula_syntax_while_01%(true)"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** WHILE/DONE "while %formula_syntax_while_02%(false)"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while %formula_syntax_while_03%(0)"
+****            "done"
+****                                    ===> ""
+
+
+**** WHILE/DONE "while %formula_syntax_while_04%(1)"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** WHILE/DONE "while %formula_syntax_while_05%('string')"
+****            "done"
+****                                    ===> "condition true in while statement, thus come here."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in while statement, thus come here.
+    
+        condition true in if statement, thus stop loop.
+        
+
+##
+## Test > Formula > Syntax > DO/WHILE
+##
+**** DO/WHILE "do"
+****          "while null"
+****                                    ===> "condition false in do...while statement, thus come here once."
+
+    condition false in do...while statement, thus come here once.
+
+
+**** DO/WHILE "do"
+****          "while true"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** DO/WHILE "do"
+****          "while false"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+
+    condition false in do...while statement, thus come here onece.
+
+
+**** DO/WHILE "do"
+****          "while 0"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+
+    condition false in do...while statement, thus come here onece.
+
+
+**** DO/WHILE "do"
+****          "while 1"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** DO/WHILE "do"
+****          "while 'string'"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_00%(null)"
+****                                    ===> "condition false in do...while statement, thus come here once."
+
+    condition false in do...while statement, thus come here once.
+
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_01%(true)"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_02%(false)"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+
+    condition false in do...while statement, thus come here onece.
+
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_03%(0)"
+****                                    ===> "condition false in do...while statement, thus come here onece."
+
+    condition false in do...while statement, thus come here onece.
+
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_04%(1)"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** DO/WHILE "do"
+****          "while %formula_syntax_do_05%('string')"
+****                                    ===> "condition true in do...while statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in do...while statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+##
+## Test > Formula > Syntax > FOR/DONE
+##
+**** FOR/DONE "for ; null ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; true ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for ; false ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; 0 ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; 1 ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for ; 'string' ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for ; %formula_syntax_for_00%(null) ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; %formula_syntax_for_01%(true) ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for ; %formula_syntax_for_02%(false) ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; %formula_syntax_for_03%(0) ; "
+****          "done"
+****                                    ===> ""
+
+
+**** FOR/DONE "for ; %formula_syntax_for_04%(1) ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for ; %formula_syntax_for_05%('string') ; "
+****          "done"
+****                                    ===> "condition true in for statement, thus come here onece."
+****                                         "condition true in if statement, thus stop loop."
+
+    condition true in for statement, thus come here onece.
+    
+        condition true in if statement, thus stop loop.
+        
+
+**** FOR/DONE "for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < 2 ; ++%tmp_for_counter00%"
+****          "done"
+****                                    ===> "condition true(2 times) = 0 in for statement, thus come here."
+****                                         "condition true(2 times) = 1 in for statement, thus come here."
+
+    condition true(2 times) = 0 in for statement, thus come here.
+
+    condition true(2 times) = 1 in for statement, thus come here.
+
+
+##
+## Test > Formula > Syntax > FOREACH/DONE
+##
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_00%"
+****              "done"
+****                                    ===> ""
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01%"
+****              "done"
+****                                    ===> "foreach value (null) in foreach statement, thus come here."
+
+    foreach value (null) in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02%"
+****              "done"
+****                                    ===> "foreach value true in foreach statement, thus come here."
+****                                         "foreach value false in foreach statement, thus come here."
+
+    foreach value true in foreach statement, thus come here.
+
+    foreach value false in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_03%"
+****              "done"
+****                                    ===> "foreach value 0 in foreach statement, thus come here."
+****                                         "foreach value 1 in foreach statement, thus come here."
+
+    foreach value 0 in foreach statement, thus come here.
+
+    foreach value 1 in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%"
+****              "done"
+****                                    ===> "foreach value string00 in foreach statement, thus come here."
+****                                         "foreach value string01 in foreach statement, thus come here."
+
+    foreach value string00 in foreach statement, thus come here.
+
+    foreach value string01 in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%" + "continue"
+****              "done"
+****                                    ===> "foreach value string01 in foreach statement, thus come here."
+
+	
+		
+	
+    foreach value string01 in foreach statement, thus come here.
+
+
+############################################################
+#### Formula : Priority
+############################################################
+##
+## Test > Priority
+##
+**** PRIORITY "%tmp_priority_data00% = 0 && 1 + 2 & 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "false"
+
+false
+
+**** PRIORITY "%tmp_priority_data00% = 1 + 2 & 1 && 0"
+****          "= %tmp_priority_data00%"
+****                                    ===> "false"
+
+false
+
+**** PRIORITY "%tmp_priority_data00% = 0++ & 1 + 2"
+****          "= %tmp_priority_data00% }}"
+****                                    ===> "0"
+
+0
+
+**** PRIORITY "%tmp_priority_data00% = ++0 & 1 + 2"
+****          "= %tmp_priority_data00% }}"
+****                                    ===> "1"
+
+1
+
+**** PRIORITY "%tmp_priority_data00% = 1 + 3 * 2 * 3 + 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "20"
+
+20
+
+**** PRIORITY "%tmp_priority_data00% = 2 * 3 + 1"
+****          "= %tmp_priority_data00%"
+****                                    ===> "7"
+
+7
+
+############################################################
+#### TEST END
+############################################################
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#
+
+----------------------------------------------------------------
