@@ -63,7 +63,7 @@ K2HR3 REST API and K2HR3 API Server is the server side JavaScript program runnin
 [k2hash transaction plugin](https://github.com/yahoojapan/k2htp_dtor)  
 
 ### Packages
-[k2hr3-api(npm packages)]()  
+[k2hr3-api(npm packages)](https://www.npmjs.com/package/k2hr3-api)  
 
 ### License
 This software is released under the MIT License, see the license file.
