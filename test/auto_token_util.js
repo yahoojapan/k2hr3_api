@@ -106,7 +106,6 @@ exports.before = function(parentobj, alltoken, done)
 				done();
 				return;
 			}
-			var	unscopedtoken0			 = token;
 			alltoken.scopedtoken.tenant0 = 'U=' + token;
 
 			// Get scoped token for tenant1
@@ -118,15 +117,13 @@ exports.before = function(parentobj, alltoken, done)
 					done();
 					return;
 				}
-				var	unscopedtoken1			 = token;
 				alltoken.scopedtoken.tenant1 = 'U=' + token;
 
 				var	result;
 				var	expire	= 24 * 60 * 60;										// expire is 24H
-				var	base_id	= apiutil.convertHexString128ToBin64(unscopedtoken0);
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -136,7 +133,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_str_role_01 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -146,7 +143,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_obj_role_01 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -156,7 +153,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_str_role_02 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -166,7 +163,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_obj_role_02 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -176,7 +173,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_str_role_03 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03
-				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03', expire);
+				result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -186,8 +183,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_k2hr3_entest_obj_role_03 = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant0:role:test_service_tenant
-				base_id	= apiutil.convertHexString128ToBin64(unscopedtoken1);
-				result	= r3token.getRoleTokenByUser('dummyuser', 'tenant0', base_id, 'yrn:yahoo:::tenant0:role:test_service_tenant', expire);
+				result	= r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:test_service_tenant', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);
@@ -197,8 +193,7 @@ exports.before = function(parentobj, alltoken, done)
 				alltoken.roletoken.tenant0_test_service_tenant = 'R=' + result.token;
 
 				// Get role token for yrn:yahoo:::tenant1:role:test_service_owner
-				base_id	= apiutil.convertHexString128ToBin64(unscopedtoken1);
-				result	= r3token.getRoleTokenByUser('dummyuser', 'tenant1', base_id, 'yrn:yahoo:::tenant1:role:test_service_owner', expire);
+				result	= r3token.getRoleTokenByUser('dummyuser', 'tenant1', 'yrn:yahoo:::tenant1:role:test_service_owner', expire);
 				if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 					clearAllToken(_alltoken);
 					_parentobj.timeout(_buptimeout);

@@ -65,7 +65,7 @@ function postV1Resource(method, token, querypath, name, datatype, data, reskeys,
 		// case for POST
 		if(apiutil.compareCaseString('object', datatype)){
 			// If datatype is object, data is needed to decode JSON to object here.
-			data = JSON.parse(data);
+			data = apiutil.parseJSON(data);
 		}
 
 		/* eslint-disable indent, no-mixed-spaces-and-tabs */

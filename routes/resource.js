@@ -464,8 +464,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 		}
 
 		// port
-		if(apiutil.isSafeString(req.body.resource.port)){
+		if(apiutil.isSafeString(req.body.resource.port) && !isNaN(req.body.resource.port)){
 			port = parseInt(req.body.resource.port);
+		}else{
+			port = 0;
 		}
 
 		// cuk
@@ -772,8 +774,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 		}
 
 		// port
-		if(apiutil.isSafeString(req.query.port)){
+		if(apiutil.isSafeString(req.query.port) && !isNaN(req.query.port)){
 			port = parseInt(req.query.port);
+		}else{
+			port = 0;
 		}
 
 		// cuk
@@ -1035,8 +1039,10 @@ router.get('/', function(req, res, next)
 		}
 
 		// port
-		if(apiutil.isSafeString(req.query.port)){
+		if(apiutil.isSafeString(req.query.port) && !isNaN(req.query.port)){
 			port = parseInt(req.query.port);
+		}else{
+			port = 0;
 		}
 
 		// cuk
@@ -1213,8 +1219,10 @@ router.head('/', function(req, res, next)
 		}
 
 		// port
-		if(apiutil.isSafeString(req.query.port)){
+		if(apiutil.isSafeString(req.query.port) && !isNaN(req.query.port)){
 			port = parseInt(req.query.port);
+		}else{
+			port = 0;
 		}
 
 		// cuk
@@ -1242,7 +1250,6 @@ router.head('/', function(req, res, next)
 		// However, the case is rare and should not be used.
 		//
 		result = k2hr3.checkResourceByIP(clientip, port, cuk, role_yrn, comparam.res_yrn, restype, reskeyname);
-
 	}else{
 		// broken token
 		r3logger.elog('HEAD request is failure by internal error(token data broken).');
@@ -1423,8 +1430,10 @@ router.delete('/', function(req, res, next)					// eslint-disable-line no-unused
 		}
 
 		// port
-		if(apiutil.isSafeString(req.query.port)){
+		if(apiutil.isSafeString(req.query.port) && !isNaN(req.query.port)){
 			port = parseInt(req.query.port);
+		}else{
+			port = 0;
 		}
 
 		// cuk

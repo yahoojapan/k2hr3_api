@@ -125,7 +125,7 @@ function deleteV1Role(token, name, target_host, port, cuk)
 //
 // Request API for test
 //
-function deleteV1_IPByCuk(addrs, cuk)
+function deleteV1_IPByCuk(addrs, port, cuk)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers		= {
@@ -150,7 +150,11 @@ function deleteV1_IPByCuk(addrs, cuk)
 		urlarg		+= cuk;
 		already_set	= true;
 	}
-	urlarg			+= already_set ? '&extra=openstack-auto-v1' : '?extra=openstack-auto-v1';
+	if(null !== port && !isNaN(port)){
+		urlarg		+= already_set ? '&port=' : '?port=';
+		urlarg		+= String(port);
+		already_set	= true;
+	}
 
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	options		= {	'host':				hostname,
@@ -251,7 +255,7 @@ cliutil.getConsoleInput('Delete ROLE/TOKEN(role)/HOST(name or ip)/IP/CUK : ', tr
 				}
 			}
 
-			cliutil.getConsoleInput('Delete by CUK                                   : ', true, false, function(isbreak, cuk)
+			cliutil.getConsoleInput('Delete by CUK(allow empty)                      : ', true, false, function(isbreak, cuk)
 			{
 				if(isbreak){
 					process.exit(0);
@@ -261,8 +265,19 @@ cliutil.getConsoleInput('Delete ROLE/TOKEN(role)/HOST(name or ip)/IP/CUK : ', tr
 					_cuk = cuk.trim();
 				}
 
-				// run
-				deleteV1_IPByCuk(_addrs, _cuk);
+				cliutil.getConsoleInput('Delete by port(allow empty)                     : ', true, false, function(isbreak, port)
+				{
+					if(isbreak){
+						process.exit(0);
+					}
+					var	_port = null;
+					if(!isNaN(port)){
+						_port = parseInt(port);
+					}
+
+					// run
+					deleteV1_IPByCuk(_addrs, _port, _cuk);
+				});
 			});
 		});
 
