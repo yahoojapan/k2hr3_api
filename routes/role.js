@@ -34,14 +34,19 @@ var	r3keys		= require('../lib/k2hr3keys').getK2hr3Keys;
 var r3logger	= require('../lib/dbglogging');
 
 //---------------------------------------------------------
-// Get role full path which is allowed to remove ip address
+// Configuration
+//	* Get role full path which is allowed to remove ip address
+//	* Get expiration for role tokens
 //---------------------------------------------------------
 var	delhost_role_yrn	= null;
+var	expire_rtoken		= 0;
+var	expire_reg_rtoken	= 0;
 
 (function()
 {
 	var	r3Conf			= require('../lib/k2hr3config').r3ApiConfig;
 	var	apiConf			= new r3Conf();
+
 	var	admincfgobj		= apiConf.getK2hr3AdminConfig();
 	if(apiutil.isSafeEntity(admincfgobj) && apiutil.isSafeString(admincfgobj.tenant) && apiutil.isSafeString(admincfgobj.delhostrole)){
 		var	keys		= r3keys(null, admincfgobj.tenant.trim());
@@ -50,6 +55,8 @@ var	delhost_role_yrn	= null;
 		r3logger.elog('Could not find tenant/role in configuration for deleting host by cuk.');
 		delhost_role_yrn= null;
 	}
+	expire_rtoken		= apiConf.getExpireTimeRoleToken();
+	expire_reg_rtoken	= apiConf.getExpireTimeRegRoleToken();
 }());
 
 //---------------------------------------------------------
@@ -95,7 +102,8 @@ router.post('/', function(req, res, next)
 
 	}else{
 		// check host api
-		var	requestptn	= new RegExp('^/v1/role/(.*)');					// regex = /^\/v1\/role\/(.*)/
+		var	keys		= r3keys();
+		var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
 		var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 		if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
 			/* eslint-disable indent, no-mixed-spaces-and-tabs */
@@ -162,7 +170,8 @@ router.put('/', function(req, res, next)
 
 	}else{
 		// check host api
-		var	requestptn	= new RegExp('^/v1/role/(.*)');					// regex = /^\/v1\/role\/(.*)/
+		var	keys		= r3keys();
+		var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
 		var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 		if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
 			/* eslint-disable indent, no-mixed-spaces-and-tabs */
@@ -697,8 +706,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 			// port
 			port = 0;														// default any
 			if(apiutil.isSafeEntity(hostArray[cnt].port)){
-				port = parseInt(hostArray[cnt].port);
-				if(isNaN(port)){
+				if(isNaN(hostArray[cnt].port)){
 					/* eslint-disable indent, no-mixed-spaces-and-tabs */
 					result = {
 								result: 	false,
@@ -710,6 +718,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 					return;
 				}
+				port = parseInt(hostArray[cnt].port);
 			}
 
 			// cuk
@@ -787,8 +796,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		// port
 		port = 0;															// default any
 		if(apiutil.isSafeEntity(req.body.host.port)){
-			port = parseInt(req.body.host.port);
-			if(isNaN(port)){
+			if(isNaN(req.body.host.port)){
 				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
 							result: 	false,
@@ -800,6 +808,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 				return;
 			}
+			port = parseInt(req.body.host.port);
 		}
 
 		// cuk
@@ -994,8 +1003,7 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	// port
 	var	port;
 	if(apiutil.isSafeString(req.query.port)){
-		port = parseInt(req.query.port);
-		if(isNaN(port)){
+		if(isNaN(req.query.port)){
 			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
 						result: 	false,
@@ -1007,6 +1015,7 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
 		}
+		port = parseInt(req.query.port);
 	}else{
 		port = 0;														// default any
 	}
@@ -1076,7 +1085,7 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 // Router GET
 //---------------------------------------------------------
 //
-// Mountpath							: '/v1/role/*'
+// Mountpath							: '/v1/role/<role{/...}>'
 //
 // GET '/v1/role/<role{/...}>'			: get role on version 1
 // HEADER								: X-Auth-Token	=> User token
@@ -1101,14 +1110,43 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 //											}
 //
 // GET '/v1/role/token/<role{/...}>'	: get role token on version 1
-// HEADER								: X-Auth-Token	=> undefined User token or Role token
-// URL arguments						: undefined
+// HEADER								: X-Auth-Token	=> User token or Role token
+// URL arguments						: expire	=> "expire time(unix time value)" or undefined(default 24H)
 // response								:	{
 //												"result":		true or false
 //												"message":		error message
 //												"token":		"role token"
 //												"registerpath":	"path for registering"
 //											}
+//
+// GET '/v1/role/token/list/<role{/...}>': get list of role tokens on version 1
+// HEADER								: X-Auth-Token	=> User token
+// URL arguments						: expand		=> "true"(default) or "false"
+// response								:	{
+//												result:		true/false
+//												message:	null or error message string
+//												tokens:	{
+//													"token": {
+//														date:		create date(UTC ISO 8601)
+//														expire:		expire date(UTC ISO 8601)
+//														user:		user name if user created this token
+//														hostname:	hostname if this token was created by host(name)
+//														ip:			ip address if this token was created by ip
+//														port:		port number, if specified port when created token
+//														cuk:		cuk, if specified cuk when created token
+//													},
+//													...
+//												}
+// 											}
+//											or
+//											{
+//												result:		true/false
+//												message:	null or error message string
+//												tokens: [
+//													"role token",
+//													....
+//												]
+// 											}
 //
 // This mount point is for creating(update) role or creating(update) host in role.
 // And get role token by host(ip address) or user(user token), update role token by
@@ -1168,27 +1206,36 @@ router.get('/', function(req, res, next)
 	// get role name
 	//------------------------------
 	// check get token type and parse role name
-	var	requestptn	= new RegExp('^/v1/role/token/(.*)');				// regex = /^\/v1\/role\/token\/(.*)/
-	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	var	is_get_token= false;
+	var	is_get_list	= false;
+	var	requestptn	= new RegExp(keys.MATCH_URI_GET_RTOKEN_LIST);		// regex = /^\/v1\/role\/token\/list\/(.*)/
+	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(!apiutil.isEmptyArray(reqmatchs) && 2 <= reqmatchs.length && '' !== apiutil.getSafeString(reqmatchs[1])){
-		// find get token path
-		is_get_token= true;
+		// get list of tokens
+		is_get_list	= true;
 	}else{
-		// retry parse role name
-		requestptn	= new RegExp('^/v1/role/(.*)');						// regex = /^\/v1\/role\/(.*)/
+		// recheck
+		requestptn	= new RegExp(keys.MATCH_URI_GET_RTOKEN);			// regex = /^\/v1\/role\/token\/(.*)/
 		reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
-		if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			result = {
-						result: 	false,
-						message:	'GET request url does not have role name'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		if(!apiutil.isEmptyArray(reqmatchs) && 2 <= reqmatchs.length && '' !== apiutil.getSafeString(reqmatchs[1])){
+			// get token
+			is_get_token= true;
+		}else{
+			// retry parse role name
+			requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
+			reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
+			if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				result = {
+							result: 	false,
+							message:	'GET request url does not have role name'
+						 };
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
-			r3logger.elog(result.message);
-			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
-			return;
+				r3logger.elog(result.message);
+				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+				return;
+			}
 		}
 	}
 
@@ -1260,6 +1307,25 @@ router.get('/', function(req, res, next)
 		//
 		getRoleToken(name, token_info, token_type, token_str, req, res);
 
+	}else if(is_get_list){
+		//------------------------------
+		// GET LIST OF ROLE TOKENS
+		//------------------------------
+		if('user' === apiutil.getSafeString(token_type)){
+			getListRoleTokens(name, token_info, req, res);
+		}else{
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			result = {
+						result: 	false,
+						message:	'GET request without UserToken for getting list of role(' + name + ') tokens, need User Token.'
+					 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
+			return;
+		}
+
 	}else{
 		//------------------------------
 		// GET ROLE DATA
@@ -1284,7 +1350,8 @@ router.get('/', function(req, res, next)
 //
 // Sub router function for GET ROLE DATA
 //
-// Mountpath						:	'/v1/role/*'
+// Mountpath						:	'/v1/role/<role{/...}>'
+//
 // GET '/v1/role/<role{/...}>'		:	get role on version 1
 // HEADER							:	X-Auth-Token	=> User token
 // URL arguments					:	expand			=> "true"(default) or "false"
@@ -1405,10 +1472,12 @@ function getRole(role, token_info, req, res)
 //
 // Sub router function for GET ROLE TOKEN
 //
-// Mountpath							: '/v1/role/*'
+// Mountpath							: '/v1/role/<role{/...}>'
+//
 // GET '/v1/role/token/<role{/...}>'	: get role on version 1
 // HEADER								: X-Auth-Token	=> undefined User token or Role token
-// URL arguments						: undefined
+// URL arguments						: expire	=> "expire time(unix time value)" or undefined(default 24H)
+//														if 0 is specified, no expire.
 // response								:	{
 //												"result":		true or false
 //												"message":		error message
@@ -1483,10 +1552,39 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 	//------------------------------
 	// get role token
 	//------------------------------
-	var	expire	= 24 * 60 * 60;											// expire is 24H
+	var	expire;
 	if(!apiutil.isSafeString(token_type)){
 		// no token
-		result = r3token.getRoleTokenByIP(clientip, 0, null, tenant, role, expire);		// port = any, cuk = any
+
+		// check port
+		var	port;
+		if(apiutil.isSafeString(req.query.port)){
+			if(isNaN(req.query.port)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				result = {
+							result: 	false,
+							message:	'GET request has port which is not number: ' + JSON.stringify(req.query.port)
+						 };
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+				r3logger.elog(result.message);
+				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
+				return;
+			}
+			port = parseInt(req.query.port);
+		}else{
+			port = 0;														// default any
+		}
+
+		// check cuk parameter
+		var	cuk;
+		if(apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
+			cuk = apiutil.getSafeString(req.query.cuk).trim();
+		}else{
+			cuk = null;
+		}
+
+		result = r3token.getRoleTokenByIP(clientip, port, cuk, tenant, role, expire_rtoken);	// strict checking port/cuk
 
 	}else if('role' === apiutil.getSafeString(token_type)){
 		// role token
@@ -1500,14 +1598,22 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 			/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
 			r3logger.elog(result.message);
-			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
+			resutil.errResponse(req, res, 400, result);						// 400: Bad Request
 			return;
 		}
-		result 	= r3token.getRoleTokenByIP(clientip, 0, null, tenant, role, expire);	// port = any, cuk = any
+
+		// set expire time as same as old token
+		expire = apiutil.getExpireUnixtimeFromISOStrings(token_info.date, token_info.expire);
+		if(0 >= expire){
+			expire = expire_rtoken;
+		}
+
+		// using port/cuk from token inforamtion
+		result = r3token.getRoleTokenByIP(clientip, token_info.port, token_info.cuk, tenant, role, expire);	// strict checking port/cuk
 
 		// if succeed to get new role token, remove old token
 		if(apiutil.isSafeEntity(result) && apiutil.isSafeEntity(result.result) && result.result){
-			var	rm_result = r3token.removeRoleTokenByIP(token_str, clientip);
+			var	rm_result = r3token.removeRoleTokenByIP(token_str, clientip, token_info.port, token_info.cuk);
 			if(!apiutil.isSafeEntity(rm_result) || !apiutil.isSafeEntity(rm_result.result) || false === rm_result.result){
 				r3logger.wlog('could not remove old role token(' + token_str + '), but continue...');
 			}
@@ -1515,8 +1621,30 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 
 	}else if('user' === apiutil.getSafeString(token_type)){
 		// user token
-		var	base_id	= apiutil.convertHexString128ToBin64(token_str);
-		result		= r3token.getRoleTokenByUser(token_info.user, tenant, base_id, role, expire);
+
+		// expire
+		if(apiutil.isSafeString(req.query.expire)){
+			if(isNaN(req.query.expire)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				result = {
+							result: 	false,
+							message:	'GET request has expire which is not number: ' + JSON.stringify(req.query.expire)
+						 };
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+				r3logger.elog(result.message);
+				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
+				return;
+			}
+			expire = parseInt(req.query.expire);
+			if(0 == expire){
+				expire = expire_reg_rtoken;									// If 0 is specified, it means no expire
+			}
+		}else{
+			expire = expire_rtoken;											// expire is 24H
+		}
+
+		result = r3token.getRoleTokenByUser(token_info.user, tenant, role, expire);
 
 	}else{
 		// broken token
@@ -1583,11 +1711,162 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 	res.send(JSON.stringify(result));
 }
 
+//
+// Sub router function for GET LIST OF ROLE TOKENS
+//
+// Mountpath								: '/v1/role/list/token/<role{/...}>'
+//
+// GET '/v1/role/token/list/<role{/...}>'	: get list of role tokens on version 1
+// HEADER									: X-Auth-Token	=> User token
+// URL arguments							: expand		=> "true"(default) or "false"
+//
+// response									:	{
+//													result:		true/false
+//													message:	null or error message string
+//													tokens:	{
+//														"token": {
+//															date:			create date(UTC ISO 8601)
+//															expire:			expire date(UTC ISO 8601)
+//															user:			user name if user created this token
+//															hostname:		hostname if this token was created by host(name)
+//															ip:				ip address if this token was created by ip
+//															port:			port number, if specified port when created token
+//															cuk:			cuk, if specified cuk when created token
+//															registerpath:	register path in user data script
+//														},
+//														...
+//													}
+// 												}
+//												or
+//												{
+//													result:		true/false
+//													message:	null or error message string
+//													tokens: [
+//														"role token",
+//														....
+//													]
+// 												}
+//
+// This mount point is for listing of all role tokens in role.
+//
+function getListRoleTokens(role, token_info, req, res)
+{
+	r3logger.dlog('CALL:', req.method, req.url);
+
+	res.type('application/json; charset=utf-8');
+
+	var	result;
+	if(	!apiutil.isSafeEntity(req) ||
+		!apiutil.isSafeEntity(req.query) )
+	{
+		/* eslint-disable indent, no-mixed-spaces-and-tabs */
+		result = {
+					result: 	false,
+					message:	'GET request query is wrong'
+				 };
+		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+		r3logger.elog(result.message);
+		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
+		return;
+	}
+
+	//------------------------------
+	// check arguments
+	//------------------------------
+	var	keys	= r3keys();
+	var	expand	= true;
+	if(apiutil.isSafeString(req.query.expand)){
+		if(apiutil.compareCaseString(keys.VALUE_TRUE, req.query.expand)){
+			expand = true;
+		}else if(apiutil.compareCaseString(keys.VALUE_FALSE, req.query.expand)){
+			expand = false;
+		}else{
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			result = {
+						result: 	false,
+						message:	'GET expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.'
+					 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
+			return;
+		}
+	}
+
+	// check token
+	if(	!apiutil.isSafeString(role)				||
+		!apiutil.isSafeEntity(token_info)		||
+		!apiutil.isSafeString(token_info.user)	||
+		!apiutil.isSafeString(token_info.tenant))
+	{
+		/* eslint-disable indent, no-mixed-spaces-and-tabs */
+		result = {
+					result: 	false,
+					message:	'GET request is failure by internal error.'
+				 };
+		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+		r3logger.elog(result.message);
+		resutil.errResponse(req, res, 500, result);						// 500: Internal Error
+		return;
+	}
+
+	//------------------------------
+	// get list of role tokens
+	//------------------------------
+	result = r3token.getListRoleTokens(role, token_info.tenant, expand);
+
+	// check result
+	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
+		if(!apiutil.isSafeEntity(result)){
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			result = {
+						result: 	false,
+						message:	'Could not get role token list.'
+					 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		}else{
+			if(!apiutil.isSafeEntity(result.result)){
+				result.result	= false;
+			}
+			if(!apiutil.isSafeEntity(result.message)){
+				result.message	= 'Could not get error message in response from get role token list';
+			}
+		}
+		r3logger.elog(result.message);
+		resutil.errResponse(req, res, 404, result);						// 404: Not Found
+		return;
+	}
+
+	// add register path into each role token elements
+	if(expand){
+		Object.keys(result.tokens).forEach(function(oneToken){
+			var	regparamobj = {
+				role:	role,
+				token:	oneToken
+			};
+			var	udproc		= new r3userdata.userdataProcess;
+			var	regparamstr	= udproc.encryptRoleInfo(regparamobj);
+			if(!apiutil.isSafeString(regparamstr)){
+				r3logger.elog('Could not create register url parameter with role token(' + JSON.stringify(oneToken) + '), but continue...');
+				regparamstr	= null;
+			}
+			result.tokens[oneToken].registerpath = regparamstr;
+		});
+	}
+
+	r3logger.dlog('succeed : ' + result.message);
+	res.status(200);													// 200: OK
+	res.send(JSON.stringify(result));
+}
+
 //---------------------------------------------------------
 // Router HEAD
 //---------------------------------------------------------
 //
-// Mountpath							: '/v1/role/*'
+// Mountpath							: '/v1/role/<role{/...}>'
 //
 // HEAD '/v1/role/<role{/...}>'			: head role on version 1
 // HEADER								: X-Auth-Token	=> User token or Role token or undefined
@@ -1639,7 +1918,7 @@ router.head('/', function(req, res, next)
 	// get role name
 	//------------------------------
 	// check get token type and parse role name
-	var	requestptn	= new RegExp('^/v1/role/(.*)');						// regex = /^\/v1\/role\/(.*)/
+	var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);			// regex = /^\/v1\/role\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
 		r3logger.elog('HEAD request url does not have role name');
@@ -1702,8 +1981,24 @@ router.head('/', function(req, res, next)
 			resutil.errResponse(req, res, 400);							// 400: Bad Request
 			return;
 		}
+		// port
+		var	tg_port	= 0;
+		if(apiutil.isSafeEntity(req.query) && apiutil.isSafeString(req.query.port)){
+			if(isNaN(req.query.port)){
+				r3logger.elog('HEAD request has port which is not number: ' + JSON.stringify(req.query.port));
+				resutil.errResponse(req, res, 400);						// 400: Bad Request
+				return false;
+			}
+			tg_port	= parseInt(req.query.port);
+		}
+		// cuk
+		var	tg_cuk	= null;
+		if(apiutil.isSafeEntity(req.query) && apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
+			tg_cuk	= req.query.cuk.trim();
+		}
+
 		// find host
-		result = k2hr3.findHost(tenantname, rolename, null, clientip, 0, null);		// port = any, cuk = any
+		result = k2hr3.findHost(tenantname, rolename, null, clientip, tg_port, tg_cuk, false);		// not strictly checking
 
 		// result
 		if(!result.result){
@@ -1760,19 +2055,63 @@ router.head('/', function(req, res, next)
 // Router DELETE
 //---------------------------------------------------------
 //
-// Mountpath							: '/v1/role/*'
+// Mountpath							: '/v1/role/<role{/...}>'
 //
-// DELETE '/v1/role/<role{/...}>'		: delete role on version 1
-// HEADER								: X-Auth-Token	=> User token or Role token or undefined
+// DELETE '/v1/role/<role{/...}>'		: delete role member host on version 1
+// HEADER								: X-Auth-Token	=> undefined
 // URL arguments
-//	"host":	<hostname or ip address>
 //	"port":	<port number>				: this value is number string(0-), allowed null and '' for  this value.
 //	"cuk":	<container unique key>		: this value is string. if this value is undefined/null/empty string, it means any.
 // response								: nothing
 // response status code					: 204 or 4xx/5xx
 //
-// This mount point is for deleting role data or deleting role token or deleting host(ip address) from role.
+// The role's host member removes itself from the role without any token.
+// Whether a role member is a host is automatically determined by client ip, port, and cuk.
 //
+//
+// DELETE '/v1/role/<role{/...}>'		: delete role token on version 1
+// HEADER								: X-Auth-Token	=> Role token
+// URL arguments						: n/a
+// response								: nothing
+// response status code					: 204 or 4xx/5xx
+//
+// Delete the role token by role token.
+//
+//
+// DELETE '/v1/role/<role{/...}>'		: delete role member hosts or ip addresses on version 1
+// HEADER								: X-Auth-Token	=> User Scoped token
+// URL arguments
+//	"host":	<string, JSON string array>	: this value is string for one IP address, or string array encoded JSON string
+//										  for IP addresses.
+//	"port":	<port number>				: this value is number string(0-), allowed null and '' for  this value.
+//	"cuk":	<container unique key>		: this value is string. if this value is undefined/null/empty string, it means any.
+// response								: nothing
+// response status code					: 204 or 4xx/5xx
+//
+// Delete the role host(ip address)s member.
+//
+//
+// DELETE '/v1/role/<role{/...}>'		: delete role member hosts or ip addresses on version 1
+// HEADER								: X-Auth-Token	=> User Scoped token
+// URL arguments						: n/a
+// response								: nothing
+// response status code					: 204 or 4xx/5xx
+//
+// Delete the role.
+//
+//---------------------------------------------------------
+//
+// Mountpath							: '/v1/role/token/<role token>'
+//
+// DELETE '/v1/role/token/<role token>'	: delete role token on version 1
+// HEADER								: X-Auth-Token	=> User Scoped token
+// URL arguments						: undefined
+// response								: nothing
+// response status code					: 204 or 4xx/5xx
+//
+// Delete the role token by user.
+//
+//---------------------------------------------------------
 //
 // Mountpath							: '/v1/role'
 //
@@ -1783,9 +2122,9 @@ router.head('/', function(req, res, next)
 //										  Role members associated with this Id will be deleted.
 //	"host":	<string, JSON string array>	: this value is string for one IP address, or string array encoded JSON string
 //										  for IP addresses.
-//	"extra"								: extra data(string), current supports only "openstack-auto-v1"
 // response								: nothing
 // response status code					: 204 or 4xx/5xx
+//
 //
 // This mount point is for deleting ip addresses from roles by container unique key which includes ip addresses.
 // The requester must be role member which is allowed to access this mount point for removing IP address by cuk.
@@ -1807,27 +2146,50 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	//
 	// Check Path type and branch
 	//
-	var	urlpath = decodeURI(req.baseUrl);
-	if(urlpath == '/v1/role' || urlpath == '/v1/role/'){
-		// urlpath is /v1/role, this is to delete ip address by cuk
-		if(!rawDeleteIpsByCuk(req, res)){
-			// something error, and already do error processing.
-			return;
-		}
+	var	keys			= r3keys();
+	var	is_delete_token	= false;
+	var	is_delete_ip	= false;
+	var	urlpath			= decodeURI(req.baseUrl);
+	var	requestptn		= new RegExp(keys.MATCH_URI_GET_RTOKEN);		// regex = /^\/v1\/role\/token\/(.*)/
+	var	reqmatchs		= urlpath.match(requestptn);
+	if(!apiutil.isEmptyArray(reqmatchs) && 2 <= reqmatchs.length && '' !== apiutil.getSafeString(reqmatchs[1])){
+		// get token
+		is_delete_token	= true;
 	}else{
-		// urlpath is not /v1/role, expected /v1/role/<role>, this is to delete role.
-		if(!rawDeleteRole(req, res)){
-			// something error, and already do error processing.
-			return;
+		// recheck simply
+		if(urlpath == '/v1/role' || urlpath == '/v1/role/'){
+			// urlpath is /v1/role, this is to delete ip address by cuk
+			is_delete_ip= true;
+		}else{
+			// urlpath is not /v1/role, expected /v1/role/<role>, this is to delete role.
 		}
 	}
+
+	// Run
+	if(is_delete_token){
+		// delete role token.
+		if(!rawDeleteRoleToken(req, res)){
+			r3logger.elog('failed to delete role token.');
+		}
+	}else if(is_delete_ip){
+		// delete ip address by cuk
+		if(!rawDeleteIpsByCuk(req, res)){
+			r3logger.elog('failed to delete ip address by cuk.');
+		}
+	}else{
+		// delete role / role token.
+		if(!rawDeleteRoleByPath(req, res)){
+			r3logger.elog('failed to delete role.');
+		}
+	}
+
 	res.send();
 });
 
 //
-// Utility for deleting role
+// Utility for deleting role / role token
 //
-function rawDeleteRole(req, res)
+function rawDeleteRoleByPath(req, res)
 {
 	//------------------------------
 	// check token for API mode
@@ -1850,31 +2212,10 @@ function rawDeleteRole(req, res)
 	}
 
 	//------------------------------
-	// check arguments
-	//------------------------------
-	var	tg_host	= null;
-	if(apiutil.isSafeEntity(req.query) &&apiutil.isSafeString(req.query.host)){
-		tg_host	= apiutil.getSafeString(req.query.host);
-	}
-	var	tg_port	= 0;
-	if(apiutil.isSafeEntity(req.query) && apiutil.isSafeString(req.query.port)){
-		tg_port	= parseInt(req.query.port);
-		if(isNaN(tg_port)){
-			r3logger.elog('DELETE request has port which is not number: ' + JSON.stringify(req.query.port));
-			resutil.errResponse(req, res, 400);							// 400: Bad Request
-			return false;
-		}
-	}
-	var	tg_cuk	= null;
-	if(apiutil.isSafeEntity(req.query) && apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
-		tg_cuk	= req.query.cuk.trim();
-	}
-
-	//------------------------------
 	// get role name
 	//------------------------------
 	// check get token type and parse role name
-	var	requestptn	= new RegExp('^/v1/role/(.*)');						// regex = /^\/v1\/role\/(.*)/
+	var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);			// regex = /^\/v1\/role\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
 		r3logger.elog('HEAD request url does not have role name');
@@ -1929,6 +2270,8 @@ function rawDeleteRole(req, res)
 	// Run
 	//------------------------------
 	var	clientip;
+	var	port;
+	var	cuk;
 	var	result;
 	if(null === token_type){
 		// remove host ip address in role
@@ -1938,16 +2281,36 @@ function rawDeleteRole(req, res)
 			resutil.errResponse(req, res, 400);							// 400: Bad Request
 			return false;
 		}
-		// remove host
-		result = k2hr3.removeHost(tenantname, rolename, null, clientip, tg_port, tg_cuk);
+
+		// check port
+		if(apiutil.isSafeString(req.query.port)){
+			if(isNaN(req.query.port)){
+				r3logger.elog('DELETE request has port which is not number: ' + JSON.stringify(req.query.port));
+				resutil.errResponse(req, res, 400);						// 400: Bad Request
+				return;
+			}
+			port = parseInt(req.query.port);
+		}else{
+			port = 0;													// default any
+		}
+
+		// check cuk parameter
+		if(apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
+			cuk = apiutil.getSafeString(req.query.cuk).trim();
+		}else{
+			cuk = null;
+		}
+
+		// remove host(check requester and requester is target)
+		result = k2hr3.removeHost(tenantname, rolename, clientip, port, cuk, clientip, port, cuk);
 
 		// result
 		if(!result.result){
-			r3logger.elog('DELETE request failure - remove host ip(' + clientip + ':' + String(tg_port) + ') address in role(tenant=' + tenantname + ', role=' + rolename + ') host');
+			r3logger.elog('DELETE request failure - remove host by ip(' + clientip + ':' + String(port) + ') address, cuk(' + JSON.stringify(cuk) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
 			resutil.errResponse(req, res, 403);							// 403: Forbidden
 			return false;
 		}else{
-			r3logger.dlog('DELETE request succeed - remove host ip(' + clientip + ':' + String(tg_port) + ') address in role(tenant=' + tenantname + ', role=' + rolename + ') host');
+			r3logger.dlog('DELETE request succeed - remove host by ip(' + clientip + ':' + String(port) + ') address, cuk(' + JSON.stringify(cuk) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
 			res.status(204);											// 204: No Content
 		}
 
@@ -1959,7 +2322,50 @@ function rawDeleteRole(req, res)
 			resutil.errResponse(req, res, 400);							// 400: Bad Request
 			return false;
 		}
-		result = r3token.removeRoleTokenByIP(token_str, clientip);
+
+		// check full role yrn path in token and path
+		if(token_info.role != roleyrn){
+			r3logger.elog('DELETE request is something wrong, the role token(' + JSON.stringify(token_info.role) + ') and role path(' + JSON.stringify(roleyrn) + ') do not match.');
+			resutil.errResponse(req, res, 400);							// 400: Bad Request
+			return false;
+		}
+
+		// check for k8s cuk/port
+		if(token_info.extra == keys.VALUE_K8S_V1){
+			// cuk
+			if(!apiutil.isSafeString(req.query.cuk) || !apiutil.isSafeString(req.query.cuk.trim())){
+				r3logger.elog('DELETE request need cuk parameter for deleting role token which is made for k8s.');
+				resutil.errResponse(req, res, 400);						// 400: Bad Request
+				return false;
+			}
+			cuk = apiutil.getSafeString(req.query.cuk).trim();
+
+			if(token_info.cuk != cuk){
+				r3logger.elog('DELETE request cuk(' + JSON.string(cuk) + ') parameter is invalid.');
+				resutil.errResponse(req, res, 400);						// 400: Bad Request
+				return false;
+			}
+
+			// port
+			if(apiutil.isSafeString(req.query.port)){
+				if(isNaN(req.query.port)){
+					r3logger.elog('DELETE request has port which is not number: ' + JSON.stringify(req.query.port));
+					resutil.errResponse(req, res, 400);					// 400: Bad Request
+					return;
+				}
+				port = parseInt(req.query.port);
+			}else{
+				port = 0;												// default any
+			}
+			if(token_info.port != port){
+				r3logger.elog('DELETE request port(' + JSON.stringify(port) + ') parameter is invalid.');
+				resutil.errResponse(req, res, 400);						// 400: Bad Request
+				return false;
+			}
+		}
+
+		// remove role token
+		result = r3token.removeRoleTokenByIP(token_str, clientip, token_info.port, token_info.cuk);
 
 		// result
 		if(!result.result){
@@ -1972,22 +2378,43 @@ function rawDeleteRole(req, res)
 		}
 
 	}else if('user' === apiutil.getSafeString(token_type)){
-		if(apiutil.isSafeString(tg_host)){
+		if(apiutil.isSafeString(req.query.host)){
 			// remove host(hostname or ip address) in role
-			var	tg_ip	= null;
-			if(apiutil.isIpAddressString(tg_host)){
-				tg_ip	= tg_host;
-				tg_host	= null;
+			var	tg_host	= apiutil.getSafeString(req.query.host);
+			var	tmp_host= apiutil.parseJSON(req.query.host);
+			if(!apiutil.isEmptyArray(tmp_host)){
+				tg_host	= tmp_host;
 			}
-			result = k2hr3.removeHost(tenantname, rolename, tg_host, tg_ip, tg_port, tg_cuk);
+
+			// check port
+			if(apiutil.isSafeString(req.query.port)){
+				if(isNaN(req.query.port)){
+					r3logger.elog('GET request has port which is not number: ' + JSON.stringify(req.query.port));
+					resutil.errResponse(req, res, 400);						// 400: Bad Request
+					return;
+				}
+				port = parseInt(req.query.port);
+			}else{
+				port = 0;													// default any
+			}
+
+			// check cuk parameter
+			if(apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
+				cuk = apiutil.getSafeString(req.query.cuk).trim();
+			}else{
+				cuk = null;
+			}
+
+			// remove host(not check requester)
+			result = k2hr3.removeHost(tenantname, rolename, tg_host, port, cuk);
 
 			// result
 			if(!result.result){
-				r3logger.elog('DELETE request failure - remove host(' + apiutil.getSafeString(tg_ip) + apiutil.getSafeString(tg_host) + ':' + String(tg_port) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
+				r3logger.elog('DELETE request failure - remove host(' + apiutil.getSafeString(tg_host) + ':' + String(port) + ') address, cuk(' + JSON.stringify(cuk) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
 				resutil.errResponse(req, res, 403);						// 403: Forbidden
 				return false;
 			}else{
-				r3logger.dlog('DELETE request succeed - remove host(' + apiutil.getSafeString(tg_ip) + apiutil.getSafeString(tg_host) + ':' + String(tg_port) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
+				r3logger.dlog('DELETE request succeed - remove host(' + apiutil.getSafeString(tg_host) + ':' + String(port) + ') address, cuk(' + JSON.stringify(cuk) + ') in role(tenant=' + tenantname + ', role=' + rolename + ') host');
 				res.status(204);										// 204: No Content
 			}
 		}else{
@@ -2021,19 +2448,9 @@ function rawDeleteIpsByCuk(req, res)
 {
 	var	keys = r3keys();
 
-	//------------------------------
-	// check Client's IP address allowed
-	//------------------------------
 	var	clientip = apiutil.getClientIpAddress(req);
 	if(!apiutil.isSafeString(clientip)){
 		r3logger.elog('DELETE request does not have ip address for client');
-		resutil.errResponse(req, res, 400);								// 400: Bad Request
-		return false;
-	}
-
-	var	adminips = k2hr3.findRoleHost(null, delhost_role_yrn, null, clientip, null, null, null);
-	if(!apiutil.isSafeEntity(adminips)){
-		r3logger.elog('DELETE request from ip address(' + JSON.stringify(clientip) + ') is not role(' + JSON.stringify(delhost_role_yrn) + ') member.');
 		resutil.errResponse(req, res, 400);								// 400: Bad Request
 		return false;
 	}
@@ -2062,37 +2479,62 @@ function rawDeleteIpsByCuk(req, res)
 		}
 	}
 
-	var	tg_cuk = null;
-	if(apiutil.isSafeString(req.query.cuk) && apiutil.isSafeString(req.query.cuk.trim())){
-		tg_cuk	= req.query.cuk.trim();
-	}else{
+	// cuk parameter
+	if(!apiutil.isSafeString(req.query.cuk) || !apiutil.isSafeString(req.query.cuk.trim())){
 		r3logger.elog('DELETE request has invalid cuk parameter: ' + JSON.stringify(req.query.cuk));
 		resutil.errResponse(req, res, 400);								// 400: Bad Request
 		return false;
 	}
+	var	tg_cuk	= req.query.cuk.trim();
 
-	var	tg_extra = null;
-	if(apiutil.isSafeString(req.query.extra) && apiutil.isSafeString(req.query.extra.trim())){
-		tg_extra = req.query.extra.trim().toLowerCase();
+	var	tg_extra= k2hr3.getExtraFromCuk(tg_cuk);
+	var	adminips;
 
+	// Check client ip address
+	if(tg_extra == keys.VALUE_K8S_V1){
+		// for kubernetes
+
+		// check client ip address is the host itself to be removed
+		// 
 		// [NOTE]
-		// Current supports only openstack.
+		// if result is true, it means client ip address is cuk's node ip address.
+		// after that, the comparison between the cuk object data contents and the cuk data
+		// in k2hdkc linked to the this ip address is done in removeIpsByCuk() function.
 		//
-		if(tg_extra != keys.VALUE_OPENSTACK_V1){
-			r3logger.elog('DELETE request has unknown extra parameter: ' + JSON.stringify(req.query.extra));
-			resutil.errResponse(req, res, 400);							// 400: Bad Request
+		if(!k2hr3.compareIpAndKubernetesCuk(clientip, tg_cuk)){
+			// client ip is not as same as cuk's node ip address, 
+			// then retry to compare delhost ip in config and it.
+			adminips = k2hr3.findRoleHost(null, delhost_role_yrn, null, clientip, 0, null, null, false);	// not strict checking for admin delhost host
+			if(!apiutil.isSafeEntity(adminips)){
+				r3logger.elog('DELETE request from ip address(' + JSON.stringify(clientip) + ') is not role(' + JSON.stringify(delhost_role_yrn) + ') member.');
+				resutil.errResponse(req, res, 400);								// 400: Bad Request
+				return false;
+			}
+		}
+	}else if(tg_extra == keys.VALUE_OPENSTACK_V1){
+		// for openstack
+
+		// In case of openstack, when deleting without token, it can be deleted only from
+		// the IP address registered as delhost ip in config.
+		//
+		// Check client ip address is in role admin member ip address.
+		adminips = k2hr3.findRoleHost(null, delhost_role_yrn, null, clientip, 0, null, null, false);		// not strict checking for admin delhost host
+		if(!apiutil.isSafeEntity(adminips)){
+			r3logger.elog('DELETE request from ip address(' + JSON.stringify(clientip) + ') is not role(' + JSON.stringify(delhost_role_yrn) + ') member.');
+			resutil.errResponse(req, res, 400);						// 400: Bad Request
 			return false;
 		}
 	}else{
-		r3logger.elog('DELETE request has invalid extra parameter: ' + JSON.stringify(req.query.extra));
-		resutil.errResponse(req, res, 400);								// 400: Bad Request
+		// Currently supports only openstack and kubernetes
+		r3logger.elog('DELETE request has unknown extra type in cuk parameter: ' + JSON.stringify(req.query.cuk));
+		resutil.errResponse(req, res, 400);							// 400: Bad Request
 		return false;
 	}
 
 	//------------------------------
 	// Run
 	//------------------------------
-	var	resobj = k2hr3.removeIpsByCuk(tg_cuk, tg_extra, tg_host, true);
+	var	resobj = k2hr3.removeIpsByCuk(tg_cuk, tg_host, true);
 	if(!apiutil.isSafeEntity(resobj) || !apiutil.isSafeEntity(resobj.result) || false === resobj.result){
 		var	message = null;
 		if(apiutil.isSafeEntity(resobj) && apiutil.isSafeEntity(resobj.message)){
@@ -2106,6 +2548,57 @@ function rawDeleteIpsByCuk(req, res)
 	}
 	r3logger.dlog('succeed : ' + resobj.message);
 	res.status(204);													// 204: No Content
+
+	return true;
+}
+
+//
+// Utility for deleting role token
+//
+function rawDeleteRoleToken(req, res)
+{
+	//------------------------------
+	// check token
+	//------------------------------
+	if(!r3token.hasAuthTokenHeader(req)){
+		r3logger.elog('DELETE request does not have any auth token.');
+		resutil.errResponse(req, res, 400);								// 400: Bad Request
+		return false;
+	}
+	var	token_result = r3token.checkToken(req, true, true);				// scoped, user token
+	if(!token_result.result){
+		r3logger.elog(token_result.message);
+		resutil.errResponse(req, res, token_result.status);
+		return false;
+	}
+	var	token_info	= token_result.token_info;
+	var	keys		= r3keys(token_info.user, token_info.tenant);
+
+	//------------------------------
+	// get role token from uri
+	//------------------------------
+	// check get token type and parse role name
+	var	requestptn	= new RegExp(keys.MATCH_URI_GET_RTOKEN);			// regex = /^\/v1\/role\/token\/(.*)/
+	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
+	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
+		r3logger.elog('DELETE request url does not have token string nor yrn path');
+		resutil.errResponse(req, res, 400);								// 400: Bad Request
+		return false;
+	}
+	var	token_string	= apiutil.getSafeString(reqmatchs[1]);
+
+	//------------------------------
+	// Run
+	//------------------------------
+	if(!r3token.removeRoleTokenByPath(token_string, token_info.tenant)){
+		r3logger.elog('failed to remove role token.');
+		r3logger.elog('DELETE request failure - remove role token(' + token_string + ')');
+		resutil.errResponse(req, res, 403);								// 403: Forbidden
+		return false;
+	}else{
+		r3logger.dlog('DELETE request succeed - remove role token(' + token_string + ')');
+		res.status(204);												// 204: No Content
+	}
 
 	return true;
 }

@@ -99,6 +99,52 @@ describe('PROCESS : WATHCER', function(){				// eslint-disable-line no-undef
 				done();
 			});
 	});
+
+	it('CHECK WATCHER RESULT : get k8s_test_role role which has only two IP addresses with response 200', function(done){	// eslint-disable-line no-undef
+		var	uri	= '/v1/role';
+		uri		+= '/k8s_test_role';													// path:	yrn:yahoo:::tenant0:role:k8s_test_role
+		uri		+= '?expand=false';														// expand:	false
+
+		chai.request(app)
+			.get(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.scopedtoken.tenant0)							// tenant0
+			.end(function(err, res){
+				expect(res).to.have.status(200);
+				expect(res).to.be.json;
+				expect(res.body).to.be.an('object');
+				expect(res.body.result).to.be.a('boolean').to.be.true;
+				expect(res.body.message).to.be.a('null');
+				expect(res.body.role).to.be.an('object');
+				expect(res.body.role.hosts).to.be.an('object');
+				expect(res.body.role.hosts.hostnames).to.be.an.instanceof(Array).to.have.lengthOf(0);
+				expect(res.body.role.hosts.ips).to.be.an.instanceof(Array);
+
+				if(3 == res.body.role.hosts.ips.length){
+					// when run test:all, array is 3
+					expect(res.body.role.hosts.ips).to.be.an.instanceof(Array).to.have.lengthOf(3);
+					expect(res.body.role.hosts.ips[0]).to.be.a('string').to.equal('255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+					expect(res.body.role.hosts.ips[1]).to.be.a('string').to.equal('255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+					expect(res.body.role.hosts.ips[2]).to.be.a('string').to.equal('255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+
+				}else if(4 == res.body.role.hosts.ips.length){
+					// when run test:wacher as single testing, array is 4
+					expect(res.body.role.hosts.ips).to.be.an.instanceof(Array).to.have.lengthOf(4);
+					expect(res.body.role.hosts.ips[0]).to.be.a('string').to.equal('127.0.0.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ== k8s-auto-v1');
+					expect(res.body.role.hosts.ips[1]).to.be.a('string').to.equal('255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+					expect(res.body.role.hosts.ips[2]).to.be.a('string').to.equal('255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+					expect(res.body.role.hosts.ips[3]).to.be.a('string').to.equal('255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 k8s-auto-v1');
+
+				}else{
+					// force do error
+					expect(res.body.role.hosts.ips).to.be.an.instanceof(Array).to.have.lengthOf(0);
+				}
+
+				done();
+			});
+	});
+
+
 });
 
 /*

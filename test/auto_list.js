@@ -216,7 +216,7 @@ describe('API : LIST', function(){						// eslint-disable-line no-undef
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.true;
 				expect(res.body.message).to.be.null;
-				expect(res.body.children).to.have.lengthOf(5);
+				expect(res.body.children).to.have.lengthOf(6);
 				done();
 			});
 	});
@@ -248,7 +248,7 @@ describe('API : LIST', function(){						// eslint-disable-line no-undef
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.true;
 				expect(res.body.message).to.be.null;
-				expect(res.body.children).to.have.lengthOf(5);
+				expect(res.body.children).to.have.lengthOf(6);
 				done();
 			});
 	});

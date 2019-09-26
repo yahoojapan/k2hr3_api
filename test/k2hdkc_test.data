@@ -296,6 +296,14 @@
 #		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.2.1<\s>0
 #		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/__LOCAL_HOST_IP__<\s>0
 #
+####
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/policies
+#		=> []
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/name
+#	yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/ip
+#		yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/ip/__LOCAL_HOST_IP__<\s>0
+#
 ################################################################
 # SERVICE AND ETC
 ################################################################
@@ -321,7 +329,7 @@
 #   	=> enable
 #     yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner
 #       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/id
-#        	=> [31100,31100,33301,33301]
+#        	=> "33333333-3333-4000-8000-333333330000"
 #       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/policies
 #        	=> []
 #       yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/reference
@@ -332,7 +340,7 @@
 #         yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip
 #             => enable
 #           yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/__LOCAL_HOST_IP__<\s>0
-#               => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31100,31100,33301,33301]}
+#               => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330001"}
 #   yrn:yahoo:::__TENANT_NAME_SUB__:policy
 #   	=> enable
 #   yrn:yahoo:::__TENANT_NAME_SUB__:resource
@@ -349,7 +357,7 @@
 #     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/@
 #         => ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role"]
 #     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/id
-#         => [30111,30111,30300,30300]
+#         => "33333333-3333-4000-8000-333333330002"
 #     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/policies
 #         => []
 #     yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/reference
@@ -360,7 +368,7 @@
 #       yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip
 #           => enable
 #         yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/__LOCAL_HOST_IP__<\s>0
-#             => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[30111,30111,30300,30300]}
+#             => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330003"}
 #
 ###
 # yrn:yahoo:testservice
@@ -370,7 +378,7 @@
 #           => enable
 #         yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role
 #           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/id
-#               => [31111,31111,33300,33300]
+#               => "33333333-3333-4000-8000-333333330004"
 #           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/policies
 #               => ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy"]
 #           yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/reference
@@ -381,7 +389,7 @@
 #             yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip
 #                 => enable
 #               yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip/__LOCAL_HOST_IP__<\s>0
-#                   => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31111,31111,33300,33300]}
+#                   => {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330005"}
 #       yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy
 #           => enable
 #         yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy:acr-policy
@@ -409,6 +417,65 @@
 ################################################################
 # IAAS & its IP in ROLE
 ################################################################
+# Cuk values for kubernetes
+#
+# cuk 1 =	"eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+# 		=>	base64 {
+# 				json {
+# 					k8s_container_id:		"11111111111111111111111111111111",
+# 					k8s_k2hr3_rand:			"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+# 					k8s_namespace:			"auto-test-namespace",
+# 					k8s_node_ip:			"255.255.127.1",
+# 					k8s_node_name:			"auto-test-node-1",
+# 					k8s_pod_id:				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+# 					k8s_pod_ip:				"255.127.127.1",
+# 					k8s_pod_name:			"auto-test-pod-1",
+# 					k8s_service_account:	"auto-test-sa"
+# 				}
+# 			}
+# cuk 2 =	"eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+# 		=>	base64 {
+# 				json {
+# 					k8s_container_id:		"22222222222222222222222222222222",
+# 					k8s_k2hr3_rand:			"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+# 					k8s_namespace:			"auto-test-namespace",
+# 					k8s_node_ip:			"255.255.127.2",
+# 					k8s_node_name:			"auto-test-node-2",
+# 					k8s_pod_id:				"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+# 					k8s_pod_ip:				"255.127.127.2",
+# 					k8s_pod_name:			"auto-test-pod-2",
+# 					k8s_service_account:	"auto-test-sa"
+# 				}
+# 			}
+# cuk 3 =	"eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+# 		=>	base64 {
+# 				json {
+# 					k8s_container_id:		"33333333333333333333333333333333",
+# 					k8s_k2hr3_rand:			"cccccccccccccccccccccccccccccccc",
+# 					k8s_namespace:			"auto-test-namespace",
+# 					k8s_node_ip:			"255.255.127.3",
+# 					k8s_node_name:			"auto-test-node-3",
+# 					k8s_pod_id:				"cccccccccccccccccccccccccccccccc",
+# 					k8s_pod_ip:				"255.127.127.3",
+# 					k8s_pod_name:			"auto-test-pod-3",
+# 					k8s_service_account:	"auto-test-sa"
+# 				}
+# 			}
+# cuk 4 =	"eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ=="
+# 		=>	base64 {
+# 				json {
+# 					k8s_container_id:		"44444444444444444444444444444444",
+# 					k8s_k2hr3_rand:			"dddddddddddddddddddddddddddddddd",
+# 					k8s_namespace:			"auto-test-namespace",
+# 					k8s_node_ip:			"127.0.0.1",
+# 					k8s_node_name:			"auto-test-node-4",
+# 					k8s_pod_id:				"dddddddddddddddddddddddddddddddd",
+# 					k8s_pod_ip:				"127.0.0.1",
+# 					k8s_pod_name:			"auto-test-pod-4",
+# 					k8s_service_account:	"auto-test-sa"
+# 				}
+# 			}
+#
 #### IAAS Key
 # yrn:yahoo:::
 # 	yrn:yahoo::::iaas
@@ -420,18 +487,39 @@
 # 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk
 # 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk
 #
+# 			yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> enable
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+# 			yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> enable
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+# 			yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> enable
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+# 			yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==
+#				=> enable
+# 				yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==
+#
 #### IP Key under Role
 # yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
 #	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts
 #		yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip
 # 			yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk
-#				=> {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":[11111,11111,11111,11111]}
+#				=> {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":"11111111-1111-4000-8000-111111110000"}
 # 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk
-#				=> {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":[22222,22222,22222,22222]}
+#				=> {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":"22222222-2222-4000-8000-222222220000"}
 # 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk
-#				=> {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":[33333,33333,33333,33333]}
+#				=> {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":"33333333-3333-4000-8000-333333330000"}
 #
-
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> {"ip":"255.255.127.1","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"aaaaaaaa-aaaa-4000-8000-aaaaaaaa0000","k8s_container_id":"11111111111111111111111111111111","k8s_k2hr3_rand":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.1","k8s_node_name":"auto-test-node-1","k8s_pod_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","k8s_pod_ip":"255.127.127.1","k8s_pod_name":"auto-test-pod-1","k8s_service_account":"auto-test-sa"}
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> {"ip":"255.255.127.2","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"bbbbbbbb-bbbb-4000-8000-bbbbbbbb0000","k8s_container_id":"22222222222222222222222222222222","k8s_k2hr3_rand":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.2","k8s_node_name":"auto-test-node-2","k8s_pod_id":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","k8s_pod_ip":"255.127.127.2","k8s_pod_name":"auto-test-pod-2","k8s_service_account":"auto-test-sa"}
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9
+#				=> {"ip":"255.255.127.3","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"cccccccc-cccc-4000-8000-cccccccc0000","k8s_container_id":"33333333333333333333333333333333","k8s_k2hr3_rand":"cccccccccccccccccccccccccccccccc","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.3","k8s_node_name":"auto-test-node-3","k8s_pod_id":"cccccccccccccccccccccccccccccccc","k8s_pod_ip":"255.127.127.3","k8s_pod_name":"auto-test-pod-3","k8s_service_account":"auto-test-sa"}
+# 		 	yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==
+#				=> {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==","deadat":"0","extra":"k8s-auto-v1","id":"cccccccc-cccc-4000-8000-cccccccc0000","k8s_container_id":"44444444444444444444444444444444","k8s_k2hr3_rand":"dddddddddddddddddddddddddddddddd","k8s_namespace":"auto-test-namespace","k8s_node_ip":"127.0.0.1","k8s_node_name":"auto-test-node-4","k8s_pod_id":"dddddddddddddddddddddddddddddddd","k8s_pod_ip":"127.0.0.1","k8s_pod_name":"auto-test-pod-4","k8s_service_account":"auto-test-sa"}
+#
 ################################################################
 # Clean keys
 ################################################################
@@ -453,6 +541,7 @@ rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 all
 #rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 all
 rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 all
 rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 all
+rm yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 all
 
 ################################################################
 # Make yrn Tree
@@ -619,13 +708,13 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11111,11111,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11111,11111,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.0 * " {"ip":"127.0.1.0","hostname":null,"port":0,"extra":null,"id":[11111,11111,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.1 * " {"ip":"127.0.1.1","hostname":null,"port":0,"extra":null,"id":[11111,11111,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[11111,11111,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110001"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/name/host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110002"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.0 * " {"ip":"127.0.1.0","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110003"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/127.0.1.1 * " {"ip":"127.0.1.1","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110004"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110005"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/id [11111,11111,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/id "11111111-1111-4000-8000-111111110006"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/reference 0
 
@@ -638,13 +727,13 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11122,11122,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[11122,11122,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.0 * " {"ip":"127.0.2.0","hostname":null,"port":0,"extra":null,"id":[11122,11122,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.1 * " {"ip":"127.0.2.1","hostname":null,"port":0,"extra":null,"id":[11122,11122,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[11122,11122,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110007"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/name/host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_01.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110008"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.0 * " {"ip":"127.0.2.0","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-111111110009"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/127.0.2.1 * " {"ip":"127.0.2.1","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-11111111000a"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"11111111-1111-4000-8000-11111111000b"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/id [11122,11122,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/id "11111111-1111-4000-8000-11111111000c"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/reference 0
 
@@ -657,13 +746,13 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_s
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22211,22211,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22211,22211,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.0 * " {"ip":"127.1.1.0","hostname":null,"port":0,"extra":null,"id":[22211,22211,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.1 * " {"ip":"127.1.1.1","hostname":null,"port":0,"extra":null,"id":[22211,22211,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[22211,22211,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220000"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/name/host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220001"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.0 * " {"ip":"127.1.1.0","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220002"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/127.1.1.1 * " {"ip":"127.1.1.1","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220003"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220004"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/id [22211,22211,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/id "22222222-2222-4000-8000-222222220005"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02/reference 0
 
@@ -676,13 +765,13 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_o
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22222,22222,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[22222,22222,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.0 * " {"ip":"127.1.2.0","hostname":null,"port":0,"extra":null,"id":[22222,22222,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.1 * " {"ip":"127.1.2.1","hostname":null,"port":0,"extra":null,"id":[22222,22222,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[22222,22222,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220006"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/name/host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_02.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220007"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.0 * " {"ip":"127.1.2.0","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220008"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/127.1.2.1 * " {"ip":"127.1.2.1","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-222222220009"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"22222222-2222-4000-8000-22222222000a"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/id [22222,22222,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/id "22222222-2222-4000-8000-22222222000b"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02/reference 0
 
@@ -694,13 +783,13 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33311,33311,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33311,33311,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":[33311,33311,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":[33311,33311,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[33311,33311,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330000"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/name/host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_str_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330001"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330002"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330003"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330004"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/id [33311,33311,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/id "33333333-3333-4000-8000-333333330005"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_str_role_03/reference 0
 
@@ -712,16 +801,30 @@ ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33322,33322,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":[33322,33322,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":[33321,33321,11101,11101]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":[33322,33322,11100,11100]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":[33322,33322,22200,22200]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[33322,33322,33300,33300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host01.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330006"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/name/host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp * " {"ip":null,"hostname":"host02.k2hr3_entest_obj_03.k2hr3.yahoo.co.jp","port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330007"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330008"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.0 * " {"ip":"127.3.1.0","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330009"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/127.3.1.1 * " {"ip":"127.3.1.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-33333333000a"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-33333333000b"}
 ### id value is dummy
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/id [33322,33322,11111,11111]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/id "33333333-3333-4000-8000-33333333000c"
 ### reference must be bin, but this tool set only string. thus this value is dummy
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_03/reference 0
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/policies []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/name enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/ip enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330009"}
+### id value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/id "33333333-3333-4000-8000-33333333000d"
+### reference must be bin, but this tool set only string. thus this value is dummy
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04 yrn:yahoo:::__TENANT_NAME_MAIN__:role:k2hr3_entest_obj_role_04/reference 0
 
 ################################################################
 # SERVICE AND ETC
@@ -746,14 +849,14 @@ ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:service enabl
 ss yrn:yahoo:::__TENANT_NAME_SUB__:service yrn:yahoo::::service:testservice
 ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:role enable
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner
-ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/id [31100,31100,33301,33301]
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/id "33333333-3333-4000-8000-33333333000d"
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/policies []
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/reference 0
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":[31101,31101,33302,33302]}
-ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31100,31100,33301,33301]}
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/127.0.0.1 * " {"ip":"127.0.0.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-33333333000e"}
+ss yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip "yrn:yahoo:::__TENANT_NAME_SUB__:role:test_service_owner/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-33333333000f"}
 ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:policy enable
 ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:resource enable
 ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:service enable
@@ -764,14 +867,14 @@ ss yrn:yahoo:::__TENANT_NAME_SUB__ yrn:yahoo:::__TENANT_NAME_SUB__:service enabl
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:service yrn:yahoo::::service:testservice
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/@ ["yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role"]
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/id [30111,30111,30300,30300]
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/id "33333333-3333-4000-8000-333333330010"
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/policies []
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/reference 0
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/name enable
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip enable
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/127.1.0.1 * " {"ip":"127.1.0.1","hostname":null,"port":0,"extra":null,"id":[30112,30112,30302,30302]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[30111,30111,30300,30300]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/127.1.0.1 * " {"ip":"127.1.0.1","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330011"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:test_service_tenant/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330012"}
 
 #
 # service in tenant : yrn:yahoo:testservice::__TENANT_NAME_MAIN__
@@ -787,8 +890,8 @@ ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservi
 ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts
 ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/name enable
 ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip enable
-ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip "yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":[31111,31111,33300,33300]}
-ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/id [31111,31111,33300,33300]
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip "yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/hosts/ip/__LOCAL_HOST_IP__ * " {"ip":"__LOCAL_HOST_IP__","hostname":null,"port":0,"extra":null,"id":"33333333-3333-4000-8000-333333330013"}
+ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/id "33333333-3333-4000-8000-333333330014"
 ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role yrn:yahoo:testservice::__TENANT_NAME_MAIN__:role:acr-role/reference 0
 
 ss yrn:yahoo:testservice::__TENANT_NAME_MAIN__ yrn:yahoo:testservice::__TENANT_NAME_MAIN__:policy enable
@@ -818,16 +921,56 @@ ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:r
 ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk"
 ss yrn:yahoo::::iaas:openstack:auto-test-cuk "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk"
 
+ss yrn:yahoo::::iaas           yrn:yahoo::::iaas:k8s               enable
+
+ss yrn:yahoo::::iaas:k8s yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 enable
+ss yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+
+ss yrn:yahoo::::iaas:k8s yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 enable
+ss yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+
+ss yrn:yahoo::::iaas:k8s yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 enable
+ss yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9 "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9"
+
+ss yrn:yahoo::::iaas:k8s yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==         enable
+ss yrn:yahoo::::iaas:k8s:eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==         "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/127.0.0.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ=="
+
 #
 # yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
 #
 ss yrn:yahoo:::__TENANT_NAME_MAIN__                               yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/policies []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/id        "66666666-6666-4000-8000-666666660000"
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/reference 0
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/policies  []
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts
 ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts     yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk"     {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":[11111,11111,11111,11111]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk" {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":[22222,22222,22222,22222]}
-ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk" {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":[33333,33333,33333,33333]}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/127.0.0.1 * auto-test-cuk"     {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"auto-test-cuk","extra":"openstack-auto-v1","id":"44444444-4444-4000-8000-444444440000"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.1 * auto-test-cuk" {"ip":"255.255.255.1","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"2404449632","extra":"openstack-auto-v1","id":"44444444-4444-4000-8000-444444440001"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:auto_test_role/hosts/ip/255.255.255.2 * auto-test-cuk" {"ip":"255.255.255.2","hostname":null,"port":0,"cuk":"auto-test-cuk","deadat":"0","extra":"openstack-auto-v1","id":"44444444-4444-4000-8000-444444440002"}
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__                              yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/id        "66666666-6666-4000-8000-666666660001"
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/reference 0
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/policies  []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role           yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts     yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9" {"ip":"255.255.127.1","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEiLCJrOHNfazJocjNfcmFuZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjEiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMSIsIms4c19wb2RfaWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4xIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0xIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"aaaaaaaa-aaaa-4000-8000-aaaaaaaa0000","k8s_container_id":"11111111111111111111111111111111","k8s_k2hr3_rand":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.1","k8s_node_name":"auto-test-node-1","k8s_pod_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","k8s_pod_ip":"255.127.127.1","k8s_pod_name":"auto-test-pod-1","k8s_service_account":"auto-test-sa"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.2 * eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9" {"ip":"255.255.127.2","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCJrOHNfazJocjNfcmFuZCI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjIiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMiIsIms4c19wb2RfaWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4yIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0yIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"bbbbbbbb-bbbb-4000-8000-bbbbbbbb0000","k8s_container_id":"22222222222222222222222222222222","k8s_k2hr3_rand":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.2","k8s_node_name":"auto-test-node-2","k8s_pod_id":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","k8s_pod_ip":"255.127.127.2","k8s_pod_name":"auto-test-pod-2","k8s_service_account":"auto-test-sa"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/255.255.127.3 * eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9" {"ip":"255.255.127.3","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMiLCJrOHNfazJocjNfcmFuZCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjI1NS4yNTUuMTI3LjMiLCJrOHNfbm9kZV9uYW1lIjoiYXV0by10ZXN0LW5vZGUtMyIsIms4c19wb2RfaWQiOiJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYyIsIms4c19wb2RfaXAiOiIyNTUuMTI3LjEyNy4zIiwiazhzX3BvZF9uYW1lIjoiYXV0by10ZXN0LXBvZC0zIiwiazhzX3NlcnZpY2VfYWNjb3VudCI6ImF1dG8tdGVzdC1zYSJ9","deadat":"0","extra":"k8s-auto-v1","id":"cccccccc-cccc-4000-8000-cccccccc0000","k8s_container_id":"33333333333333333333333333333333","k8s_k2hr3_rand":"cccccccccccccccccccccccccccccccc","k8s_namespace":"auto-test-namespace","k8s_node_ip":"255.255.127.3","k8s_node_name":"auto-test-node-3","k8s_pod_id":"cccccccccccccccccccccccccccccccc","k8s_pod_ip":"255.127.127.3","k8s_pod_name":"auto-test-pod-3","k8s_service_account":"auto-test-sa"}
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip "yrn:yahoo:::__TENANT_NAME_MAIN__:role:k8s_test_role/hosts/ip/127.0.0.1 * eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ=="     {"ip":"127.0.0.1","hostname":null,"port":0,"cuk":"eyJrOHNfY29udGFpbmVyX2lkIjoiNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQiLCJrOHNfazJocjNfcmFuZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX25hbWVzcGFjZSI6ImF1dG8tdGVzdC1uYW1lc3BhY2UiLCJrOHNfbm9kZV9pcCI6IjEyNy4wLjAuMSIsIms4c19ub2RlX25hbWUiOiJhdXRvLXRlc3Qtbm9kZS00IiwiazhzX3BvZF9pZCI6ImRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkIiwiazhzX3BvZF9pcCI6IjEyNy4wLjAuMSIsIms4c19wb2RfbmFtZSI6ImF1dG8tdGVzdC1wb2QtNCIsIms4c19zZXJ2aWNlX2FjY291bnQiOiJhdXRvLXRlc3Qtc2EifQ==","deadat":"0","extra":"k8s-auto-v1","id":"cccccccc-cccc-4000-8000-cccccccc0000","k8s_container_id":"44444444444444444444444444444444","k8s_k2hr3_rand":"dddddddddddddddddddddddddddddddd","k8s_namespace":"auto-test-namespace","k8s_node_ip":"127.0.0.1","k8s_node_name":"auto-test-node-4","k8s_pod_id":"dddddddddddddddddddddddddddddddd","k8s_pod_ip":"127.0.0.1","k8s_pod_name":"auto-test-pod-4","k8s_service_account":"auto-test-sa"}
+
+#
+# yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role
+#
+ss yrn:yahoo:::__TENANT_NAME_MAIN__                                  yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role       yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/id        "66666666-6666-4000-8000-666666660002"
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role       yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/reference 0
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role       yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/policies  []
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role       yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/hosts     enable
+ss yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/hosts yrn:yahoo:::__TENANT_NAME_MAIN__:role:autotest_del_k8s_role/hosts/ip  enable
 
 exit
 ################################################################

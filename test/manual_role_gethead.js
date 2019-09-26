@@ -100,7 +100,7 @@ function getV1Role(token, name, is_expand)
 	req.end();
 }
 
-function getV1RoleToken(token, name)
+function getV1RoleToken(token, name, expire)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers		= {
@@ -110,9 +110,13 @@ function getV1RoleToken(token, name)
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
 	}
+	var	urlarg		= '';
+	if(null !== expire && !isNaN(expire)){
+		urlarg		= '?expire=' + String(expire);
+	}
 	var	options		= {	'host':				hostname,
 						'port':				hostport,
-						'path': 			'/v1/role/token/' + name,
+						'path': 			'/v1/role/token/' + name + urlarg,
 						'method':			'GET',
 						'headers':			headers
 					  };
@@ -161,7 +165,68 @@ function getV1RoleToken(token, name)
 	req.end();
 }
 
-function headV1Role(token, roleyrn)
+function getV1RoleTokenList(token, name, expand)
+{
+	/* eslint-disable indent, no-mixed-spaces-and-tabs */
+	var	headers		= {
+						'Content-Type':		'application/json',
+						'Content-Length':	0,
+					  };
+	if(apiutil.isSafeString(token)){
+		headers['X-Auth-Token'] = token;
+	}
+	var	options		= {	'host':				hostname,
+						'port':				hostport,
+						'path': 			'/v1/role/token/list/' + name + (expand ? '?expand=true' : '?expand=false'),
+						'method':			'GET',
+						'headers':			headers
+					  };
+	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+	r3logger.dlog('request options   = ' + JSON.stringify(options));
+	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
+
+	var	httpobj;
+	if(is_https){
+		if(null !== cacerts.ca){
+			options.ca = cacerts.ca;
+		}
+		options.agent	= new https.Agent(options);
+		httpobj			= https;
+	}else{
+		options.agent	= new http.Agent(options);
+		httpobj			= http;
+	}
+
+	var	req	= httpobj.request(options, function(res)
+	{
+		var	response = '';
+		r3logger.dlog('response status   = ' + res.statusCode);
+		r3logger.dlog('response header   = ' + JSON.stringify(res.headers));
+		res.setEncoding('utf8');
+
+		res.on('data', function (chunk)
+		{
+			r3logger.dlog('response chunk    = ' + chunk);
+			response += chunk;
+		});
+
+		res.on('end', function(result)					// eslint-disable-line no-unused-vars
+		{
+			r3logger.mlog(r3logger.dump(response));		// response is object(or not)
+			console.log('RESPONSE =\n' + JSON.stringify(response));
+			process.exit(0);
+		});
+	});
+
+	req.on('error', function(e)
+	{
+		r3logger.elog('problem with request: ' + e.message);
+	});
+	req.end();
+}
+
+function headV1Role(token, roleyrn, port, cuk)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers		= {
@@ -171,9 +236,21 @@ function headV1Role(token, roleyrn)
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
 	}
+	var	urlargs		= '';
+	if(null !== port){
+		urlargs		= '?port=' + String(port);
+	}
+	if(apiutil.isSafeString(cuk)){
+		if(apiutil.isSafeString(urlargs)){
+			urlargs	+= '&cuk=';
+		}else{
+			urlargs	= '?cuk=';
+		}
+		urlargs		+= cuk;
+	}
 	var	options		= {	'host':				hostname,
 						'port':				hostport,
-						'path': 			'/v1/role/' + roleyrn,
+						'path': 			'/v1/role/' + roleyrn + urlargs,
 						'method':			'HEAD',
 						'headers':			headers
 					  };
@@ -235,12 +312,12 @@ cliutil.getConsoleInput('Method(GET/HEAD)             : ', true, false, function
 
 	if(apiutil.compareCaseString('get', _method)){
 
-		cliutil.getConsoleInput('Get data(DATA)/token(TOKEN)  : ', true, false, function(isbreak, type)
+		cliutil.getConsoleInput('host or token or tokenlist   : ', true, false, function(isbreak, type)
 		{
 			if(isbreak){
 				process.exit(0);
 			}
-			if(apiutil.compareCaseString('data', type)){
+			if(apiutil.compareCaseString('host', type)){
 				// get role data
 				cliutil.getConsoleInput('Scoped user token            : ', true, false, function(isbreak, token)
 				{
@@ -314,8 +391,61 @@ cliutil.getConsoleInput('Method(GET/HEAD)             : ', true, false, function
 							}else{
 								_token = 'R=' + token;
 							}
+
+							if('user' == _token_type){
+								cliutil.getConsoleInput('expire(default or number or no expire(NO))  : ', true, false, function(isbreak, expire)
+								{
+									if(isbreak){
+										process.exit(0);
+									}
+									var	_expire = null;
+									if(!isNaN(expire)){
+										_expire = parseInt(expire);
+									}else if(apiutil.compareCaseString('no expire', expire) || apiutil.compareCaseString('no', expire)){
+										_expire = 0;
+									}
+
+									// run
+									getV1RoleToken(_token, _name, _expire);
+								});
+							}else{
+								// run
+								getV1RoleToken(_token, _name);
+							}
+						});
+					});
+				});
+
+			}else if(apiutil.compareCaseString('tokenlist', type)){
+				// get role token list
+				cliutil.getConsoleInput('Role name                    : ', true, false, function(isbreak, name)
+				{
+					if(isbreak){
+						process.exit(0);
+					}
+					var	_name = name;
+
+					cliutil.getConsoleInput('Scoped User token            : ', true, false, function(isbreak, token)
+					{
+						if(isbreak){
+							process.exit(0);
+						}
+						var	_token = 'U=' + token;
+
+						cliutil.getConsoleInput('expand(default yes) - y/n    : ', true, false, function(isbreak, expand)
+						{
+							if(isbreak){
+								process.exit(0);
+							}
+							var	_expand = true;
+							if(apiutil.compareCaseString('no', expand) || apiutil.compareCaseString('n', expand)){
+								_expand = false;
+							}else{
+								_expand = true;
+							}
+
 							// run
-							getV1RoleToken(_token, _name);
+							getV1RoleTokenList(_token, _name, _expand);
 						});
 					});
 				});
@@ -371,8 +501,28 @@ cliutil.getConsoleInput('Method(GET/HEAD)             : ', true, false, function
 					});
 
 				}else{
-					// run
-					headV1Role(null, roleyrn);
+
+					cliutil.getConsoleInput('port number(allow empty)              : ', true, false, function(isbreak, port)
+					{
+						if(isbreak){
+							process.exit(0);
+						}
+						var	_port = null;
+						if(!isNaN(port)){
+							_port = port;
+						}
+
+						cliutil.getConsoleInput('cuk(allow empty, need for k8s)        : ', true, false, function(isbreak, cuk)
+						{
+							if(isbreak){
+								process.exit(0);
+							}
+							var	_cuk = cuk;
+
+							// run
+							headV1Role(null, _roleyrn, _port, _cuk);
+						});
+					});
 				}
 			});
 		});

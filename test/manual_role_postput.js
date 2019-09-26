@@ -369,9 +369,13 @@ function inputHostType(method)
 					if(isbreak){
 						process.exit(0);
 					}
-					var	_port = parseInt(port);
 
-					if(port !== String(_port) && _port < 0){
+					var	_port;
+					if(null === port || !apiutil.isSafeString(port)){
+						_port = 0;
+					}else if(!isNaN(port)){
+						_port = parseInt(port);
+					}else{
 						console.log('port number must be decimal number: ' + JSON.stringify(port));
 						process.exit(0);
 					}
@@ -416,7 +420,7 @@ function inputHostType(method)
 
 							}else if(apiutil.compareCaseString('string', is_extra) || apiutil.compareCaseString('str', is_extra)){
 
-								cliutil.getConsoleInput('     Extra data for host(specify string)              : \n', true, true, function(isbreak, extra)
+								cliutil.getConsoleInput('     Extra data - null/openstack(os)/kubernetes(k8s)  : ', true, false, function(isbreak, extra)
 								{
 									if(isbreak){
 										process.exit(0);
@@ -425,6 +429,10 @@ function inputHostType(method)
 
 									if('' === apiutil.getSafeString(extra) || apiutil.compareCaseString('null', apiutil.getSafeString(extra))){
 										_extra = null;
+									}else if(apiutil.compareCaseString('os', apiutil.getSafeString(extra)) || apiutil.compareCaseString('openstack', apiutil.getSafeString(extra))){
+										_extra = 'openstack-auto-v1';
+									}else if(apiutil.compareCaseString('k8s', apiutil.getSafeString(extra)) || apiutil.compareCaseString('kubernetes', apiutil.getSafeString(extra))){
+										_extra = 'k8s-auto-v1';
 									}else{
 										_extra = extra;
 									}

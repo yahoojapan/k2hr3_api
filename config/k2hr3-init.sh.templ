@@ -23,6 +23,8 @@ LOGFILE="/var/log/${SCRIPTNAME}.log"
 CLOUDINIT_DATA_DIR="/var/lib/cloud/data"
 INSTANCE_ID_FILE="${CLOUDINIT_DATA_DIR}/instance-id"
 K2HR3_ROLE_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-role"
+K2HR3_CUK_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-cuk"
+K2HR3_APIARG_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-apiarg"
 
 K2HR3_USER_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
 K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}/v1/role"
@@ -68,6 +70,32 @@ if [ $? -ne 0 ]; then
 	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_ROLE_FILE}, but continue..." | tee -a ${LOGFILE}
 fi
 echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize host information for k2hr3" | tee -a ${LOGFILE}
+
+echo "${INSTANCE_ID}" > ${K2HR3_CUK_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put cuk=instanceid(${INSTANCE_ID}) to ${K2HR3_CUK_FILE}" | tee -a ${LOGFILE}
+	exit 1
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create cuk=instanceid(${INSTANCE_ID}) file(${K2HR3_CUK_FILE})" | tee -a ${LOGFILE}
+
+chmod 444 ${K2HR3_CUK_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_CUK_FILE}, but continue..." | tee -a ${LOGFILE}
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize cuk(instanceid) information for k2hr3" | tee -a ${LOGFILE}
+
+echo "${CUK_PARAMETER}" > ${K2HR3_APIARG_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put api url argument(${CUK_PARAMETER}) to ${K2HR3_APIARG_FILE}" | tee -a ${LOGFILE}
+	exit 1
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create api url argument(${CUK_PARAMETER}) file(${K2HR3_APIARG_FILE})" | tee -a ${LOGFILE}
+
+chmod 444 ${K2HR3_APIARG_FILE}
+if [ $? -ne 0 ]; then
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_APIARG_FILE}, but continue..." | tee -a ${LOGFILE}
+fi
+echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize cuk information for k2hr3" | tee -a ${LOGFILE}
 
 exit 0
 
