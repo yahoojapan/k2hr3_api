@@ -50,7 +50,6 @@ services:
   - docker
 
 before_install:
-  - sudo apt-get update -qq
   - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
   - sudo service docker restart
   - sleep 5
