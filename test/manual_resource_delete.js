@@ -63,7 +63,7 @@ function deleteV1Resource(token_type, token, name, data_type, keynames, aliases,
 	if(null === data_type){
 		// remove all resource data, so no parameter
 
-	}else if(apiutil.compareCaseString(keys.VALUE_ANYDATA_TYPE, data_type) || apiutil.compareCaseString(keys.VALUE_STRING_TYPE, data_type) || apiutil.compareCaseString(keys.VALUE_OBJECT_TYPE, data_type)){
+	}else if(apiutil.compareCaseString(keys.VALUE_ANYDATA_TYPE, data_type) || apiutil.compareCaseString(keys.VALUE_STRING_TYPE, data_type) || apiutil.compareCaseString(keys.VALUE_OBJECT_TYPE, data_type) || apiutil.compareCaseString(keys.VALUE_EXPIRE_TYPE, data_type)){
 		urlarg		+= already_set ? '&type=' : '?type=';
 		urlarg		+= data_type;
 		already_set	= true;
