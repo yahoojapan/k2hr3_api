@@ -1394,6 +1394,8 @@ router.delete('/', function(req, res, next)					// eslint-disable-line no-unused
 				aliases = [aliases];
 			}
 		}
+	}else if(apiutil.compareCaseString(comparam.keys.VALUE_EXPIRE_TYPE, req.query.type)){
+		datatype	= comparam.keys.VALUE_EXPIRE_TYPE;
 	}else{
 		r3logger.elog('DELETE request type(' + req.query.type + ') parameter is wrong.');
 		resutil.errResponse(req, res, 400);					// 400: Bad Request
