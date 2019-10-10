@@ -36,7 +36,7 @@ func_usage()
 	echo "        TRAVIS_TAG         if the current build is for a git tag, this variable is set to the tag's name"
 	echo "        FORCE_PUBLISH_PKG  if this env is 'true', force packaging and publishing anytime"
 	echo "        NPM_TOKEN          specify NPM token for publishing or checking package(must not be null)"
-	echo "        NODE_MAJOR_VERSION specify Node.js major version number(6, 8, 10, ...)"
+	echo "        NODE_MAJOR_VERSION specify Node.js major version number(8, 10, 12...)"
 	echo "        USE_PC_REPO        if this env is 'true', use packagecloud.io repository"
 	echo "        PUBLISHER          if this env is 'true', do publish npm package."
 	echo ""
@@ -155,8 +155,8 @@ if [ $? -ne 0 ]; then
 	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be number." 1>&2
 	exit 1
 fi
-if [ ${NODE_MAJOR_VERSION} -lt 6 ]; then
-	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be after 6." 1>&2
+if [ ${NODE_MAJOR_VERSION} -lt 8 ]; then
+	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be 8 or later." 1>&2
 	exit 1
 fi
 echo ""
@@ -195,15 +195,6 @@ fi
 #
 prn_cmd "curl -sL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash -"
 curl -sL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash -
-if [ ${NODE_MAJOR_VERSION} -eq 6 ]; then
-	#
-	# Node.js 6.x needs to set following file.
-	# If not set this file, probably install 8.x and not found npm command.
-	# See: https://github.com/nodesource/distributions/issues/761#issuecomment-443072330
-	#
-	mkdir -p /etc/apt/preferences.d
-	echo -e "Package: nodejs\nPin: origin deb.nodesource.com\nPin-Priority: 600" | sed 's/^-e //g' > /etc/apt/preferences.d/nodesource
-fi
 
 #
 # update
@@ -225,12 +216,7 @@ fi
 #
 run_cmd node -v
 run_cmd npm version
-if [ ${NODE_MAJOR_VERSION} -gt 6 ]; then
-	#
-	# do not use npx now, because Node.js 6x does not have this.
-	#
-	run_cmd npx -v
-fi
+run_cmd npx -v
 
 #
 # Copy sources ( to build under /tmp )
@@ -310,16 +296,6 @@ if [ ${IS_PUBLISH_TEST} -eq 1 ]; then
 		#
 		#grep -l '"uncommittedChanges": true' .publishrc | xargs sed -i.BAK -e 's/"uncommittedChanges": true/"uncommittedChanges": false/g'
 		grep -l '"gitTag": true' .publishrc | xargs sed -i.BAK -e 's/"gitTag": true/"gitTag": false/g'
-	fi
-	if [ ${NODE_MAJOR_VERSION} -eq 6 ]; then
-		#
-		# Node.js 6.x has old npm
-		# - vulnerableDependencies needs npm version 6.1.0 or above.
-		# - sensitiveData needs npm version 5.9.0 or above.
-		#
-		#grep -l '"uncommittedChanges": true' .publishrc | xargs sed -i.BAK -e 's/"uncommittedChanges": true/"uncommittedChanges": false/g'
-		grep -l '"vulnerableDependencies": true' .publishrc | xargs sed -i.BAK -e 's/"vulnerableDependencies": true/"vulnerableDependencies": false/g'
-		grep -l '"sensitiveData": true' .publishrc | xargs sed -i.BAK -e 's/"sensitiveData": true/"sensitiveData": false/g'
 	fi
 	rm -f .publishrc.BAK
 	run_cmd cat .publishrc

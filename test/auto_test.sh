@@ -61,6 +61,7 @@ PrintUsage()
 {
 	echo "Usage:   $1 [--production | --development(default)]"
 	echo "            [--logger(-l)]"
+	echo "            [--timeout <ms>]"
 	echo "            [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
 	echo "            Command"
 	echo ""
@@ -73,6 +74,11 @@ PrintUsage()
 	echo "                            (This can be substituted by setting the"
 	echo "                            'NODE_LOGGER' environment variable to 'yes'"
 	echo "                            or 'no')"
+	echo "         --timeout(-t)    : Specify the mocha timeout in milliseconds"
+	echo "                            mocha sets a timeout of 2000ms by default,"
+	echo "                            but this test script currently sets it to"
+	echo "                            2000ms. This option can be used to change"
+	echo "                             the timeout value."
 	echo "         --debuglevel(-d) : Specify the level of debug output."
 	echo "                            (DBG/MSG/WARN/ERR/custom debug level)"
 	echo ""
@@ -97,6 +103,7 @@ NODE_ENV_VALUE=""
 DEBUG_ENV_CUSTOM=""
 DEBUG_ENV_LEVEL=0
 IS_LOGGING=""
+TIMEOUT="2000"
 
 while [ $# -ne 0 ]; do
 	if [ "X$1" = "X" ]; then
@@ -179,6 +186,24 @@ while [ $# -ne 0 ]; do
 			fi
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
+
+	elif [ "X$1" = "X--timeout" -o "X$1" = "X--TIMEOUT" -o "X$1" = "X-t" -o "X$1" = "X-T" ]; then
+		#
+		# timeout option
+		#
+		shift
+		if [ $# -eq 0 ]; then
+			echo "ERROR: --timeout(-t) option needs parameter(millisecond)"
+			exit 1
+		fi
+
+		# check number value
+		expr "$1" + 1 >/dev/null 2>&1
+		if [ $? -ge 2 ]; then
+			echo "ERROR: --timeout(-t) parameter($1) must be number value"
+			exit 1
+		fi
+		TIMEOUT=$1
 
 	else
 		#
@@ -272,7 +297,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha test/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}
+NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha --timeout ${TIMEOUT} test/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}
 if [ $? -ne 0 ]; then
 	echo "ERROR: The test failed."
 	test/auto_init_config_json.sh -restore
