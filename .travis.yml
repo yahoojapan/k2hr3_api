@@ -30,11 +30,6 @@ env:
   matrix:
     - OS=ubuntu
       TAG=18.04
-      NODE_MAJOR_VERSION=6
-      PUBLISHER=false
-      INSTPKG="k2hdkc-dev"
-    - OS=ubuntu
-      TAG=18.04
       NODE_MAJOR_VERSION=8
       PUBLISHER=false
       INSTPKG="k2hdkc-dev"
@@ -42,6 +37,11 @@ env:
       TAG=18.04
       NODE_MAJOR_VERSION=10
       PUBLISHER=true
+      INSTPKG="k2hdkc-dev"
+    - OS=ubuntu
+      TAG=18.04
+      NODE_MAJOR_VERSION=12
+      PUBLISHER=false
       INSTPKG="k2hdkc-dev"
 
 cache: apt
