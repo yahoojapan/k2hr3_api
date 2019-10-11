@@ -1,3 +1,10 @@
+k2hr3-api (0.9.3) unstable; urgency=low
+
+  * Updated package dependency and support nodejs version - #6
+  * Fixed a bug about service resource expire key in k2hdkc - #5
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 11 Oct 2019 09:40:23 +0900
+
 k2hr3-api (0.9.2) unstable; urgency=low
 
   * Supports kubernetes pod and container for role member - #3
