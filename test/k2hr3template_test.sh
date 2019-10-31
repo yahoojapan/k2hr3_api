@@ -36,6 +36,7 @@ PrintUsage()
 	echo "                             [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
 	echo "                             [--varlist(-v) \"variables JSON file path\"]"
 	echo "                             {--templ(-t) \"template file path\" | --string(-s) \"template string\"}"
+	echo "                             {--async(-a)}"
 	echo ""
 	echo "       If you do not specify input file path or template string,"
 	echo "       $1 prompts you to enter a template string from stdin."
@@ -48,6 +49,7 @@ PrintUsage()
 INPUT_TEMPLFILE=""
 INPUT_TEMPLSTR=""
 INPUT_VARFILE=""
+INPUT_ASYNCMODE=0
 DEBUG_OPTION=""
 DEBUG_PIPE_LINE=""
 DEBUG_ENV_CUSTOM=""
@@ -171,6 +173,16 @@ while [ ${OPTCOUNT} -ne 0 ]; do
 		fi
 		INPUT_TEMPLSTR=$1
 
+	elif [ "X$1" = "X--async" -o "X$1" = "X--ASYNC" -o "X$1" = "X-a" -o "X$1" = "X-A" ]; then
+		#
+		# async mode
+		#
+		if [ ${INPUT_ASYNCMODE} -ne 0 ]; then
+			echo "ERROR: --async(-a) option is already specified"
+			exit 1
+		fi
+		INPUT_ASYNCMODE=1
+
 	else
 		echo "ERROR: unknown option \"$1\""
 		echo ""
@@ -237,6 +249,15 @@ if [ "X${INPUT_TEMPLFILE}" = "X" ]; then
 fi
 
 #
+# Checking async mode
+#
+if [ ${INPUT_ASYNCMODE} -eq 0 ]; then
+	TEST_PROG="test/k2hr3template_test.js"
+else
+	TEST_PROG="test/k2hr3template_test_async.js"
+fi
+
+#
 # Input template string
 #
 if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
@@ -255,17 +276,17 @@ cd ${SRCTOP}
 if [ "X${DEBUG_PIPE_LINE}" = "X" ]; then
 	if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
 		echo "***** Run *****"
-		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} test/k2hr3template_test.js"
+		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG}"
 		echo ""
 	fi
-	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} test/k2hr3template_test.js
+	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG}
 else
 	if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
 		echo "***** Run *****"
-		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} test/k2hr3template_test.js 2>&1 | ${DEBUG_PIPE_LINE}"
+		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG} 2>&1 | ${DEBUG_PIPE_LINE}"
 		echo ""
 	fi
-	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} test/k2hr3template_test.js 2>&1 | ${DEBUG_PIPE_LINE}
+	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG} 2>&1 | ${DEBUG_PIPE_LINE}
 fi
 
 #

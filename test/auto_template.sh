@@ -40,7 +40,7 @@ EXPANDED_FILE=/tmp/k2hr3template_test_template.result
 #
 PrintUsage()
 {
-	echo "Usage: $1 [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
+	echo "Usage: $1 [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)] [--async(-a)]"
 	echo ""
 }
 
@@ -49,6 +49,7 @@ PrintUsage()
 #
 DEBUG_OPTION=""
 DEBUG_ENV_DBG=0
+ASYNC_OPTION=""
 
 while [ $# -ne 0 ]; do
 	if [ "X$1" = "X" ]; then
@@ -77,6 +78,13 @@ while [ $# -ne 0 ]; do
 		fi
 		DEBUG_OPTION="-d $1"
 
+	elif [ "X$1" = "X--async" -o "X$1" = "X--ASYNC" -o "X$1" = "X-a" -o "X$1" = "X-A" ]; then
+		if [ "X$ASYNC_OPTION" != "X" ]; then
+			echo "ERROR: already specified  --async(-a) option"
+			exit 1
+		fi
+		ASYNC_OPTION="--async"
+
 	else
 		echo "ERROR: unknown option \"$1\""
 		echo ""
@@ -92,10 +100,10 @@ done
 #
 if [ ${DEBUG_ENV_DBG} -eq 1 ]; then
 	echo "***** Run(execute template engine) *****"
-	echo "${TEST_PROGRAM} -v ${VARS_FILE} -t ${TEMPL_FILE} > ${EXPANDED_FILE}"
+	echo "${TEST_PROGRAM} -v ${VARS_FILE} -t ${TEMPL_FILE} ${ASYNC_OPTION} > ${EXPANDED_FILE}"
 	echo ""
 fi
-${TEST_PROGRAM} -v ${VARS_FILE} -t ${TEMPL_FILE} > ${EXPANDED_FILE}
+${TEST_PROGRAM} -v ${VARS_FILE} -t ${TEMPL_FILE} ${ASYNC_OPTION} > ${EXPANDED_FILE}
 if [ $? -ne 0 ]; then
 	exit $?
 fi
