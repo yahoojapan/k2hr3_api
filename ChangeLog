@@ -1,3 +1,9 @@
+k2hr3-api (0.9.4) unstable; urgency=low
+
+  * Updated template engine, deprecated functions, and dependencies - #8
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 31 Oct 2019 14:18:55 +0900
+
 k2hr3-api (0.9.3) unstable; urgency=low
 
   * Updated package dependency and support nodejs version - #6
