@@ -1,5 +1,5 @@
 ----------------------------------------------------------------
-var names = statement_print_test_00,formula_variable_00,formula_variable_01,formula_variable_02,formula_calculate_not_00,formula_calculate_not_01,formula_calculate_inc_00,formula_calculate_dec_00,formula_calculate_set_00,formula_calculate_set_01,formula_calculate_plus_00,formula_calculate_plus_01,formula_calculate_plus_02,formula_calculate_plus_03,formula_calculate_sub_00,formula_calculate_sub_01,formula_calculate_div_00,formula_calculate_div_01,formula_calculate_mul_00,formula_calculate_mul_01,formula_calculate_rem_00,formula_calculate_rem_01,formula_calculate_lshift_00,formula_calculate_lshift_01,formula_calculate_rshift_00,formula_calculate_rshift_01,formula_calculate_amp_00,formula_calculate_amp_01,formula_calculate_amp_02,formula_calculate_amp_03,formula_calculate_vartbar_00,formula_calculate_vartbar_01,formula_calculate_vartbar_02,formula_calculate_vartbar_03,formula_cond_and_00,formula_cond_and_01,formula_cond_and_02,formula_cond_and_03,formula_cond_and_04,formula_cond_and_05,formula_cond_or_00,formula_cond_or_01,formula_cond_or_02,formula_cond_or_03,formula_cond_or_04,formula_cond_or_05,formula_cond_less_02,formula_cond_less_01,formula_cond_less_00,formula_cond_great_02,formula_cond_great_01,formula_cond_great_00,formula_cond_lesseq_02,formula_cond_lesseq_01,formula_cond_lesseq_00,formula_cond_greateq_02,formula_cond_greateq_01,formula_cond_greateq_00,formula_cond_eq_00,formula_cond_eq_01,formula_cond_eq_02,formula_cond_eq_03,formula_cond_eq_04,formula_cond_eq_05,formula_cond_noteq_00,formula_cond_noteq_01,formula_cond_noteq_02,formula_cond_noteq_03,formula_cond_noteq_04,formula_cond_noteq_05,formula_syntax_if_00,formula_syntax_if_01,formula_syntax_if_02,formula_syntax_if_03,formula_syntax_if_04,formula_syntax_if_05,formula_syntax_while_04,formula_syntax_while_00,formula_syntax_while_01,formula_syntax_while_02,formula_syntax_while_03,formula_syntax_while_05,formula_syntax_do_04,formula_syntax_do_00,formula_syntax_do_01,formula_syntax_do_02,formula_syntax_do_03,formula_syntax_do_05,formula_syntax_for_04,formula_syntax_for_00,formula_syntax_for_01,formula_syntax_for_02,formula_syntax_for_03,formula_syntax_for_05,tmp_for_counter00,tmp_foreach_value_00,formula_syntax_foreach_00,formula_syntax_foreach_01,formula_syntax_foreach_02,formula_syntax_foreach_03,formula_syntax_foreach_04,tmp_priority_data00
+var names = statement_print_test_00,formula_variable_00,formula_variable_01,formula_variable_02,formula_variable_array_01,formula_variable_object_01,temp_val,formula_calculate_not_00,formula_calculate_not_01,formula_calculate_inc_00,formula_calculate_dec_00,formula_calculate_set_00,formula_calculate_set_01,formula_calculate_plus_00,formula_calculate_plus_01,formula_calculate_plus_02,formula_calculate_plus_03,formula_calculate_sub_00,formula_calculate_sub_01,formula_calculate_div_00,formula_calculate_div_01,formula_calculate_mul_00,formula_calculate_mul_01,formula_calculate_rem_00,formula_calculate_rem_01,formula_calculate_lshift_00,formula_calculate_lshift_01,formula_calculate_rshift_00,formula_calculate_rshift_01,formula_calculate_amp_00,formula_calculate_amp_01,formula_calculate_amp_02,formula_calculate_amp_03,formula_calculate_vartbar_00,formula_calculate_vartbar_01,formula_calculate_vartbar_02,formula_calculate_vartbar_03,formula_cond_and_00,formula_cond_and_01,formula_cond_and_02,formula_cond_and_03,formula_cond_and_04,formula_cond_and_05,formula_cond_or_00,formula_cond_or_01,formula_cond_or_02,formula_cond_or_03,formula_cond_or_04,formula_cond_or_05,formula_cond_less_02,formula_cond_less_01,formula_cond_less_00,formula_cond_great_02,formula_cond_great_01,formula_cond_great_00,formula_cond_lesseq_02,formula_cond_lesseq_01,formula_cond_lesseq_00,formula_cond_greateq_02,formula_cond_greateq_01,formula_cond_greateq_00,formula_cond_eq_00,formula_cond_eq_01,formula_cond_eq_02,formula_cond_eq_03,formula_cond_eq_04,formula_cond_eq_05,formula_cond_noteq_00,formula_cond_noteq_01,formula_cond_noteq_02,formula_cond_noteq_03,formula_cond_noteq_04,formula_cond_noteq_05,formula_syntax_if_00,formula_syntax_if_01,formula_syntax_if_02,formula_syntax_if_03,formula_syntax_if_04,formula_syntax_if_05,formula_syntax_while_04,formula_syntax_while_00,formula_syntax_while_01,formula_syntax_while_02,formula_syntax_while_03,formula_syntax_while_05,formula_syntax_do_04,formula_syntax_do_00,formula_syntax_do_01,formula_syntax_do_02,formula_syntax_do_03,formula_syntax_do_05,formula_syntax_for_04,formula_syntax_for_00,formula_syntax_for_01,formula_syntax_for_02,formula_syntax_for_03,formula_syntax_for_05,tmp_for_counter00,formula_syntax_for_06,formula_syntax_for_07,tmp_foreach_value_00,formula_syntax_foreach_00,formula_syntax_foreach_01,formula_syntax_foreach_02,formula_syntax_foreach_03,formula_syntax_foreach_04,formula_syntax_foreach_10,formula_syntax_foreach_11,formula_syntax_foreach_12,formula_syntax_foreach_13,formula_syntax_foreach_14,tmp_priority_data00
 ----------------------------------------------------------------
 RESULT
 ----------------------------------------------------------------
@@ -100,6 +100,69 @@ input string  = #
 
 **** VARIABLE: "= "formula_variable_static_squote_''11"" ===> "formula_variable_static_squote_''11"
 {{= "formula_variable_static_squote_''11" }}
+
+**** VARIABLE: "= %formula_variable_array_01%" ===> "array_value_00,array_value_01"
+{{= %formula_variable_array_01% }}
+
+**** VARIABLE: "= %formula_variable_array_01%.length" ===> "2"
+{{= %formula_variable_array_01%.length }}
+
+**** VARIABLE: "= %formula_variable_array_01%.size" ===> "2"
+{{= %formula_variable_array_01%.size }}
+
+**** VARIABLE: "= %formula_variable_array_01%.count" ===> "2"
+{{= %formula_variable_array_01%.count }}
+
+**** VARIABLE: "= %formula_variable_array_01%[0]" ===> "array_value_00"
+{{= %formula_variable_array_01%[0] }}
+
+**** VARIABLE: "= %formula_variable_array_01%["1"]" ===> "array_value_01"
+{{= %formula_variable_array_01%["1"] }}
+
+**** VARIABLE: "= %formula_variable_array_01%['1']" ===> "array_value_01"
+{{= %formula_variable_array_01%['1'] }}
+
+**** VARIABLE: "= %formula_variable_array_01%{0}" ===> "array_value_00"
+{{= %formula_variable_array_01%{0} }}
+
+**** VARIABLE: "= %formula_variable_array_01%{"1"}" ===> "array_value_01"
+{{= %formula_variable_array_01%{"1"} }}
+
+**** VARIABLE: "= %formula_variable_array_01%{'1'}" ===> "array_value_01"
+{{= %formula_variable_array_01%{'1'} }}
+
+**** VARIABLE: "= %formula_variable_object_01%" ===> "[object Object]"
+{{= %formula_variable_object_01% }}
+
+**** VARIABLE: "= %formula_variable_object_01%.length" ===> "4"
+{{= %formula_variable_object_01%.length }}
+
+**** VARIABLE: "= %formula_variable_object_01%.size" ===> "4"
+{{= %formula_variable_object_01%.size }}
+
+**** VARIABLE: "= %formula_variable_object_01%.count" ===> "4"
+{{= %formula_variable_object_01%.count }}
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_00'}" ===> "object_value_00"
+{{= %formula_variable_object_01%{'object_key_00'} }}
+
+**** VARIABLE: "= %formula_variable_object_01%{"object_key_01"}" ===> "object_value_01"
+{{= %formula_variable_object_01%{"object_key_01"} }}
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_02'}" ===> "object_value_02_01,object_value_02_02"
+{{= %formula_variable_object_01%{'object_key_02'} }}
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_02'}" ===> "%temp_val%[0]" ===> "object_value_02_01"
+{{ %temp_val% = %formula_variable_object_01%{'object_key_02'} }}{{= %temp_val%[0] }}
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_03'}" ===> "[object Object]"
+{{= %formula_variable_object_01%{'object_key_03'} }}
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_03'}" ===> "%temp_val%['object_valkey_03_00']" ===> "true"
+{{ %temp_val% = %formula_variable_object_01%{'object_key_03'} }}{{= %temp_val%['object_valkey_03_00'] }}
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_03'}" ===> "%temp_val%['object_valkey_03_01']" ===> "object_valval_03_01"
+{{ %temp_val% = %formula_variable_object_01%{'object_key_03'} }}{{= %temp_val%['object_valkey_03_01'] }}
 
 ############################################################
 #### Formula : Calculate
@@ -3371,6 +3434,32 @@ input string  = #
     condition true(2 times) = {{= %tmp_for_counter00% }} in for statement, thus come here.
 {{ done }}
 
+**** FOR/DONE "for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < %formula_syntax_for_06%.length ; ++%tmp_for_counter00%"
+****          "done"
+****                                    ===> "%formula_syntax_for_06%[ 0 ] = string00"
+****                                         "%formula_syntax_for_06%[ 1 ] = string01"
+{{ for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < %formula_syntax_for_06%.length ; ++%tmp_for_counter00% }}
+    %formula_syntax_for_06%[ {{= %tmp_for_counter00% }} ] = {{= %formula_syntax_for_06%[%tmp_for_counter00%] }}
+{{ done }}
+
+**** ARRAY COUNT "%formula_syntax_for_06%.length"
+****          "done"
+****                                    ===> "%formula_syntax_for_06%.length = 2"
+****                                         "%formula_syntax_for_06%.size   = 2"
+****                                         "%formula_syntax_for_06%.count  = 2"
+%formula_syntax_for_06%.length = {{= %formula_syntax_for_06%.length }}
+%formula_syntax_for_06%.size   = {{= %formula_syntax_for_06%.size }}
+%formula_syntax_for_06%.count  = {{= %formula_syntax_for_06%.count }}
+
+**** OBJECT COUNT "%formula_syntax_for_07%.length"
+****          "done"
+****                                    ===> "%formula_syntax_for_07%.length = 2"
+****                                         "%formula_syntax_for_07%.size   = 2"
+****                                         "%formula_syntax_for_07%.count  = 2"
+%formula_syntax_for_07%.length = {{= %formula_syntax_for_07%.length }}
+%formula_syntax_for_07%.size   = {{= %formula_syntax_for_07%.size }}
+%formula_syntax_for_07%.count  = {{= %formula_syntax_for_07%.count }}
+
 ##
 ## Test > Formula > Syntax > FOREACH/DONE
 ##
@@ -3383,17 +3472,17 @@ input string  = #
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01%"
 ****              "done"
-****                                    ===> "foreach value (null) in foreach statement, thus come here."
+****                                    ===> "foreach value 0(null) in foreach statement, thus come here."
 {{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01% }}
     foreach value {{= %tmp_foreach_value_00% }}(null) in foreach statement, thus come here.
 {{ done }}
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02%"
 ****              "done"
-****                                    ===> "foreach value true in foreach statement, thus come here."
-****                                         "foreach value false in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_02%[0] = true in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_02%[1] = false in foreach statement, thus come here."
 {{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02% }}
-    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_02%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_02%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
 {{ done }}
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_03%"
@@ -3406,20 +3495,68 @@ input string  = #
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%"
 ****              "done"
-****                                    ===> "foreach value string00 in foreach statement, thus come here."
-****                                         "foreach value string01 in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_04%[0] = string00 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here."
 {{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04% }}
-    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_04%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_04%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
 {{ done }}
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%" + "continue"
 ****              "done"
-****                                    ===> "foreach value string01 in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here."
 {{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04% }}
-	{{ if 'string00' == %tmp_foreach_value_00% }}
-		{{ continue }}
-	{{ endif }}
-    foreach value {{= %tmp_foreach_value_00% }} in foreach statement, thus come here.
+    {{ if 'string00' == %formula_syntax_foreach_04%[%tmp_foreach_value_00%] }}
+        {{ continue }}
+    {{ endif }}
+    foreach value %formula_syntax_foreach_04%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_04%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_10%"
+****              "done"
+****                                    ===> ""
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_10% }}
+    foreach value {{= %tmp_foreach_value_00% }} is not exists in foreach statement, thus not come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_11%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_11%[key] = (null) in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_11% }}
+    foreach value %formula_syntax_foreach_11%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_11%[%tmp_foreach_value_00%] }}(null) in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_12%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_12%[key_1] = true in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_12%[key_2] = false in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_12% }}
+    foreach value %formula_syntax_foreach_12%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_12%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_13%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_13%[key_1] = 0 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_13%[key_2] = 1 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_13% }}
+    foreach value %formula_syntax_foreach_13%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_13%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_14%[key_1] = string00 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14% }}
+    foreach value %formula_syntax_foreach_14%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_14%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
+{{ done }}
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14%" + "continue"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here."
+{{ foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14% }}
+    {{ if 'string00' == %formula_syntax_foreach_14%[%tmp_foreach_value_00%] }}
+        {{ continue }}
+    {{ endif }}
+    foreach value %formula_syntax_foreach_14%[{{= %tmp_foreach_value_00% }}] = {{= %formula_syntax_foreach_14%[%tmp_foreach_value_00%] }} in foreach statement, thus come here.
 {{ done }}
 
 ############################################################
@@ -3569,6 +3706,69 @@ formula_variable_static_squote_10
 
 **** VARIABLE: "= "formula_variable_static_squote_''11"" ===> "formula_variable_static_squote_''11"
 formula_variable_static_squote_''11
+
+**** VARIABLE: "= %formula_variable_array_01%" ===> "array_value_00,array_value_01"
+array_value_00,array_value_01
+
+**** VARIABLE: "= %formula_variable_array_01%.length" ===> "2"
+2
+
+**** VARIABLE: "= %formula_variable_array_01%.size" ===> "2"
+2
+
+**** VARIABLE: "= %formula_variable_array_01%.count" ===> "2"
+2
+
+**** VARIABLE: "= %formula_variable_array_01%[0]" ===> "array_value_00"
+array_value_00
+
+**** VARIABLE: "= %formula_variable_array_01%["1"]" ===> "array_value_01"
+array_value_01
+
+**** VARIABLE: "= %formula_variable_array_01%['1']" ===> "array_value_01"
+array_value_01
+
+**** VARIABLE: "= %formula_variable_array_01%{0}" ===> "array_value_00"
+array_value_00
+
+**** VARIABLE: "= %formula_variable_array_01%{"1"}" ===> "array_value_01"
+array_value_01
+
+**** VARIABLE: "= %formula_variable_array_01%{'1'}" ===> "array_value_01"
+array_value_01
+
+**** VARIABLE: "= %formula_variable_object_01%" ===> "[object Object]"
+[object Object]
+
+**** VARIABLE: "= %formula_variable_object_01%.length" ===> "4"
+4
+
+**** VARIABLE: "= %formula_variable_object_01%.size" ===> "4"
+4
+
+**** VARIABLE: "= %formula_variable_object_01%.count" ===> "4"
+4
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_00'}" ===> "object_value_00"
+object_value_00
+
+**** VARIABLE: "= %formula_variable_object_01%{"object_key_01"}" ===> "object_value_01"
+object_value_01
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_02'}" ===> "object_value_02_01,object_value_02_02"
+object_value_02_01,object_value_02_02
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_02'}" ===> "%temp_val%[0]" ===> "object_value_02_01"
+object_value_02_01
+
+**** VARIABLE: "= %formula_variable_object_01%{'object_key_03'}" ===> "[object Object]"
+[object Object]
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_03'}" ===> "%temp_val%['object_valkey_03_00']" ===> "true"
+true
+
+**** VARIABLE: "%temp_val% = %formula_variable_object_01%{'object_key_03'}" ===> "%temp_val%['object_valkey_03_01']" ===> "object_valval_03_01"
+object_valval_03_01
 
 ############################################################
 #### Formula : Calculate
@@ -6722,6 +6922,34 @@ false
     condition true(2 times) = 1 in for statement, thus come here.
 
 
+**** FOR/DONE "for %tmp_for_counter00% = 0 ; %tmp_for_counter00% < %formula_syntax_for_06%.length ; ++%tmp_for_counter00%"
+****          "done"
+****                                    ===> "%formula_syntax_for_06%[ 0 ] = string00"
+****                                         "%formula_syntax_for_06%[ 1 ] = string01"
+
+    %formula_syntax_for_06%[ 0 ] = string00
+
+    %formula_syntax_for_06%[ 1 ] = string01
+
+
+**** ARRAY COUNT "%formula_syntax_for_06%.length"
+****          "done"
+****                                    ===> "%formula_syntax_for_06%.length = 2"
+****                                         "%formula_syntax_for_06%.size   = 2"
+****                                         "%formula_syntax_for_06%.count  = 2"
+%formula_syntax_for_06%.length = 2
+%formula_syntax_for_06%.size   = 2
+%formula_syntax_for_06%.count  = 2
+
+**** OBJECT COUNT "%formula_syntax_for_07%.length"
+****          "done"
+****                                    ===> "%formula_syntax_for_07%.length = 2"
+****                                         "%formula_syntax_for_07%.size   = 2"
+****                                         "%formula_syntax_for_07%.count  = 2"
+%formula_syntax_for_07%.length = 2
+%formula_syntax_for_07%.size   = 2
+%formula_syntax_for_07%.count  = 2
+
 ##
 ## Test > Formula > Syntax > FOREACH/DONE
 ##
@@ -6732,19 +6960,19 @@ false
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_01%"
 ****              "done"
-****                                    ===> "foreach value (null) in foreach statement, thus come here."
+****                                    ===> "foreach value 0(null) in foreach statement, thus come here."
 
-    foreach value (null) in foreach statement, thus come here.
+    foreach value 0(null) in foreach statement, thus come here.
 
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_02%"
 ****              "done"
-****                                    ===> "foreach value true in foreach statement, thus come here."
-****                                         "foreach value false in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_02%[0] = true in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_02%[1] = false in foreach statement, thus come here."
 
-    foreach value true in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_02%[0] = true in foreach statement, thus come here.
 
-    foreach value false in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_02%[1] = false in foreach statement, thus come here.
 
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_03%"
@@ -6759,22 +6987,74 @@ false
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%"
 ****              "done"
-****                                    ===> "foreach value string00 in foreach statement, thus come here."
-****                                         "foreach value string01 in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_04%[0] = string00 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here."
 
-    foreach value string00 in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_04%[0] = string00 in foreach statement, thus come here.
 
-    foreach value string01 in foreach statement, thus come here.
+    foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here.
 
 
 **** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_04%" + "continue"
 ****              "done"
-****                                    ===> "foreach value string01 in foreach statement, thus come here."
+****                                    ===> "foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here."
 
-	
-		
-	
-    foreach value string01 in foreach statement, thus come here.
+    
+        
+    
+    foreach value %formula_syntax_foreach_04%[1] = string01 in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_10%"
+****              "done"
+****                                    ===> ""
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_11%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_11%[key] = (null) in foreach statement, thus come here."
+
+    foreach value %formula_syntax_foreach_11%[key] = (null) in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_12%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_12%[key_1] = true in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_12%[key_2] = false in foreach statement, thus come here."
+
+    foreach value %formula_syntax_foreach_12%[key_1] = true in foreach statement, thus come here.
+
+    foreach value %formula_syntax_foreach_12%[key_2] = false in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_13%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_13%[key_1] = 0 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_13%[key_2] = 1 in foreach statement, thus come here."
+
+    foreach value %formula_syntax_foreach_13%[key_1] = 0 in foreach statement, thus come here.
+
+    foreach value %formula_syntax_foreach_13%[key_2] = 1 in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14%"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_14%[key_1] = string00 in foreach statement, thus come here."
+****                                         "foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here."
+
+    foreach value %formula_syntax_foreach_14%[key_1] = string00 in foreach statement, thus come here.
+
+    foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here.
+
+
+**** FOREACH/DONE "foreach %tmp_foreach_value_00% in %formula_syntax_foreach_14%" + "continue"
+****              "done"
+****                                    ===> "foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here."
+
+    
+        
+    
+    foreach value %formula_syntax_foreach_14%[key_2] = string01 in foreach statement, thus come here.
 
 
 ############################################################
