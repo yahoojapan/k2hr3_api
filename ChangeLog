@@ -1,3 +1,9 @@
+k2hr3-api (0.9.5) unstable; urgency=low
+
+  * Improved template engine about mainly role member host information - #10
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 11 Nov 2019 13:13:19 +0900
+
 k2hr3-api (0.9.4) unstable; urgency=low
 
   * Updated template engine, deprecated functions, and dependencies - #8
