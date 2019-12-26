@@ -1,3 +1,9 @@
+k2hr3-api (0.9.6) unstable; urgency=low
+
+  * Updated dependency and codes for k2hdkc nodejs update - #12
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 26 Dec 2019 17:07:56 +0900
+
 k2hr3-api (0.9.5) unstable; urgency=low
 
   * Improved template engine about mainly role member host information - #10
