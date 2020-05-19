@@ -62,6 +62,7 @@ var service		= require('./routes/service');
 var acr			= require('./routes/acr');
 var list		= require('./routes/list');
 var userdata	= require('./routes/userdata');
+var extdata		= require('./routes/extdata');
 var verify		= null;
 if(!is_product){
 	verify		= require('./routes/debugVerify');
@@ -79,6 +80,7 @@ var serviceExp	= express();
 var acrExp		= express();
 var listExp		= express();
 var userdataExp	= express();
+var extdataExp	= express();
 var verifyExp	= null;
 if(!is_product){
 	verifyExp	= express();
@@ -100,6 +102,7 @@ serviceExp.set('trust proxy',	'loopback');
 acrExp.set('trust proxy',		'loopback');
 listExp.set('trust proxy',		'loopback');
 userdataExp.set('trust proxy',	'loopback');
+extdataExp.set('trust proxy',	'loopback');
 if(!is_product){
 	verifyExp.set('trust proxy','loopback');
 }
@@ -200,6 +203,7 @@ serviceExp.use('/*', 			service);		// '/v1/service'
 acrExp.use('/*', 				acr);			// '/v1/acr'
 listExp.use('/*', 				list);			// '/v1/list'
 userdataExp.use('/*', 			userdata);		// '/v1/userdata'
+extdataExp.use('/*', 			extdata);		// '/v1/extdata'
 if(!is_product){
 	verifyExp.use('/*',			verify);		// '/v1/debug/verify*'
 }
@@ -212,6 +216,7 @@ app.use('/v1/service',			serviceExp);	// mountpath:	'/v1/service*'
 app.use('/v1/acr',				acrExp);		// mountpath:	'/v1/acr*'
 app.use('/v1/list',				listExp);		// mountpath:	'/v1/list*'
 app.use('/v1/userdata',			userdataExp);	// mountpath:	'/v1/userdata*'
+app.use('/v1/extdata',			extdataExp);	// mountpath:	'/v1/extdata*'
 if(!is_product){
 	app.use('/v1/debug/verify',	verifyExp);		// mountpath:	'/v1/debug/verify*'
 }

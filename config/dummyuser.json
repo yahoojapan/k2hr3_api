@@ -35,6 +35,15 @@
 		'port':			'18031'
 	},
 
+	'extdata': {
+		'dummy': {
+			'baseuri':		'http://localhost',
+			'template':		'config/extdata-dummy.sh.templ',
+			'useragent':	'dummy-client',
+			'contenttype':	'text/x-shellscript; charset="us-ascii"'
+		}
+	},
+
 	'k2hr3admin': {
 		'tenant':		'tenant0',
 		'delhostrole':	'autotest_delhost_role'

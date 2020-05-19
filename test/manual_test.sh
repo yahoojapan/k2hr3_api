@@ -53,6 +53,7 @@ COMMANDS="
 	acr_delete
 	list_gethead
 	userdata_get
+	extdata_get
 	allusertenant_get
 	k2hr3keys_get
 "
@@ -114,6 +115,8 @@ PrintUsage()
 	echo "         list_gethead           : Get(Head) children list for path(v1)"
 	echo ""
 	echo "         userdata_get           : Get userdata for openstack instance(v1)"
+	echo ""
+	echo "         extdata_get            : Get extdata for user defined data(v1)"
 	echo ""
 	echo "         allusertenant_get      : Get all user and tenant list in k2hr3"
 	echo "         k2hr3keys_get          : Get common key name object for debug"
