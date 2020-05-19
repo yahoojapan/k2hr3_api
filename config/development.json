@@ -47,6 +47,15 @@
 
 	'userdata': {
 		'baseuri':			'http://localhost:3000'
+	},
+
+	'extdata': {
+		'dummy': {
+			'baseuri':		'http://localhost:3000',
+			'template':		'config/extdata-dummy.sh.templ',
+			'useragent':	'dummy-client',
+			'contenttype':	'text/x-shellscript; charset="us-ascii"'
+		}
 	}
 }
 

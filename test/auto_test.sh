@@ -43,6 +43,7 @@ COMMANDS="
 	service
 	acr
 	userdata
+	extdata
 	watcher
 "
 
@@ -92,6 +93,7 @@ PrintUsage()
 	echo "         service          : Service API test"
 	echo "         acr              : Accessing Cross Role(ACR) API test"
 	echo "         userdata         : Get userdata for openstack API test"
+	echo "         extdata          : Get extdata for user defined data"
 	echo "         watcher          : Watcher sub process test"
 	echo ""
 }

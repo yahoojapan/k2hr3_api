@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# K2HR3 Frontend Web Application
+#
+# Copyright 2018 Yahoo! Japan Corporation.
+#
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Tue May 13 2020
+# REVISION:
+#
+
+#
+# Test template for extdata
+#
+ROLE_NAME={{= %K2HR3_ROLE_NAME% }}
+ROLE_TOKEN={{= %K2HR3_ROLE_TOKEN% }}
+K2HR3_API_HOST={{= %K2HR3_API_HOST_URI% }}
+ERROR_MSG={{= %K2HR3_ERROR_MSG% }}
+
+echo "ROLE_NAME:      ${ROLE_NAME}"
+echo "ROLE_TOKEN:     ${ROLE_TOKEN}"
+echo "K2HR3_API_HOST: ${K2HR3_API_HOST}"
+echo "ERROR_MSG:      ${ERROR_MSG}"
+
+exit 0
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#
