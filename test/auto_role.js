@@ -3078,7 +3078,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_post_dummy_role1 = res.body.token;
+				ip_roletoken_tenant0_autotest_post_dummy_role1 = res.body.token;		// eslint-disable-line no-unused-vars
 
 				done();
 			});
@@ -3100,7 +3100,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_post_dummy_role3 = res.body.token;
+				ip_roletoken_tenant0_autotest_post_dummy_role3 = res.body.token;		// eslint-disable-line no-unused-vars
 
 				done();
 			});
@@ -3122,7 +3122,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_put_dummy_role1 = res.body.token;
+				ip_roletoken_tenant0_autotest_put_dummy_role1 = res.body.token;			// eslint-disable-line no-unused-vars
 
 				done();
 			});
@@ -3144,7 +3144,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_put_dummy_role4 = res.body.token;
+				ip_roletoken_tenant0_autotest_put_dummy_role4 = res.body.token;			// eslint-disable-line no-unused-vars
 
 				done();
 			});
@@ -4717,28 +4717,28 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_post_dummy_role1 = result.token;
+		user_roletoken_tenant0_autotest_post_dummy_role1 = result.token;							// eslint-disable-line no-unused-vars
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_post_dummy_role3
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_post_dummy_role3', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_post_dummy_role3 = result.token;
+		user_roletoken_tenant0_autotest_post_dummy_role3 = result.token;							// eslint-disable-line no-unused-vars
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_put_dummy_role1
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_put_dummy_role1', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_put_dummy_role1 = result.token;
+		user_roletoken_tenant0_autotest_put_dummy_role1 = result.token;								// eslint-disable-line no-unused-vars
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_put_dummy_role4
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_put_dummy_role4', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_put_dummy_role4 = result.token;
+		user_roletoken_tenant0_autotest_put_dummy_role4 = result.token;								// eslint-disable-line no-unused-vars
 
 		done();
 	});

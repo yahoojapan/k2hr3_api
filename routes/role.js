@@ -558,6 +558,8 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //																this value is string. if this value is undefined/null/empty string, it means any.
 //			"extra":		<extra string data>				=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //																extra is any string including Control code, allowed null and '' for  this value.
+//			"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																tag is any string including Control code, allowed null and '' for  this value.
 //		}
 //		"clear_hostname":	<true/false>
 //		"clear_ips":		<true/false>
@@ -570,6 +572,7 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //				"port":		<port number>
 //				"cuk":		<container unique key>
 //				"extra":	<extra string data>
+//				"tag":		<string data>
 //			}
 //			...
 //		]
@@ -587,6 +590,8 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //																this value is string. if this value is undefined/null/empty string, it means any.
 //			"extra":		<extra string data>				=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //																extra is any string including Control code, allowed null and '' for  this value.
+//			"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																tag is any string including Control code, allowed null and '' for  this value.
 //		}
 //	}
 //
@@ -665,6 +670,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 	var	port;
 	var	cuk;
 	var	extra;
+	var	tag;
 	if(!is_host_req){
 		//
 		// request from user token
@@ -733,6 +739,12 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 				extra = apiutil.getSafeString(hostArray[cnt].extra);
 			}
 
+			// tag
+			tag = null;
+			if(apiutil.isSafeString(hostArray[cnt].tag)){
+				tag = apiutil.getSafeString(hostArray[cnt].tag);
+			}
+
 			// set to array
 			if(null !== tg_host){
 				hostnameArray.push({
@@ -740,7 +752,8 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 					hostname:	tg_host,
 					port:		port,
 					cuk:		cuk,
-					extra:		extra
+					extra:		extra,
+					tag:		tag
 				});
 			}else{	// null !== tg_ip
 				ipArray.push({
@@ -748,7 +761,8 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 					hostname:	null,
 					port:		port, 
 					cuk:		cuk,
-					extra:		extra
+					extra:		extra,
+					tag:		tag
 				});
 			}
 		}
@@ -826,10 +840,19 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 			}
 		}
 
+		// tag
+		tag = null;
+		if(apiutil.isSafeString(req.body.host.tag)){
+			tag = apiutil.getSafeString(req.body.host.tag);
+			if(apiutil.checkSimpleJSON(tag)){
+				tag	= JSON.parse(tag);
+			}
+		}
+
 		//
 		// Add ip address ---> Role Token or User Token
 		//
-		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra);
+		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag);
 	}
 
 	//------------------------------
@@ -879,6 +902,9 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 //	"extra":		<extra string data>				=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //														This value must be encoded by JSON.
 //														extra is any string including Control code, allowed null and '' for  this value.
+//	"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														This value must be encoded by JSON.
+//														tag is any string including Control code, allowed null and '' for  this value.
 //
 // [RoleToken] url argument
 //	"port":			<port number>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/ip/<ip port cuk>"
@@ -889,6 +915,9 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 //	"extra":		<extra string data>				=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //														This value must be encoded by JSON.
 //														extra is any string including Control code, allowed null and '' for  this value.
+//	"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														This value must be encoded by JSON.
+//														tag is any string including Control code, allowed null and '' for  this value.
 //
 // [NOTE]
 // This API only set(add/create) host into role. Ether hostname or ip address must be specified.
@@ -1039,8 +1068,19 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		extra		= null;
 	}
 
+	// tag
+	var	tag;
+	if(apiutil.isSafeString(req.query.tag)){
+		tag		= apiutil.getSafeString(req.query.tag);
+		if(apiutil.checkSimpleJSON(tag)){
+			tag	= JSON.parse(tag);										// tag encoded JSON
+		}
+	}else{
+		tag		= null;
+	}
+
 	// make host information
-	var	host_info = { ip: ip, hostname: hostname, port: port, cuk: cuk, extra: extra };
+	var	host_info = { ip: ip, hostname: hostname, port: port, cuk: cuk, extra: extra, tag: tag };
 
 	//------------------------------
 	// add host to role
@@ -1054,7 +1094,7 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		}
 	}else{
 		// Add ip address ---> Role Token or User Token
-		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra);
+		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag);
 	}
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
@@ -1098,11 +1138,11 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 //													aliases:	array					<--- only not expand
 //													hosts: {							<--- only not expand
 //														'hostnames': [					hostname array or empty array
-//															<hostname> <port> <cuk>,	(if any port, port is *)
+//															<hostname> <port> <cuk> <extra> <tag>,	(if any port, port is *)
 //															...
 //														],
 //														'ips': [						ip address array or empty array
-//															<ip address> <port> <cuk>,	(if any port, port is *)
+//															<ip address> <port> <cuk> <extra> <tag>,(if any port, port is *)
 //															...
 //														]
 //													}
@@ -1360,14 +1400,14 @@ router.get('/', function(req, res, next)
 //											"message":	error message
 //											"role":	{
 //												policies:	array,
-//												aliases:	array					<--- only not expand
-//												hosts: {							<--- only not expand
-//													'hostnames': [					hostname array or empty array
-//														<hostname> <port> <cuk>,	(if any port, port is *)
+//												aliases:	array								<--- only not expand
+//												hosts: {										<--- only not expand
+//													'hostnames': [								hostname array or empty array
+//														<hostname> <port> <cuk> <extra> <tag>,	(if any port, port is *)
 //														...
 //													],
-//													'ips': [						ip address array or empty array
-//														<ip address> <port> <cuk>,	(if any port, port is *)
+//													'ips': [									ip address array or empty array
+//														<ip address> <port> <cuk> <extra> <tag>,(if any port, port is *)
 //														...
 //													]
 //												}

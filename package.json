@@ -9,8 +9,8 @@
     "debug": "~4.1.1",
     "express": "^4.17.1",
     "k2hdkc": "^0.9.9",
-    "morgan": "~1.9.1",
-    "rotating-file-stream": "^1.4.6"
+    "morgan": "~1.10.0",
+    "rotating-file-stream": "^2.1.3"
   },
   "bin": {
     "k2hr3-api": "./bin/www",
@@ -28,10 +28,10 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "eslint": "^6.8.0",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
-    "publish-please": "^5.4.3"
+    "eslint": "^7.5.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "publish-please": "^5.5.1"
   },
   "scripts": {
     "help": "echo 'command list:\n    npm run start\n    npm run start:prod\n    npm run start:production\n    npm run start:dev\n    npm run start:develop\n    npm run start:dbg\n    npm run start:debug\n    npm run start:debug:break\n    npm run start:debug:nobreak\n    npm run start:watcher:prod\n    npm run start:watcher:production\n    npm run start:watcher:dev\n    npm run start:watcher:develop\n    npm run start:watcher:dbg\n    npm run start:watcher:debug\n    npm run start:watcher:debug:break\n    npm run start:watcher:debug:nobreak\n    npm run start:watcher:oneshot:prod\n    npm run start:watcher:oneshot:production\n    npm run start:watcher:oneshot:dev\n    npm run start:watcher:oneshot:develop\n    npm run start:watcher:oneshot:dbg\n    npm run start:watcher:oneshot:debug\n    npm run start:watcher:oneshot:debug:break\n    npm run start:watcher:oneshot:debug:nobreak\n    npm run stop\n    npm run stop:watcher\n    npm run test\n    npm run test:lint\n    npm run test:cover\n    npm run test:auto:all{:dbg}\n    npm run test:auto:version{:dbg}\n    npm run test:auto:usertokens{:dbg}\n    npm run test:auto:list{:dbg}\n    npm run test:auto:resource{:dbg}\n    npm run test:auto:policy{:dbg}\n    npm run test:auto:role{:dbg}\n    npm run test:auto:service{:dbg}\n    npm run test:auto:acr{:dbg}\n    npm run test:auto:userdata{:dbg}\n    npm run test:auto:extdata{:dbg}\n    npm run test:auto:watcher{:dbg}\n    npm run test:auto:templengine\n    npm run test:auto:templengine:async\n    npm run test:manual:apis:version_get\n    npm run test:manual:apis:usertoken_postput\n    npm run test:manual:apis:usertoken_gethead\n    npm run test:manual:apis:policy_postput\n    npm run test:manual:apis:policy_gethead\n    npm run test:manual:apis:policy_delete\n    npm run test:manual:apis:resource_postput\n    npm run test:manual:apis:resource_gethead\n    npm run test:manual:apis:resource_delete\n    npm run test:manual:apis:role_postput\n    npm run test:manual:apis:role_gethead\n    npm run test:manual:apis:role_delete\n    npm run test:manual:apis:service_postput\n    npm run test:manual:apis:service_gethead\n    npm run test:manual:apis:service_delete\n    npm run test:manual:apis:acr_postput\n    npm run test:manual:apis:acr_get\n    npm run test:manual:apis:acr_delete\n    npm run test:manual:apis:list_gethead\n    npm run test:manual:apis:userdata_get\n    npm run test:manual:apis:extdata_get\n    npm run test:manual:apis:allusertenant_get\n    npm run test:manual:apis:k2hr3keys_get\n    npm run test:manual:load:k2hdkcdata:auto\n    npm run test:manual:load:k2hdkcdata:local\n    npm run test:manual:templengine\n    npm run test:manual:templengine:async\n'",

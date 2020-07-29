@@ -18,21 +18,14 @@
 #
 
 language: cpp
-
-sudo: required
-
 dist: trusty
+os: linux
 
 env:
   global:
     - PCUSER=antpickax
     - PCREPO=stable
-  matrix:
-    - OS=ubuntu
-      TAG=18.04
-      NODE_MAJOR_VERSION=8
-      PUBLISHER=false
-      INSTPKG="k2hdkc-dev"
+  jobs:
     - OS=ubuntu
       TAG=18.04
       NODE_MAJOR_VERSION=10

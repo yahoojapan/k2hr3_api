@@ -146,7 +146,7 @@ function postV1Role(method, token, name, policies, alias)
 	req.end();
 }
 
-function postV1RoleHost(method, is_user_token, token, name, target_host, port, cuk, extra)
+function postV1RoleHost(method, is_user_token, token, name, target_host, port, cuk, extra, tag)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	strbody		= '';
@@ -170,6 +170,7 @@ function postV1RoleHost(method, is_user_token, token, name, target_host, port, c
 		host_info.port				= port;
 		host_info.cuk				= cuk;
 		host_info.extra				= extra;
+		host_info.tag				= tag;
 
 		var	body					= {	'host': host_info };
 
@@ -200,6 +201,11 @@ function postV1RoleHost(method, is_user_token, token, name, target_host, port, c
 		if(apiutil.isSafeString(extra)){
 			urlarg		+= already_set ? '&extra=' : '?extra=';
 			urlarg		+= JSON.stringify(extra);			// if extra is existing, it includes control codes, so it is converted to JSON.
+			already_set	= true;
+		}
+		if(apiutil.isSafeString(tag)){
+			urlarg		+= already_set ? '&tag=' : '?tag=';
+			urlarg		+= JSON.stringify(tag);				// if tag is existing, it includes control codes, so it is converted to JSON.
 			already_set	= true;
 		}
 		headers['Content-Length']	= 0;
@@ -390,17 +396,38 @@ function inputHostType(method)
 							_cuk = cuk.trim();
 						}
 
-						cliutil.getConsoleInput('     Extra data TYPE for host(NULL or STRING)         : ', true, false, function(isbreak, is_extra)
+						cliutil.getConsoleInput('     Extra data - null/openstack(os)/kubernetes(k8s)  : ', true, false, function(isbreak, extra)
 						{
 							if(isbreak){
 								process.exit(0);
 							}
+							var	_extra;
 
-							if('' === apiutil.getSafeString(is_extra) || apiutil.compareCaseString('null', is_extra)){
+							if('' === apiutil.getSafeString(extra) || apiutil.compareCaseString('null', apiutil.getSafeString(extra))){
+								_extra = null;
+							}else if(apiutil.compareCaseString('os', apiutil.getSafeString(extra)) || apiutil.compareCaseString('openstack', apiutil.getSafeString(extra))){
+								_extra = 'openstack-auto-v1';
+							}else if(apiutil.compareCaseString('k8s', apiutil.getSafeString(extra)) || apiutil.compareCaseString('kubernetes', apiutil.getSafeString(extra))){
+								_extra = 'k8s-auto-v1';
+							}else{
+								_extra = extra;
+							}
+
+							cliutil.getConsoleInput('     Tag string - null or string                      : ', true, false, function(isbreak, tag)
+							{
+								if(isbreak){
+									process.exit(0);
+								}
+								var	_tag;
+								if('' === apiutil.getSafeString(tag) || apiutil.compareCaseString('null', apiutil.getSafeString(tag))){
+									_tag = null;
+								}else{
+									_tag = tag;
+								}
 
 								if(!_is_user_token){
 									// run
-									postV1RoleHost(_method, _is_user_token, _token, _name, null, _port, null);
+									postV1RoleHost(_method, _is_user_token, _token, _name, null, _port, _cuk, _extra, _tag);
 								}else{
 
 									cliutil.getConsoleInput('     Host(specify hostname or ip address)             : ', true, false, function(isbreak, target_host)
@@ -414,54 +441,10 @@ function inputHostType(method)
 										var	_target_host = target_host;
 
 										// run
-										postV1RoleHost(_method, _is_user_token, _token, _name, _target_host, _port, _cuk, null);
+										postV1RoleHost(_method, _is_user_token, _token, _name, _target_host, _port, _cuk, _extra, _tag);
 									});
 								}
-
-							}else if(apiutil.compareCaseString('string', is_extra) || apiutil.compareCaseString('str', is_extra)){
-
-								cliutil.getConsoleInput('     Extra data - null/openstack(os)/kubernetes(k8s)  : ', true, false, function(isbreak, extra)
-								{
-									if(isbreak){
-										process.exit(0);
-									}
-									var	_extra;
-
-									if('' === apiutil.getSafeString(extra) || apiutil.compareCaseString('null', apiutil.getSafeString(extra))){
-										_extra = null;
-									}else if(apiutil.compareCaseString('os', apiutil.getSafeString(extra)) || apiutil.compareCaseString('openstack', apiutil.getSafeString(extra))){
-										_extra = 'openstack-auto-v1';
-									}else if(apiutil.compareCaseString('k8s', apiutil.getSafeString(extra)) || apiutil.compareCaseString('kubernetes', apiutil.getSafeString(extra))){
-										_extra = 'k8s-auto-v1';
-									}else{
-										_extra = extra;
-									}
-
-
-									if(!_is_user_token){
-										// run
-										postV1RoleHost(_method, _is_user_token, _token, _name, null, _port, _cuk, _extra);
-									}else{
-
-										cliutil.getConsoleInput('     Host(specify hostname or ip address)             : ', true, false, function(isbreak, target_host)
-										{
-											if(isbreak){
-												process.exit(0);
-											}
-											if(!apiutil.isSafeString(target_host)){
-												process.exit(0);
-											}
-											var	_target_host = target_host;
-
-											// run
-											postV1RoleHost(_method, _is_user_token, _token, _name, _target_host, _port, _cuk, _extra);
-										});
-									}
-								});
-							}else{
-								console.log('flag must be null(empty) or string: ' + JSON.stringify(is_extra));
-								process.exit(0);
-							}
+							});
 						});
 					});
 				});
