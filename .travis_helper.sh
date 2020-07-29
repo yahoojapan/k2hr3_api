@@ -155,8 +155,8 @@ if [ $? -ne 0 ]; then
 	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be number." 1>&2
 	exit 1
 fi
-if [ ${NODE_MAJOR_VERSION} -lt 8 ]; then
-	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be 8 or later." 1>&2
+if [ ${NODE_MAJOR_VERSION} -lt 10 ]; then
+	echo "[ERROR] ${PRGNAME} : NODE_MAJOR_VERSION(=${NODE_MAJOR_VERSION}) environment must be 10 or later." 1>&2
 	exit 1
 fi
 echo ""
