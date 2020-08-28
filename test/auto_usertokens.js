@@ -208,7 +208,7 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 			});
 	});
 
-	it('POST /v1/user/tokens : failure scoped token by invalid unscoped token with status 401', function(done){						// eslint-disable-line no-undef
+	it('POST /v1/user/tokens : failure scoped token by invalid unscoped token with status 404', function(done){						// eslint-disable-line no-undef
 		chai.request(app)
 			.post('/v1/user/tokens')
 			.set('content-type', 'application/json')
@@ -219,11 +219,11 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 				}
 			})
 			.end(function(err, res){
-				expect(res).to.have.status(401);
+				expect(res).to.have.status(404);
 				expect(res).to.be.json;
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.false;
-				expect(res.body.message).to.be.a('string').to.equal('token(error_dummy_token) is not existed, because it is expired or not set yet.');
+				expect(res.body.message).to.be.a('string').to.equal('could not get scoped user token for other token, tenant=tenant0 by could not get user access token by could not get user access token by getUserUnscopedTokenByToken is not implemented');
 
 				done();
 			});
@@ -334,7 +334,7 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 				expect(res).to.be.json;
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.false;
-				expect(res.body.message).to.be.a('string').to.equal('POST body does not have tenant name(or user credentials)');
+				expect(res.body.message).to.be.a('string').to.equal('There is no x-auth-token header');
 
 				done();
 			});
@@ -378,7 +378,7 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 			});
 	});
 
-	it('PUT /v1/user/tokens : failure scoped token by invalid unscoped token with status 401', function(done){						// eslint-disable-line no-undef
+	it('PUT /v1/user/tokens : failure scoped token by invalid unscoped token with status 404', function(done){						// eslint-disable-line no-undef
 		let	url	= '/v1/user/tokens';
 		url		+= '?tenantname=tenant0';
 		chai.request(app)
@@ -386,11 +386,11 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 			.set('content-type', 'application/json')
 			.set('x-auth-token', 'error_dummy_token')
 			.end(function(err, res){
-				expect(res).to.have.status(401);
+				expect(res).to.have.status(404);
 				expect(res).to.be.json;
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.false;
-				expect(res.body.message).to.be.a('string').to.equal('token(error_dummy_token) is not existed, because it is expired or not set yet.');
+				expect(res.body.message).to.be.a('string').to.equal('could not get scoped user token for other token, tenant=tenant0 by could not get user access token by could not get user access token by getUserUnscopedTokenByToken is not implemented');
 
 				done();
 			});

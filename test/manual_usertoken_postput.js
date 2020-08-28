@@ -40,7 +40,7 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 // Request API for test
 //
-function postV1UserTokens(method, token, user, passwd, tenant)
+function postV1UserTokens(method, token, othertoken, user, passwd, tenant)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers		= {
@@ -57,6 +57,9 @@ function postV1UserTokens(method, token, user, passwd, tenant)
 	var	is_user_cred_type = true;
 	if(apiutil.isSafeString(token)){
 		headers['x-auth-token']	= 'U=' + token;
+		is_user_cred_type		= false;
+	}else if(apiutil.isSafeString(othertoken)){
+		headers['x-auth-token']	= 'U=' + othertoken;
 		is_user_cred_type		= false;
 	}
 
@@ -182,7 +185,7 @@ cliutil.getConsoleInput('Method(POST/PUT)               : ', true, false, functi
 		process.exit(0);
 	}
 
-	cliutil.getConsoleInput('User CRED or TOKEN(cred/token) : ', true, false, function(isbreak, type)
+	cliutil.getConsoleInput('Type(CRED/TOKEN/OTHER)         : ', true, false, function(isbreak, type)
 	{
 		if(isbreak){
 			process.exit(0);
@@ -231,14 +234,14 @@ cliutil.getConsoleInput('Method(POST/PUT)               : ', true, false, functi
 						}
 
 						// run
-						postV1UserTokens(_method, null, _username, _passwd, _tenant);
+						postV1UserTokens(_method, null, null, _username, _passwd, _tenant);
 					});
 				});
 			});
 
-		}else{
+		}else if('' === apiutil.getSafeString(_type) || apiutil.compareCaseString('token', apiutil.getSafeString(_type))){
 			//
-			// Unscoped user token
+			// Unscoped user token registered in k2hr3
 			//
 			cliutil.getConsoleInput('Unscoped user token            : ', true, false, function(isbreak, token)
 			{
@@ -259,10 +262,42 @@ cliutil.getConsoleInput('Method(POST/PUT)               : ', true, false, functi
 					var	_tenant = tenant;
 
 					// run
-					postV1UserTokens(_method, _token, null, null, _tenant);
+					postV1UserTokens(_method, _token, null, null, null, _tenant);
 				});
 
 			});
+
+		}else if('' === apiutil.getSafeString(_type) || apiutil.compareCaseString('other', apiutil.getSafeString(_type))){
+			//
+			// other token from other(openstack) authorization system
+			//
+			cliutil.getConsoleInput('Other system token             : ', true, false, function(isbreak, token)
+			{
+				if(isbreak){
+					process.exit(0);
+				}
+				var	_token = token;
+
+				cliutil.getConsoleInput('Tenant(allow null/skip)        : ', true, false, function(isbreak, tenant)
+				{
+					if(isbreak){
+						process.exit(0);
+					}
+					var	_tenant = tenant;
+					if('' === apiutil.getSafeString(tenant) || apiutil.compareCaseString('null', apiutil.getSafeString(tenant))){
+						_tenant = null;
+					}else{
+						_tenant = tenant;
+					}
+
+					// run
+					postV1UserTokens(_method, null, _token, null, null, _tenant);
+				});
+			});
+
+		}else{
+			console.log('type must be CRED or TOKEN or OTHER(unregistered token by openstack) : ' + _type);
+			process.exit(0);
 		}
 	});
 });
