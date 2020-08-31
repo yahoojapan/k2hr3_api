@@ -33,33 +33,35 @@ var r3logger	= require('../lib/dbglogging');
 //
 // Common utility function
 //
-function rawCommonGetUserToken(req, res, unscopedToken, username, passwd, tenant)
+function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, passwd, tenant)
 {
-	if(!apiutil.isSafeString(username)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
-		var	error = {
-						result: 	false,
-						message:	'Some parameter(user name or unscoped token) is wrong.'
-					};
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
-		r3logger.elog(error.message);
-		resutil.errResponse(req, res, 400, error);				// 400: Bad Request
-		return;
-	}
-
 	// arguments
 	var	_req			= req;
 	var	_res			= res;
 	var	_unscopedToken	= apiutil.getSafeString(unscopedToken);
+	var	_otherToken		= apiutil.getSafeString(otherToken);
 	var	_username		= apiutil.getSafeString(username);
 	var	_passwd			= apiutil.getSafeString(passwd);
 	var	_tenant			= apiutil.getSafeString(tenant);
+	var	error;
 
-	if(!apiutil.isSafeString(_unscopedToken)){
+	if(!apiutil.isSafeString(_unscopedToken) && !apiutil.isSafeString(_otherToken)){
 		//
 		// Get token from User Credentials
 		//
+		if(!apiutil.isSafeString(username)){
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			error = {
+						result: 	false,
+						message:	'Some parameter(user name or unscoped token) is wrong.'
+					};
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+			r3logger.elog(error.message);
+			resutil.errResponse(req, res, 400, error);				// 400: Bad Request
+			return;
+		}
+
 		r3token.getUserToken(_username, _passwd, _tenant, function(err, token)
 		{
 			if(null !== err){
@@ -88,10 +90,23 @@ function rawCommonGetUserToken(req, res, unscopedToken, username, passwd, tenant
 			_res.send(JSON.stringify(result));
 		});
 
-	}else{
+	}else if(apiutil.isSafeString(_unscopedToken)){
 		//
 		// Get Scoped token from Unscoped token
 		//
+		if(!apiutil.isSafeString(username)){
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			error = {
+						result: 	false,
+						message:	'Some parameter(user name or unscoped token) is wrong.'
+					};
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+			r3logger.elog(error.message);
+			resutil.errResponse(req, res, 400, error);				// 400: Bad Request
+			return;
+		}
+
 		r3token.getScopedUserToken(_unscopedToken, _username, _tenant, function(err, token)
 		{
 			if(null !== err){
@@ -99,6 +114,39 @@ function rawCommonGetUserToken(req, res, unscopedToken, username, passwd, tenant
 				var	error = {
 								result: 	false,
 								message:	'could not get scoped user token for user=' + _username + ', tenant=' + _tenant + ' by ' + err.message
+							};
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+				r3logger.elog(error.message);
+				resutil.errResponse(_req, _res, 404, error);		// 404: Not Found
+				return;
+			}
+			r3logger.dlog('get user token jsonres = ' + JSON.stringify(token));
+
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			var	result = {
+							result:		true,
+							message:	'succeed',
+							scoped:		apiutil.isSafeString(_tenant),
+							token:		token
+						 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+			_res.status(201);										// 201: Created
+			_res.send(JSON.stringify(result));
+		});
+
+	}else if(apiutil.isSafeString(_otherToken)){
+		//
+		// Get Scoped/Unscoped token from other token
+		//
+		r3token.getUserTokenByToken(_otherToken, _tenant, function(err, token)
+		{
+			if(null !== err){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				var	error = {
+								result: 	false,
+								message:	'could not get scoped user token for other token, tenant=' + _tenant + ' by ' + err.message
 							};
 				/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
@@ -190,43 +238,60 @@ router.post('/', function(req, res, next)						// eslint-disable-line no-unused-
 	// arguments
 	var	tenant			= apiutil.isSafeEntity(req.body.auth) ? apiutil.getSafeString(req.body.auth.tenantName) : null;
 	var	unscopedtoken	= null;
+	var	otherToken		= null;
 	var	username		= null;
 	var	passwd			= null;
 
 	if(!apiutil.isSafeEntity(req.body.auth) || !apiutil.isSafeEntity(req.body.auth.passwordCredentials)){
 		//
-		// case of unscoped token
+		// Token is required if no user credentials are specified.
 		//
-		if(!apiutil.isSafeEntity(req.body.auth) || !apiutil.isSafeString(req.body.auth.tenantName)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			error = {
-						result: 	false,
-						message:	'POST body does not have tenant name(or user credentials)'
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
-			r3logger.elog(error.message);
-			resutil.errResponse(req, res, 400, error);			// 400: Bad Request
-			return;
-		}
+		// [NOTE]
+		// There are two cases in this case:
+		// (1) Specify the UnscopedToken registered in k2hr3 to get the ScopedToken(must specify the tenant name)
+		// (2) Specify a token other than k2hr3 (OpenStack, etc.) and perform Unauthenticated Token after user authentication.
+		//     In this case, if tenant is specified, ScopedToken can be obtained directly.
+		//
 
 		// get unscoped token
 		var	resobj = rawGetUnscopedUserToken(req);
-		if(!resobj.result){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			error = {
-						result: 	false,
-						message:	resobj.message
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		if(resobj.result){
+			//
+			// (1) case of unscoped token registered in k2hr3
+			//
+			if(!apiutil.isSafeEntity(req.body.auth) || !apiutil.isSafeString(req.body.auth.tenantName)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				error = {
+							result: 	false,
+							message:	'POST body does not have tenant name(or user credentials)'
+						};
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
-			r3logger.elog(resobj.message);
-			resutil.errResponse(req, res, resobj.status, error);	// 40X
-			return;
+				r3logger.elog(error.message);
+				resutil.errResponse(req, res, 400, error);				// 400: Bad Request
+				return;
+			}
+			username		= resobj.username;
+			unscopedtoken	= resobj.token;
+
+		}else{
+			//
+			// (2) get (un)scoped token from other a token other than k2hr3(OpenStack, etc.)
+			//
+			otherToken = r3token.getAuthTokenHeader(req, false);
+			if(!apiutil.isSafeString(otherToken)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				error = {
+							result: 	false,
+							message:	resobj.message
+						};
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+				r3logger.elog(resobj.message);
+				resutil.errResponse(req, res, resobj.status, error);	// 40X
+				return;
+			}
 		}
-		username		= resobj.username;
-		unscopedtoken	= resobj.token;
-
 	}else{
 		//
 		// case of user credentials
@@ -235,7 +300,7 @@ router.post('/', function(req, res, next)						// eslint-disable-line no-unused-
 		passwd		= apiutil.getSafeString(req.body.auth.passwordCredentials.password);	// password is allowed empty, it depends on the authentication system.
 	}
 
-	return rawCommonGetUserToken(req, res, unscopedtoken, username, passwd, tenant);
+	return rawCommonGetUserToken(req, res, unscopedtoken, otherToken, username, passwd, tenant);
 });
 
 // Mountpath				: '/v1/user/tokens'
@@ -270,43 +335,61 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 	// arguments
 	var	tenant			= apiutil.getSafeString(req.query.tenantname);
 	var	unscopedtoken	= null;
+	var	otherToken		= null;
 	var	username		= null;
 	var	passwd			= null;
 
 	if(!apiutil.isSafeString(req.query.username)){
 		//
-		// case of unscoped token
+		// Token is required if no user credentials are specified.
 		//
-		if(!apiutil.isSafeString(req.query.tenantname)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			error = {
-						result: 	false,
-						message:	'POST body does not have tenant name(or user credentials)'
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
-			r3logger.elog(error.message);
-			resutil.errResponse(req, res, 400, error);			// 400: Bad Request
-			return;
-		}
+		// [NOTE]
+		// There are two cases in this case:
+		// (1) Specify the UnscopedToken registered in k2hr3 to get the ScopedToken(must specify the tenant name)
+		// (2) Specify a token other than k2hr3 (OpenStack, etc.) and perform Unauthenticated Token after user authentication.
+		//     In this case, if tenant is specified, ScopedToken can be obtained directly.
+		//
 
 		// get unscoped token
 		var	resobj = rawGetUnscopedUserToken(req);
-		if(!resobj.result){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			error = {
-						result: 	false,
-						message:	resobj.message
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		if(resobj.result){
+			//
+			// (1) case of unscoped token registered in k2hr3
+			//
+			if(!apiutil.isSafeString(req.query.tenantname)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				error = {
+							result: 	false,
+							message:	'POST body does not have tenant name(or user credentials)'
+						};
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
-			r3logger.elog(resobj.message);
-			resutil.errResponse(req, res, resobj.status, error);	// 40X
-			return;
+				r3logger.elog(error.message);
+				resutil.errResponse(req, res, 400, error);			// 400: Bad Request
+				return;
+			}
+
+			username		= resobj.username;
+			unscopedtoken	= resobj.token;
+
+		}else{
+			//
+			// (2) get (un)scoped token from other a token other than k2hr3(OpenStack, etc.)
+			//
+			otherToken = r3token.getAuthTokenHeader(req, false);
+			if(!apiutil.isSafeString(otherToken)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				error = {
+							result: 	false,
+							message:	resobj.message
+						};
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+				r3logger.elog(resobj.message);
+				resutil.errResponse(req, res, resobj.status, error);	// 40X
+				return;
+			}
 		}
-		username		= resobj.username;
-		unscopedtoken	= resobj.token;
-
 	}else{
 		//
 		// case of user credentials
@@ -315,7 +398,7 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 		passwd		= apiutil.isSafeEntity(req.query.password) ? decodeURIComponent(apiutil.getSafeString(req.query.password)) : null;	// password is allowed empty, it depends on the authentication system.
 	}
 
-	return rawCommonGetUserToken(req, res, unscopedtoken, username, passwd, tenant);
+	return rawCommonGetUserToken(req, res, unscopedtoken, otherToken, username, passwd, tenant);
 });
 
 //

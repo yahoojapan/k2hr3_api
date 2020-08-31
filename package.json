@@ -28,8 +28,8 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "eslint": "^7.5.0",
-    "mocha": "^8.0.1",
+    "eslint": "^7.7.0",
+    "mocha": "^8.1.2",
     "nyc": "^15.1.0",
     "publish-please": "^5.5.1"
   },
