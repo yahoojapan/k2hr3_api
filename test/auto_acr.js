@@ -806,7 +806,7 @@ describe('API : ACR', function(){						// eslint-disable-line no-undef
 				expect(res.body.result).to.be.a('boolean').to.be.false;
 				expect(res.body.message).to.be.a('string');
 				expect(res.body.message).to.satisfy(function(message){
-					return (-1 != message.indexOf('connect ECONNREFUSED') || -1 != message.indexOf('got error response for verify request by status=401'));
+					return (-1 != message.indexOf('connect ECONNREFUSED') || -1 != message.indexOf('got error response for verify request by status=401') || -1 != message.indexOf('parameter is wrong : verifyurl='));
 				});
 
 				done();
@@ -1051,7 +1051,7 @@ describe('API : ACR', function(){						// eslint-disable-line no-undef
 				expect(res.body.result).to.be.a('boolean').to.be.false;
 				expect(res.body.message).to.be.a('string');
 				expect(res.body.message).to.satisfy(function(message){
-					return (-1 != message.indexOf('connect ECONNREFUSED') || -1 != message.indexOf('got error response for verify request by status=401'));
+					return (-1 != message.indexOf('connect ECONNREFUSED') || -1 != message.indexOf('got error response for verify request by status=401') || -1 != message.indexOf('parameter is wrong : verifyurl='));
 				});
 
 				done();
