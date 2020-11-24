@@ -1,3 +1,10 @@
+k2hr3-api (0.9.11) unstable; urgency=low
+
+  * Switched Travis CI to Github actions - #23
+  * Supported Node.js 12 and 14 - #22
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 24 Nov 2020 15:33:45 +0900
+
 k2hr3-api (0.9.10) unstable; urgency=low
 
   * Added authorization using Token from external authentication system - #20
