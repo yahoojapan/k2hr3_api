@@ -1,6 +1,6 @@
 K2HR3 REST API(k2hr3-api)
 -------------------------
-[![Build Status](https://travis-ci.org/yahoojapan/k2hr3_api.svg?branch=master)](https://travis-ci.org/yahoojapan/k2hr3_api)
+[![Node.js AntPickax CI](https://github.com/yahoojapan/k2hr3_api/workflows/Node.js%20AntPickax%20CI/badge.svg)](https://github.com/yahoojapan/k2hr3_api/actions)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/yahoojapan/k2hr3_api/master/LICENSE)
 [![GitHub forks](https://img.shields.io/github/forks/yahoojapan/k2hr3_api.svg)](https://github.com/yahoojapan/k2hr3_api/network)
 [![GitHub stars](https://img.shields.io/github/stars/yahoojapan/k2hr3_api.svg)](https://github.com/yahoojapan/k2hr3_api/stargazers)
