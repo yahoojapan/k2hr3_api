@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# K2HR3 Frontend Web Application
+# K2HR3 REST API
 #
 # Copyright 2018 Yahoo! Japan Corporation.
 #
@@ -18,89 +18,864 @@
 # REVISION:
 #
 
-SCRIPTNAME="k2hr3-init"
-LOGFILE="/var/log/${SCRIPTNAME}.log"
+#----------------------------------------------------------
+# Utility functions
+#----------------------------------------------------------
+#
+# Usage
+#
+func_usage()
+{
+	echo ""
+	echo "Usage:  $1 {-h(--help) | -r(--register) | -d(--delete)}"
+	echo "  -h(--help)      print help."
+	echo "  -r(--register)  register host to k2hr3 system, and setup packages if needed.(default)"
+	echo "  -d(--delete)    unregister host from k2hr3 system(not unsetup(delete) packages)."
+	echo ""
+	echo "Specification:"
+	echo "  This script is executed by cloud-init and is used to automatically register the Virtual"
+	echo "  Machine with ROLE of K2HR3."
+	echo "  In addition, the script can be executed even if it is called from other than cloud-init,"
+	echo "  and the VM can be deregistered from ROLE of K2HR3."
+	echo "  When automatically registered, the following files will be output to /etc/antpickax."
+	echo "      k2hr3-role-token"
+	echo "      k2hr3-role-name"
+	echo "      k2hr3-role-tenant"
+	echo "      k2hr3-cuk"
+	echo "      k2hr3-cuk-param"
+	echo "      k2hr3-extra-param"
+	echo "      k2hr3-tag-param"
+	echo "      k2hr3-apiarg"
+	echo "      k2hr3-api-uri"
+	echo ""
+	echo "  These files can be used as URIs and their parameters when accessing K2HR3 from the VM."
+	echo "  After automatic registration, the following KEY-VALUE of RESOURCE corresponding to the"
+	echo "  registration destination ROLE can be read to install the package and control(start)"
+	echo "  the systemd service."
+	echo "      k2hr3-init-packages"
+	echo "      k2hr3-init-packagecloud-packages"
+	echo "      k2hr3-init-systemd-packages"
+	echo "  When deregistering, you can reverse the k2hr3-init-systemd-packages KEY-VALUE to stop"
+	echo "  the systemd service."
+	echo ""
+}
+
+#
+# Output messages utilities
+#
+output_raw()
+{
+	#
+	# $1: level string
+	# $2: message
+	#
+	_LOCAL_LEVEL=$1
+	shift
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}${_LOCAL_LEVEL}: $@" | sudo tee -a ${LOGFILE}
+}
+
+exit_err()
+{
+	output_raw "[ERROR]" "$1"
+	exit 1
+}
+
+output_warn()
+{
+	output_raw "[WARNING]" "$1"
+}
+
+output_info()
+{
+	output_raw "[INFO]" "$1"
+}
+
+#
+# Check OS
+#
+check_os()
+{
+	#
+	# Set global values
+	#	IS_OS_DEBIAN
+	#	PKGMGR_BIN
+	#	PKGMGR_UPDATE_OPT
+	#	PKGMGR_LIST_CMD
+	#
+	_OS_DIST=""
+	if [ -f /etc/centos-release ]; then
+		IS_OS_DEBIAN=0
+		if [ -f /etc/os-release ]; then
+			_OS_VERSION=`cat /etc/os-release | grep '^VERSION_ID=' | sed -e 's/VERSION_ID=//g' -e 's/"//g'`
+			if [ "X${_OS_VERSION}" = "X8" ]; then
+				_OS_DIST="CentOS 8(package manager dnf)"
+				PKGMGR_BIN="dnf"
+				PKGMGR_UPDATE_OPT="update -y -qq"
+				PKGMGR_LIST_CMD="dnf list installed"
+			else
+				_OS_DIST="CentOS 7 or older(package manager yum)"
+				PKGMGR_BIN="yum"
+				PKGMGR_UPDATE_OPT="update -y"
+				PKGMGR_LIST_CMD="yum list installed"
+			fi
+		else
+			grep ' 8' /etc/centos-release >/dev/null 2>&1
+			if [ $? -eq 0 ]; then
+				_OS_DIST="CentOS 8(package manager dnf)"
+				PKGMGR_BIN="dnf"
+				PKGMGR_UPDATE_OPT="update -y -qq"
+				PKGMGR_LIST_CMD="dnf list installed"
+			else
+				_OS_DIST="CentOS 7 or older(package manager yum)"
+				PKGMGR_BIN="yum"
+				PKGMGR_UPDATE_OPT="update -y"
+				PKGMGR_LIST_CMD="yum list installed"
+			fi
+		fi
+	elif [ -f /etc/redhat-release ]; then
+		_OS_DIST="Redhat(package manager yum)"
+		IS_OS_DEBIAN=0
+		PKGMGR_BIN="yum"
+		PKGMGR_UPDATE_OPT="update -y"
+		PKGMGR_LIST_CMD="yum list installed"
+
+	elif [ -f /etc/fedora-release ]; then
+		_OS_DIST="Fedora(package manager dnf)"
+		IS_OS_DEBIAN=0
+		PKGMGR_BIN="dnf"
+		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_LIST_CMD="dnf list installed"
+
+	elif [ -f /etc/debian_version ]; then
+		_OS_DIST="Debian(package manager apt)"
+		IS_OS_DEBIAN=1
+		PKGMGR_BIN="apt-get"
+		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_LIST_CMD="apt list --installed"
+
+	elif [ -f /etc/os-release ]; then
+		_OS_ID=`cat /etc/os-release | grep -e '^ID=' -e '^ID_LIKE=' | sed -e 's/ID=//g' -e 's/ID_LIKE=//g' -e 's/"//g'`
+		echo ${_OS_ID} | grep -e '[cC][eE][nN][tT][oO][sS]' >/dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			_OS_VERSION=`cat /etc/os-release | grep '^VERSION_ID=' | sed -e 's/VERSION_ID=//g' -e 's/"//g'`
+			IS_OS_DEBIAN=0
+			if [ "X${_OS_VERSION}" = "X8" ]; then
+				_OS_DIST="CentOS 8(package manager dnf)"
+				PKGMGR_BIN="dnf"
+				PKGMGR_UPDATE_OPT="update -y -qq"
+				PKGMGR_LIST_CMD="dnf list installed"
+			else
+				_OS_DIST="CentOS 7 or older(package manager yum)"
+				PKGMGR_BIN="yum"
+				PKGMGR_UPDATE_OPT="update -y"
+				PKGMGR_LIST_CMD="yum list installed"
+			fi
+		else
+			echo ${_OS_ID} | grep -e '[rR][hH][eE][lL]' >/dev/null 2>&1
+			if [ $? -eq 0 ]; then
+				_OS_DIST="Redhat(package manager yum)"
+				IS_OS_DEBIAN=0
+				PKGMGR_BIN="yum"
+				PKGMGR_UPDATE_OPT="update -y"
+				PKGMGR_LIST_CMD="yum list installed"
+			else
+				echo ${_OS_ID} | grep -e '[fF][eE][dD][oO][rR][aA]' >/dev/null 2>&1
+				if [ $? -eq 0 ]; then
+					_OS_DIST="Fedora(package manager dnf)"
+					IS_OS_DEBIAN=0
+					PKGMGR_BIN="dnf"
+					PKGMGR_UPDATE_OPT="update -y -qq"
+					PKGMGR_LIST_CMD="dnf list installed"
+				else
+					echo ${_OS_ID} | grep -e '[uU][bB][uU][nN][tT][uU]' -e '[dD][eE][bB][iI][aA][nN]' >/dev/null 2>&1
+					if [ $? -eq 0 ]; then
+						_OS_DIST="Debian or Ubuntu(package manager apt)"
+						IS_OS_DEBIAN=1
+						PKGMGR_BIN="apt-get"
+						PKGMGR_UPDATE_OPT="update -y -qq"
+						PKGMGR_LIST_CMD="apt list --installed"
+					else
+						exit_err "Unknown OS distribution."
+					fi
+				fi
+			fi
+		fi
+	elif [ -f /etc/lsb-release ]; then
+		_OS_DIST="Debian or Ubuntu(package manager apt)"
+		IS_OS_DEBIAN=1
+		PKGMGR_BIN="apt-get"
+		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_LIST_CMD="apt list --installed"
+	else
+		exit_err "Unknown OS distribution."
+	fi
+	output_info "OS is ${_OS_DIST}"
+	return 0
+}
+
+#
+# Update package repository caches
+#
+update_package_local_db()
+{
+	if [ ${IS_UPDATE_PKG_LOCAL_DB} -ne 0 ]; then
+		return 0
+	fi
+
+	sudo ${PKGMGR_BIN} ${PKGMGR_UPDATE_OPT}
+	if [ $? -ne 0 ]; then
+		exit_err "Failed updating packages before installing curl"
+	fi
+	output_info "Success updating package repository caches"
+	IS_UPDATE_PKG_LOCAL_DB=1
+	return 0
+}
+
+#
+# Check Curl
+#
+check_curl()
+{
+	curl --version >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		output_info "curl is already installed."
+		return 0
+	fi
+
+	# Update
+	update_package_local_db
+
+	# Install curl
+	sudo ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl
+	if [ $? -ne 0 ]; then
+		exit_err "Failed installing curl"
+	fi
+	output_info "Success installing curl"
+	return 0
+}
+
+#
+# Output file utilities
+#
+check_create_file()
+{
+	#
+	# $1: filepath
+	# $2: value
+	# $3: file mode
+	#
+	_LOCAL_CC_FILE=$1
+	_LOCAL_CC_VALUE=$2
+	if [ $# -gt 2 ]; then
+		_LOCAL_CC_MODE=$3
+	else
+		_LOCAL_CC_MODE=0644
+	fi
+
+	if [ -f ${_LOCAL_CC_FILE} ]; then
+		_LOCAL_CC_TMP=`cat ${_LOCAL_CC_FILE} 2>/dev/null | tr -d '\n' 2>/dev/null`
+		if [ "X${_LOCAL_CC_TMP}" = "X${_LOCAL_CC_VALUE}" ]; then
+			# Same value, thus nothing to do
+			return 0
+		fi
+	fi
+
+	# Put file
+	echo -n "${_LOCAL_CC_VALUE}" > ${_LOCAL_CC_FILE} 2>/dev/null
+	if [ $? -ne 0 ]; then
+		exit_err "Could not put the value to ${_LOCAL_CC_FILE}"
+	fi
+
+	# file permit
+	chmod ${_LOCAL_CC_MODE} ${_LOCAL_CC_FILE} 2>/dev/null
+	if [ $? -ne 0 ]; then
+		exit_err "Could not change mode ${_LOCAL_CC_MODE} to ${_LOCAL_CC_FILE}"
+	fi
+	output_info "Succeed to save the value to ${_LOCAL_CC_FILE}"
+	return 0
+}
+
+#
+# Load value from file with default
+#
+load_value_with_default()
+{
+	#
+	# $1:	file path
+	# $2:	default value
+	#
+	if [ ! -f $1 ]; then
+		_RESULT_VALUE="$2"
+	else
+		_RESULT_VALUE=`cat $1 2>/dev/null | tr -d '\n' 2>/dev/null`
+		if [ "X${_RESULT_VALUE}" = "X" ]; then
+			_RESULT_VALUE="$2"
+		fi
+	fi
+	echo "${_RESULT_VALUE}"
+	return 0
+}
+
+#
+# Setup packagecloud.io repository
+#
+setup_packagecloudio_repo()
+{
+	if [ ${SETUP_PC_REPO} -eq 1 ]; then
+		return 0
+	fi
+	if [ ${IS_OS_DEBIAN} -eq 1 ]; then
+		_SCRIPT_NAME="script.deb.sh"
+	else
+		_SCRIPT_NAME="script.rpm.sh"
+	fi
+	curl -s https://packagecloud.io/install/repositories/antpickax/stable/${_SCRIPT_NAME} | sudo bash
+	if [ $? -ne 0 ]; then
+		exit_err "Could not setup packagecloud.io repository."
+	fi
+	SETUP_PC_REPO=1
+	output_info "Success setup packagecloud.io repository."
+
+	# always updated
+	IS_UPDATE_PKG_LOCAL_DB=1
+
+	return 0
+}
+
+#
+# Check package installed
+#
+is_install_package()
+{
+	#
+	# $1: package name
+	#
+
+	# Update
+	update_package_local_db
+
+	# Check package installed
+	sudo ${PKGMGR_LIST_CMD} | grep "^$1" >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		# package is not installed.
+		return 1
+	fi
+	# package is already installed.
+	return 0
+}
+
+#
+# Install packages utilities
+#
+install_package()
+{
+	#
+	# $1: package name
+	#
+	_TMP_INSTALL_PKGNAME=$1
+
+	# Update
+	update_package_local_db
+
+	# check package installed
+	is_install_package ${_TMP_INSTALL_PKGNAME}
+	if [ $? -eq 0 ]; then
+		output_info "${_TMP_INSTALL_PKGNAME} pacakge is already installed."
+	else
+		# Install package
+		sudo ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME} >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			exit_err "Failed installing ${_TMP_INSTALL_PKGNAME} package"
+		fi
+		output_info "Success installing ${_TMP_INSTALL_PKGNAME} pacakge"
+	fi
+
+	return 0
+}
+
+get_install_packages()
+{
+	#
+	# $1: headers
+	# $2: url(toward keyname in resource)
+	# $3: keyname
+	# $4: packages needs packagecloud.io(1)
+	#
+	_INSTALL_PKGS_PC=0
+	if [ $# -gt 3 ]; then
+		if [ $4 -eq 1 ]; then
+			_INSTALL_PKGS_PC=1
+		fi
+	fi
+
+	# Try to get key's value in resource
+	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
+	if [ $? -ne 0 ]; then
+		output_info "There is no keyname($3), then no package is installed."
+		return 0
+	fi
+
+	# Check response(expect -> "result": true)
+	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		# Get error message(expect -> "message": "...")
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
+		return 0
+	fi
+	output_info "Success getting keyname($3) value."
+
+	# setup packakecloud.io repository
+	if [ ${_INSTALL_PKGS_PC} -eq 1 ]; then
+		setup_packagecloudio_repo
+	fi
+
+	# pacakges
+	INSTALL_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	for _package in ${INSTALL_PKGS}; do
+		install_package "${_package}" "${_INSTALL_PKGS_SYSTEMD}"
+	done
+
+	output_info "Success installing keyname($3) packages."
+	return 0
+}
+
+#
+# Systemd packages utilities
+#
+start_systemd_service()
+{
+	#
+	# $1: headers
+	# $2: url(toward keyname in resource)
+	# $3: keyname
+	#
+
+	# Try to get key's value in resource
+	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
+	if [ $? -ne 0 ]; then
+		output_info "There is no keyname($3), then no package is installed."
+		return 0
+	fi
+
+	# Check response(expect -> "result": true)
+	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		# Get error message(expect -> "message": "...")
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
+		return 0
+	fi
+	output_info "Success getting keyname($3) value."
+
+	# pacakges
+	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+
+	# check and start/enable systemd service
+	for _package in ${_TMP_LIST_PKGS}; do
+		sudo systemctl is-active ${_package} >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			sudo systemctl is-enabled ${_package} >/dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				sudo systemctl enable ${_package} >/dev/null 2>&1
+				if [ $? -ne 0 ]; then
+					output_warn "Could not enable ${_package} systemd(pacakge)"
+				else
+					output_info "Success enable ${_package} systemd(pacakge)"
+				fi
+			else
+				output_info "${_package} systemd(pacakge) is aready enabled."
+			fi
+
+			sudo systemctl start ${_package} >/dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				output_warn "Could not start ${_package} systemd(pacakge)"
+			else
+				output_info "Success start ${_package} systemd(pacakge)"
+			fi
+
+		else
+			output_info "${_package}(pacakge) is already active, then skip it."
+		fi
+	done
+
+	output_info "Success starting keyname($3) packages."
+	return 0
+}
+
+stop_systemd_service()
+{
+	#
+	# $1: headers
+	# $2: url(toward keyname in resource)
+	# $3: keyname
+	#
+
+	# Try to get key's value in resource
+	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
+	if [ $? -ne 0 ]; then
+		output_info "There is no keyname($3), then no package is installed."
+		return 0
+	fi
+
+	# Check response(expect -> "result": true)
+	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		# Get error message(expect -> "message": "...")
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
+		return 0
+	fi
+	output_info "Success getting keyname($3) value."
+
+	# pacakges
+	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+
+	# make reverse list
+	_TMP_REV_LIST_PKGS=
+	for _package in ${_TMP_LIST_PKGS}; do
+		_TMP_REV_LIST_PKGS="${_package} ${_TMP_REV_LIST_PKGS}"
+	done
+
+	# check and stop systemd service
+	for _package in ${_TMP_REV_LIST_PKGS}; do
+		sudo systemctl is-active ${_package} >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			output_info "${_package}(pacakge) is not active as systemd.service(timer) or not systemd.service(timer), then skip it."
+		else
+			sudo systemctl stop ${_package} >/dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				output_warn "Could not stop ${_package} systemd(pacakge)"
+			else
+				output_info "Success stop ${_package} systemd(pacakge)"
+			fi
+
+			sudo systemctl disable ${_package} >/dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				output_warn "Could not disable ${_package} systemd(pacakge)"
+			else
+				output_info "Success disable ${_package} systemd(pacakge)"
+			fi
+		fi
+	done
+
+	output_info "Success stopping keyname($3) packages."
+	return 0
+}
+
+#
+# Register host to K2HR3
+#
+register_host()
+{
+	#
+	# $1: headers
+	# $2: url(toward role)
+	# $3: role name(for only using message)
+	#
+	_REGISTER_RESULT=`curl -s -S -X PUT -H "$1" "$2" 2>&1`
+	if [ $? -ne 0 ]; then
+		exit_err "Could not register to role member with curl error(${_REGISTER_RESULT})"
+	fi
+	# Check response(expect -> "result": true)
+	echo ${_REGISTER_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		# Get error message(expect -> "message": "...")
+		_REGISTER_RESULT_MSG=`echo ${_REGISTER_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		exit_err "Failed to put access for registering by ${_REGISTER_RESULT_MSG}"
+	fi
+	output_info "Success setting this host to k2hr3 role($3)"
+	return 0
+}
+
+#
+# Delete(unregister) host from K2HR3
+#
+delete_host()
+{
+	#
+	# $1: headers
+	# $2: url(toward role)
+	# $3: role name(for only using message)
+	#
+	_DELETE_RESULT=`curl -s -S -X DELETE -H "$1" -o /dev/null -w "%{http_code}\n" "$2" 2>&1`
+	if [ "X${_DELETE_RESULT}" != "X204" ]; then
+		exit_err "Could not delete(unregister) host from role member with curl error(${_DELETE_RESULT})"
+	fi
+	output_info "Success deleting(unregister) this host from k2hr3 role($3)"
+	return 0
+}
+
+#----------------------------------------------------------
+# Check Options
+#----------------------------------------------------------
+#
+# Set program name and log file
+#
+SCRIPTDIR=`dirname $0`
+SCRIPTDIR=`(cd ${SCRIPTDIR}; pwd)`
+echo ${SCRIPTDIR} | grep '^/var/lib/cloud' >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+	SCRIPTNAME="k2hr3-init"
+	LOGFILE="/var/log/${SCRIPTNAME}.log"
+else
+	SCRIPTNAME=`basename $0`
+	LOGFILE="/var/log/${SCRIPTNAME}.log"
+fi
+
+#
+# Set script mode
+#
+SCRIPTMODE=
+while [ $# -ne 0 ]; do
+	if [ "X$1" = "X" ]; then
+		break;
+
+	elif [ "X$1" = "X-h" -o "X$1" = "X-H" -o "X$1" = "X--HELP" -o "X$1" = "X--help" ]; then
+		func_usage ${SCRIPTNAME}
+		exit 0
+
+	elif [ "X$1" = "X-r" -o "X$1" = "X-R" -o "X$1" = "X--register" -o "X$1" = "X--REGISTER" ]; then
+		if [ "X${SCRIPTMODE}" != "X" ]; then
+			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
+		fi
+		SCRIPTMODE="r"
+
+	elif [ "X$1" = "X-d" -o "X$1" = "X-D" -o "X$1" = "X--delete" -o "X$1" = "X--DELETE" ]; then
+		if [ "X${SCRIPTMODE}" != "X" ]; then
+			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
+		fi
+		SCRIPTMODE="d"
+
+	else
+		exit_err "Unknown option: $1, check usage with the -h option."
+	fi
+	shift
+done
+if [ "X${SCRIPTMODE}" = "X" ]; then
+	# Set default values
+	SCRIPTMODE="r"
+fi
+
+#----------------------------------------------------------
+# Main
+#----------------------------------------------------------
+output_info "Start common processing."
+
+#
+# Common variables for package manager
+#
+SETUP_PC_REPO=0
+IS_UPDATE_PKG_LOCAL_DB=0
+IS_OS_DEBIAN=0
+PKGMGR_BIN=
+PKGMGR_UPDATE_OPT=
+PKGMGR_INSTALL_OPT="-y"
+PKGMGR_LIST_CMD=
+
+#
+# Common variables for k2hr3 keyname
+#
+INSTALL_PKGS_KEYNAME="k2hr3-init-packages"
+INSTALL_PC_PKGS_KEYNAME="k2hr3-init-packagecloud-packages"
+SYSTEMD_PKGS_KEYNAME="k2hr3-init-systemd-packages"
+INSTALL_PKGS_PARAM="type=keys&keyname=${INSTALL_PKGS_KEYNAME}"
+INSTALL_PC_PKGS_PARAM="type=keys&keyname=${INSTALL_PC_PKGS_KEYNAME}"
+SYSTEMD_PKGS_PARAM="type=keys&keyname=${SYSTEMD_PKGS_KEYNAME}"
+
+#
+# Directory and files
+#
+K2HR3_ETC_DIR="/etc/antpickax"
+K2HR3_ROLE_TOKEN_FILE="${K2HR3_ETC_DIR}/k2hr3-role-token"
+K2HR3_ROLE_NAME_FILE="${K2HR3_ETC_DIR}/k2hr3-role-name"
+K2HR3_ROLE_TENANT_FILE="${K2HR3_ETC_DIR}/k2hr3-role-tenant"
+K2HR3_CUK_VALUE_FILE="${K2HR3_ETC_DIR}/k2hr3-cuk"
+K2HR3_CUK_PARAM_FILE="${K2HR3_ETC_DIR}/k2hr3-cuk-param"
+K2HR3_EXTRA_PARAM_FILE="${K2HR3_ETC_DIR}/k2hr3-extra-param"
+K2HR3_TAG_PARAM_FILE="${K2HR3_ETC_DIR}/k2hr3-tag-param"
+K2HR3_API_ARG_FILE="${K2HR3_ETC_DIR}/k2hr3-apiarg"
+K2HR3_API_HOST_URI_FILE="${K2HR3_ETC_DIR}/k2hr3-api-uri"
+
+#
+# Files by cloud-init
+#
 CLOUDINIT_DATA_DIR="/var/lib/cloud/data"
 INSTANCE_ID_FILE="${CLOUDINIT_DATA_DIR}/instance-id"
-K2HR3_ROLE_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-role"
-K2HR3_CUK_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-cuk"
-K2HR3_APIARG_FILE="${CLOUDINIT_DATA_DIR}/k2hr3-apiarg"
 
-K2HR3_USER_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
-K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}/v1/role"
+#
+# Values defined by each role( following values are set by k2hr3 )
+#
+K2HR3_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
 K2HR3_ROLE_NAME="{{= %K2HR3_ROLE_NAME% }}"
-
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Start to initialize information for k2hr3" | tee -a ${LOGFILE}
-
-if [ ! -f ${INSTANCE_ID_FILE} ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not read ${INSTANCE_ID_FILE}" | tee -a ${LOGFILE}
-	exit 1
-fi
-INSTANCE_ID=`cat ${INSTANCE_ID_FILE}`
-if [ "X${INSTANCE_ID}" = "X" ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Unknown Instance Id in ${INSTANCE_ID_FILE}" | tee -a ${LOGFILE}
-	exit 1
+K2HR3_RESOURCE_NAME=`echo ${K2HR3_ROLE_NAME} | sed -e 's/:[rR][oO][lL][eE]:/:resource:/g'`
+K2HR3_ROLE_TENANT="{{= %K2HR3_ROLE_TENANT% }}"
+K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}"
+K2HR3_ERROR_MSG="{{= %K2HR3_ERROR_MSG% }}"
+if [ "X${K2HR3_ERROR_MSG}" != "X" ]; then
+	exit_err "The script template has failed(${K2HR3_ERROR_MSG}) to be expanded and cannot be executed anymore."
 fi
 
-CUK_PARAMETER="cuk=${INSTANCE_ID}"
-EXTRA_PARAMETER="extra=openstack-auto-v1"
+#
+# Check OS and package manager
+#
+output_info "Check OS distribution and package manager"
+check_os
 
-REGISTER_RESULT=`curl -s -S -X PUT -H "x-auth-token: R=${K2HR3_USER_ROLE_TOKEN}" "${K2HR3_API_HOST_URI}/${K2HR3_ROLE_NAME}?${CUK_PARAMETER}&${EXTRA_PARAMETER}" 2>&1`
-if [ $? -ne 0 ];then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not register to role member with curl error" | tee -a ${LOGFILE}
-	exit 1
-fi
-REGISTER_RESULT_VALUE=`echo ${REGISTER_RESULT} | python -m json.tool | grep result | cut -d':' -f2,2 | sed 's/^[ ,]\+\|[ ,]\+$//g' | tr '[:lower:]' '[:upper:]'`
-if [ "X${REGISTER_RESULT_VALUE}" != "XTRUE" ]; then
-	REGISTER_RESULT_MSG=`echo ${REGISTER_RESULT} | python -m json.tool | grep message | cut -d':' -f2,2 | sed 's/^[ ,]\+\|[ ,]\+$//g'`
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Failed to put access for registering by ${REGISTER_RESULT_MSG}" | tee -a ${LOGFILE}
-	exit 1
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Set this host to k2hr3 role(${K2HR3_ROLE_NAME})" | tee -a ${LOGFILE}
+#
+# Check curl
+#
+output_info "Check curl installed and install it"
+check_curl
 
-echo "${K2HR3_ROLE_NAME}" > ${K2HR3_ROLE_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put k2hr3 role name(${K2HR3_ROLE_NAME}) to ${K2HR3_ROLE_FILE}" | tee -a ${LOGFILE}
-	exit 1
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create k2hr3 role(${K2HR3_ROLE_NAME}) file(${K2HR3_ROLE_FILE})" | tee -a ${LOGFILE}
+#
+# Processing by mode
+#
+if [ "X${SCRIPTMODE}" = "Xr" ]; then
+	#
+	# Register and Install packages and Start services
+	#
+	output_info "Start to initialize host by k2hr3"
 
-chmod 444 ${K2HR3_ROLE_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_ROLE_FILE}, but continue..." | tee -a ${LOGFILE}
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize host information for k2hr3" | tee -a ${LOGFILE}
+	#
+	# API URI
+	#
+	K2HR3_API_REGISTER_URI="${K2HR3_API_HOST_URI}/v1/role"
+	K2HR3_API_RESOURCE_URI="${K2HR3_API_HOST_URI}/v1/resource"
 
-echo "${INSTANCE_ID}" > ${K2HR3_CUK_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put cuk=instanceid(${INSTANCE_ID}) to ${K2HR3_CUK_FILE}" | tee -a ${LOGFILE}
-	exit 1
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create cuk=instanceid(${INSTANCE_ID}) file(${K2HR3_CUK_FILE})" | tee -a ${LOGFILE}
+	#
+	# Cehck output directory
+	#
+	if [ ! -d ${K2HR3_ETC_DIR} ]; then
+		sudo mkdir -p ${K2HR3_ETC_DIR}
+		if [ $? -ne 0 ]; then
+			exit_err "Could not make directory ${K2HR3_ETC_DIR}"
+		fi
+		sudo chmod 0777 ${K2HR3_ETC_DIR}
+		if [ $? -ne 0 ]; then
+			output_warn "Could not change permission ${K2HR3_ETC_DIR}"
+		fi
+	fi
 
-chmod 444 ${K2HR3_CUK_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_CUK_FILE}, but continue..." | tee -a ${LOGFILE}
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize cuk(instanceid) information for k2hr3" | tee -a ${LOGFILE}
+	#
+	# Generate values
+	#
+	if [ ! -f ${INSTANCE_ID_FILE} ]; then
+		exit_err "Could not read ${INSTANCE_ID_FILE}"
+	fi
+	INSTANCE_ID=`cat ${INSTANCE_ID_FILE} 2>/dev/null | tr -d '\n' 2>/dev/null`
+	if [ "X${INSTANCE_ID}" = "X" ]; then
+		exit_err "Unknown Instance Id in ${INSTANCE_ID_FILE}"
+	fi
+	CUK_VALUE="${INSTANCE_ID}"
+	CUK_PARAMETER="cuk=${INSTANCE_ID}"
+	EXTRA_PARAMETER="extra=openstack-auto-v1"
+	LOCAL_HOSTNAME=`hostname`
+	if [ "X${LOCAL_HOSTNAME}" = "X" ]; then
+		output_warn "Local hostname is empty"
+	fi
+	TAG_PARAMETER="tag=${LOCAL_HOSTNAME}"
 
-echo "${CUK_PARAMETER}" > ${K2HR3_APIARG_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Could not put api url argument(${CUK_PARAMETER}) to ${K2HR3_APIARG_FILE}" | tee -a ${LOGFILE}
-	exit 1
-fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: Create api url argument(${CUK_PARAMETER}) file(${K2HR3_APIARG_FILE})" | tee -a ${LOGFILE}
+	#
+	# Register this host to K2HR3
+	#
+	output_info "Register host to K2HR3"
+	register_host "x-auth-token: R=${K2HR3_ROLE_TOKEN}" "${K2HR3_API_REGISTER_URI}/${K2HR3_ROLE_NAME}?${CUK_PARAMETER}&${EXTRA_PARAMETER}&${TAG_PARAMETER}" "${K2HR3_ROLE_NAME}"
 
-chmod 444 ${K2HR3_APIARG_FILE}
-if [ $? -ne 0 ]; then
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[WARN]: Could not change mode for ${K2HR3_APIARG_FILE}, but continue..." | tee -a ${LOGFILE}
+	#
+	# Create files
+	#
+	output_info "Create files under ${K2HR3_ETC_DIR} directory"
+	check_create_file "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}"
+	check_create_file "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}"
+	check_create_file "${K2HR3_ROLE_TENANT_FILE}"  "${K2HR3_ROLE_TENANT}"
+	check_create_file "${K2HR3_CUK_VALUE_FILE}"    "${CUK_VALUE}"
+	check_create_file "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}"
+	check_create_file "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}"
+	check_create_file "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}"
+	check_create_file "${K2HR3_API_ARG_FILE}"      "${CUK_PARAMETER}"
+	check_create_file "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}"
+
+	#
+	# Install packages
+	#
+	output_info "Start installing packages(if necessary)"
+	get_install_packages "x-auth-token: R=${K2HR3_ROLE_TOKEN}" "${K2HR3_API_RESOURCE_URI}/${K2HR3_RESOURCE_NAME}?${INSTALL_PKGS_PARAM}"    "${INSTALL_PKGS_KEYNAME}"    "0"
+	get_install_packages "x-auth-token: R=${K2HR3_ROLE_TOKEN}" "${K2HR3_API_RESOURCE_URI}/${K2HR3_RESOURCE_NAME}?${INSTALL_PC_PKGS_PARAM}" "${INSTALL_PC_PKGS_KEYNAME}" "1"
+
+	#
+	# Enable/Start systemd packages
+	#
+	output_info "Enable/Start systemd packages(if necessary)"
+	start_systemd_service "x-auth-token: R=${K2HR3_ROLE_TOKEN}" "${K2HR3_API_RESOURCE_URI}/${K2HR3_RESOURCE_NAME}?${SYSTEMD_PKGS_PARAM}" "${SYSTEMD_PKGS_KEYNAME}"
+
+	#
+	# Finish
+	#
+	output_info "Finish initializing host by k2hr3"
+
+else
+	#
+	# Delete(unregister) and Stop services
+	#
+	output_info "Stop services and Delete host from k2hr3"
+
+	#
+	# Load parameters( the value used when registering has priority )
+	#
+	output_info "Loading values from files under ${K2HR3_ETC_DIR} directory"
+	LOAD_K2HR3_ROLE_TOKEN=`load_value_with_default   "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}"
+	LOAD_K2HR3_ROLE_NAME=`load_value_with_default    "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}"
+	LOAD_CUK_PARAMETER=`load_value_with_default      "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}"
+	LOAD_EXTRA_PARAMETER=`load_value_with_default    "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}"
+	LOAD_TAG_PARAMETER=`load_value_with_default      "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}"
+	LOAD_K2HR3_API_HOST_URI=`load_value_with_default "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}"
+
+	#
+	# API URI
+	#
+	LOAD_K2HR3_API_REGISTER_URI="${LOAD_K2HR3_API_HOST_URI}/v1/role"
+	LOAD_K2HR3_API_RESOURCE_URI="${LOAD_K2HR3_API_HOST_URI}/v1/resource"
+
+	#
+	# Stop all systemd services(packages)
+	#
+	output_info "Start stopping systemd services(packages)"
+	stop_systemd_service "x-auth-token: R=${K2HR3_ROLE_TOKEN}" "${LOAD_K2HR3_API_RESOURCE_URI}/${K2HR3_RESOURCE_NAME}?${SYSTEMD_PKGS_PARAM}" "${SYSTEMD_PKGS_KEYNAME}"
+
+	#
+	# Delete(unregister) host from k2hr3
+	#
+	output_info "Delete(unregister) host from K2HR3"
+	delete_host "x-auth-token: R=${LOAD_K2HR3_ROLE_TOKEN}" "${LOAD_K2HR3_API_REGISTER_URI}/${LOAD_K2HR3_ROLE_NAME}?${LOAD_CUK_PARAMETER}&${LOAD_EXTRA_PARAMETER}&${LOAD_TAG_PARAMETER}" "${LOAD_K2HR3_ROLE_NAME}"
+
+	#
+	# Remove files
+	#
+	output_info "Remove files under ${K2HR3_ETC_DIR} directory"
+	sudo rm -f ${K2HR3_ROLE_TOKEN_FILE}
+	sudo rm -f ${K2HR3_ROLE_NAME_FILE}
+	sudo rm -f ${K2HR3_ROLE_TENANT_FILE}
+	sudo rm -f ${K2HR3_CUK_VALUE_FILE}
+	sudo rm -f ${K2HR3_CUK_PARAM_FILE}
+	sudo rm -f ${K2HR3_EXTRA_PARAM_FILE}
+	sudo rm -f ${K2HR3_TAG_PARAM_FILE}
+	sudo rm -f ${K2HR3_API_ARG_FILE}
+	sudo rm -f ${K2HR3_API_HOST_URI_FILE}
+
+	#
+	# Finish
+	#
+	output_info "Finish stopping services and deleting host from k2hr3"
 fi
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[INFO]: initialize cuk information for k2hr3" | tee -a ${LOGFILE}
 
 exit 0
 
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #
