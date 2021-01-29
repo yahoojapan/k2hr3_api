@@ -41,6 +41,7 @@ K2HR3 REST API and K2HR3 API Server is the server side JavaScript program runnin
 [K2HR3 REST API Usage](https://k2hr3.antpick.ax/api.html)  
 [K2HR3 OpenStack Notification Listener Usage](https://k2hr3.antpick.ax/detail_osnl.html)  
 [K2HR3 Watcher Usage](https://k2hr3.antpick.ax/tools.html)  
+[K2HR3 Get Resource Usage](https://k2hr3.antpick.ax/tools.html)  
 [K2HR3 Utilities for Setup](https://k2hr3.antpick.ax/setup.html)  
 [K2HR3 Demonstration](https://demo.k2hr3.antpick.ax/)
 
@@ -58,6 +59,7 @@ K2HR3 REST API and K2HR3 API Server is the server side JavaScript program runnin
 [K2HR3 OpenStack Notification Listener](https://github.com/yahoojapan/k2hr3_osnl)  
 [K2HR3 Utilities](https://github.com/yahoojapan/k2hr3_utils)  
 [K2HR3 Container Registration Sidecar](https://github.com/yahoojapan/k2hr3_sidecar)  
+[K2HR3 Get Resource](https://github.com/yahoojapan/k2hr3_get_resource)  
 
 [k2hdkc](https://github.com/yahoojapan/k2hdkc)  
 [k2hash](https://github.com/yahoojapan/k2hash)  
