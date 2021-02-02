@@ -419,7 +419,7 @@ get_install_packages()
 	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
@@ -431,9 +431,9 @@ get_install_packages()
 	fi
 
 	# pacakges
-	INSTALL_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	INSTALL_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
 	for _package in ${INSTALL_PKGS}; do
-		install_package "${_package}" "${_INSTALL_PKGS_SYSTEMD}"
+		install_package "${_package}"
 	done
 
 	output_info "Success installing keyname($3) packages."
@@ -462,14 +462,14 @@ start_systemd_service()
 	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
 
 	# check and start/enable systemd service
 	for _package in ${_TMP_LIST_PKGS}; do
@@ -522,14 +522,14 @@ stop_systemd_service()
 	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
 
 	# make reverse list
 	_TMP_REV_LIST_PKGS=
@@ -581,7 +581,7 @@ register_host()
 	echo ${_REGISTER_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# Get error message(expect -> "message": "...")
-		_REGISTER_RESULT_MSG=`echo ${_REGISTER_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/,.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_REGISTER_RESULT_MSG=`echo ${_REGISTER_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
 		exit_err "Failed to put access for registering by ${_REGISTER_RESULT_MSG}"
 	fi
 	output_info "Success setting this host to k2hr3 role($3)"
@@ -824,12 +824,12 @@ else
 	# Load parameters( the value used when registering has priority )
 	#
 	output_info "Loading values from files under ${K2HR3_ETC_DIR} directory"
-	LOAD_K2HR3_ROLE_TOKEN=`load_value_with_default   "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}"
-	LOAD_K2HR3_ROLE_NAME=`load_value_with_default    "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}"
-	LOAD_CUK_PARAMETER=`load_value_with_default      "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}"
-	LOAD_EXTRA_PARAMETER=`load_value_with_default    "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}"
-	LOAD_TAG_PARAMETER=`load_value_with_default      "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}"
-	LOAD_K2HR3_API_HOST_URI=`load_value_with_default "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}"
+	LOAD_K2HR3_ROLE_TOKEN=`load_value_with_default   "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}"`
+	LOAD_K2HR3_ROLE_NAME=`load_value_with_default    "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}"`
+	LOAD_CUK_PARAMETER=`load_value_with_default      "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}"`
+	LOAD_EXTRA_PARAMETER=`load_value_with_default    "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}"`
+	LOAD_TAG_PARAMETER=`load_value_with_default      "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}"`
+	LOAD_K2HR3_API_HOST_URI=`load_value_with_default "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}"`
 
 	#
 	# API URI
