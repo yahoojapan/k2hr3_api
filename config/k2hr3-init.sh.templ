@@ -712,7 +712,7 @@ K2HR3_RESOURCE_NAME=`echo ${K2HR3_ROLE_NAME} | sed -e 's/:[rR][oO][lL][eE]:/:res
 K2HR3_ROLE_TENANT="{{= %K2HR3_ROLE_TENANT% }}"
 K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}"
 K2HR3_ERROR_MSG="{{= %K2HR3_ERROR_MSG% }}"
-if [ "X${K2HR3_ERROR_MSG}" != "X" ]; then
+if [ "X${K2HR3_ERROR_MSG}" != "X" -a "X${K2HR3_ERROR_MSG}" != "Xnull" ]; then
 	exit_err "The script template has failed(${K2HR3_ERROR_MSG}) to be expanded and cannot be executed anymore."
 fi
 
