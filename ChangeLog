@@ -1,3 +1,10 @@
+k2hr3-api (0.9.13) unstable; urgency=low
+
+  * Fixed bugs in k2hr3-init.sh.templ - #28
+  * Updated README.md for K2HR3 Get Resource - #27
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 02 Feb 2021 19:57:24 +0900
+
 k2hr3-api (0.9.12) unstable; urgency=low
 
   * Updated k2hr3-init.sh template for installing packages - #25
