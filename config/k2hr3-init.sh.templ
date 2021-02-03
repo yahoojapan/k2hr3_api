@@ -355,7 +355,7 @@ is_install_package()
 	update_package_local_db
 
 	# Check package installed
-	sudo ${PKGMGR_LIST_CMD} | grep "^$1" >/dev/null 2>&1
+	sudo ${PKGMGR_LIST_CMD} | sed 's/\./ /g' | awk '{print $1}' | grep "^$1$" >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# package is not installed.
 		return 1
@@ -594,15 +594,14 @@ register_host()
 delete_host()
 {
 	#
-	# $1: headers
-	# $2: url(toward role)
-	# $3: role name(for only using message)
+	# $1: url(toward role)
+	# $2: role name(for only using message)
 	#
-	_DELETE_RESULT=`curl -s -S -X DELETE -H "$1" -o /dev/null -w "%{http_code}\n" "$2" 2>&1`
+	_DELETE_RESULT=`curl -s -S -X DELETE -o /dev/null -w "%{http_code}\n" "$1" 2>&1`
 	if [ "X${_DELETE_RESULT}" != "X204" ]; then
 		exit_err "Could not delete(unregister) host from role member with curl error(${_DELETE_RESULT})"
 	fi
-	output_info "Success deleting(unregister) this host from k2hr3 role($3)"
+	output_info "Success deleting(unregister) this host from k2hr3 role($2)"
 	return 0
 }
 
@@ -847,7 +846,7 @@ else
 	# Delete(unregister) host from k2hr3
 	#
 	output_info "Delete(unregister) host from K2HR3"
-	delete_host "x-auth-token: R=${LOAD_K2HR3_ROLE_TOKEN}" "${LOAD_K2HR3_API_REGISTER_URI}/${LOAD_K2HR3_ROLE_NAME}?${LOAD_CUK_PARAMETER}&${LOAD_EXTRA_PARAMETER}&${LOAD_TAG_PARAMETER}" "${LOAD_K2HR3_ROLE_NAME}"
+	delete_host "${LOAD_K2HR3_API_REGISTER_URI}/${LOAD_K2HR3_ROLE_NAME}?${LOAD_CUK_PARAMETER}&${LOAD_EXTRA_PARAMETER}&${LOAD_TAG_PARAMETER}" "${LOAD_K2HR3_ROLE_NAME}"
 
 	#
 	# Remove files
