@@ -19,6 +19,16 @@
 #
 
 #----------------------------------------------------------
+# Sudo command
+#----------------------------------------------------------
+CURRENTUSER=`id -un`
+if [ "X${CURRENTUSER}" = "Xroot" ]; then
+	SUDOCMD=""
+else
+	SUDOCMD="sudo"
+fi
+
+#----------------------------------------------------------
 # Utility functions
 #----------------------------------------------------------
 #
@@ -71,7 +81,7 @@ output_raw()
 	#
 	_LOCAL_LEVEL=$1
 	shift
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}${_LOCAL_LEVEL}: $@" | sudo tee -a ${LOGFILE}
+	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}${_LOCAL_LEVEL}: $@" | ${SUDOCMD} tee -a ${LOGFILE}
 }
 
 exit_err()
@@ -222,7 +232,7 @@ update_package_local_db()
 		return 0
 	fi
 
-	sudo ${PKGMGR_BIN} ${PKGMGR_UPDATE_OPT}
+	${SUDOCMD} ${PKGMGR_BIN} ${PKGMGR_UPDATE_OPT}
 	if [ $? -ne 0 ]; then
 		exit_err "Failed updating packages before installing curl"
 	fi
@@ -246,7 +256,7 @@ check_curl()
 	update_package_local_db
 
 	# Install curl
-	sudo ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl
+	${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl
 	if [ $? -ne 0 ]; then
 		exit_err "Failed installing curl"
 	fi
@@ -329,7 +339,7 @@ setup_packagecloudio_repo()
 	else
 		_SCRIPT_NAME="script.rpm.sh"
 	fi
-	curl -s https://packagecloud.io/install/repositories/antpickax/stable/${_SCRIPT_NAME} | sudo bash
+	curl -s https://packagecloud.io/install/repositories/antpickax/stable/${_SCRIPT_NAME} | ${SUDOCMD} bash
 	if [ $? -ne 0 ]; then
 		exit_err "Could not setup packagecloud.io repository."
 	fi
@@ -355,7 +365,7 @@ is_install_package()
 	update_package_local_db
 
 	# Check package installed
-	sudo ${PKGMGR_LIST_CMD} | sed 's/\./ /g' | awk '{print $1}' | grep "^$1$" >/dev/null 2>&1
+	${SUDOCMD} ${PKGMGR_LIST_CMD} | sed 's/\./ /g' | awk '{print $1}' | grep "^$1$" >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		# package is not installed.
 		return 1
@@ -383,7 +393,7 @@ install_package()
 		output_info "${_TMP_INSTALL_PKGNAME} pacakge is already installed."
 	else
 		# Install package
-		sudo ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME} >/dev/null 2>&1
+		${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME} >/dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			exit_err "Failed installing ${_TMP_INSTALL_PKGNAME} package"
 		fi
@@ -473,11 +483,11 @@ start_systemd_service()
 
 	# check and start/enable systemd service
 	for _package in ${_TMP_LIST_PKGS}; do
-		sudo systemctl is-active ${_package} >/dev/null 2>&1
+		${SUDOCMD} systemctl is-active ${_package} >/dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			sudo systemctl is-enabled ${_package} >/dev/null 2>&1
+			${SUDOCMD} systemctl is-enabled ${_package} >/dev/null 2>&1
 			if [ $? -ne 0 ]; then
-				sudo systemctl enable ${_package} >/dev/null 2>&1
+				${SUDOCMD} systemctl enable ${_package} >/dev/null 2>&1
 				if [ $? -ne 0 ]; then
 					output_warn "Could not enable ${_package} systemd(pacakge)"
 				else
@@ -487,7 +497,7 @@ start_systemd_service()
 				output_info "${_package} systemd(pacakge) is aready enabled."
 			fi
 
-			sudo systemctl start ${_package} >/dev/null 2>&1
+			${SUDOCMD} systemctl start ${_package} >/dev/null 2>&1
 			if [ $? -ne 0 ]; then
 				output_warn "Could not start ${_package} systemd(pacakge)"
 			else
@@ -539,18 +549,18 @@ stop_systemd_service()
 
 	# check and stop systemd service
 	for _package in ${_TMP_REV_LIST_PKGS}; do
-		sudo systemctl is-active ${_package} >/dev/null 2>&1
+		${SUDOCMD} systemctl is-active ${_package} >/dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			output_info "${_package}(pacakge) is not active as systemd.service(timer) or not systemd.service(timer), then skip it."
 		else
-			sudo systemctl stop ${_package} >/dev/null 2>&1
+			${SUDOCMD} systemctl stop ${_package} >/dev/null 2>&1
 			if [ $? -ne 0 ]; then
 				output_warn "Could not stop ${_package} systemd(pacakge)"
 			else
 				output_info "Success stop ${_package} systemd(pacakge)"
 			fi
 
-			sudo systemctl disable ${_package} >/dev/null 2>&1
+			${SUDOCMD} systemctl disable ${_package} >/dev/null 2>&1
 			if [ $? -ne 0 ]; then
 				output_warn "Could not disable ${_package} systemd(pacakge)"
 			else
@@ -746,11 +756,11 @@ if [ "X${SCRIPTMODE}" = "Xr" ]; then
 	# Cehck output directory
 	#
 	if [ ! -d ${K2HR3_ETC_DIR} ]; then
-		sudo mkdir -p ${K2HR3_ETC_DIR}
+		${SUDOCMD} mkdir -p ${K2HR3_ETC_DIR}
 		if [ $? -ne 0 ]; then
 			exit_err "Could not make directory ${K2HR3_ETC_DIR}"
 		fi
-		sudo chmod 0777 ${K2HR3_ETC_DIR}
+		${SUDOCMD} chmod 0777 ${K2HR3_ETC_DIR}
 		if [ $? -ne 0 ]; then
 			output_warn "Could not change permission ${K2HR3_ETC_DIR}"
 		fi
@@ -852,15 +862,15 @@ else
 	# Remove files
 	#
 	output_info "Remove files under ${K2HR3_ETC_DIR} directory"
-	sudo rm -f ${K2HR3_ROLE_TOKEN_FILE}
-	sudo rm -f ${K2HR3_ROLE_NAME_FILE}
-	sudo rm -f ${K2HR3_ROLE_TENANT_FILE}
-	sudo rm -f ${K2HR3_CUK_VALUE_FILE}
-	sudo rm -f ${K2HR3_CUK_PARAM_FILE}
-	sudo rm -f ${K2HR3_EXTRA_PARAM_FILE}
-	sudo rm -f ${K2HR3_TAG_PARAM_FILE}
-	sudo rm -f ${K2HR3_API_ARG_FILE}
-	sudo rm -f ${K2HR3_API_HOST_URI_FILE}
+	${SUDOCMD} rm -f ${K2HR3_ROLE_TOKEN_FILE}
+	${SUDOCMD} rm -f ${K2HR3_ROLE_NAME_FILE}
+	${SUDOCMD} rm -f ${K2HR3_ROLE_TENANT_FILE}
+	${SUDOCMD} rm -f ${K2HR3_CUK_VALUE_FILE}
+	${SUDOCMD} rm -f ${K2HR3_CUK_PARAM_FILE}
+	${SUDOCMD} rm -f ${K2HR3_EXTRA_PARAM_FILE}
+	${SUDOCMD} rm -f ${K2HR3_TAG_PARAM_FILE}
+	${SUDOCMD} rm -f ${K2HR3_API_ARG_FILE}
+	${SUDOCMD} rm -f ${K2HR3_API_HOST_URI_FILE}
 
 	#
 	# Finish
