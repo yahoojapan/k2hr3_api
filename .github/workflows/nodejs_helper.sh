@@ -414,6 +414,7 @@ BUILD_SRCTOP="/tmp/${TMPSRCTOP}"
 #
 # Change current directory
 #
+echo "[INFO] ${PRGNAME} : Change current directory to ${BUILD_SRCTOP}"
 run_cmd cd ${BUILD_SRCTOP}
 
 #
