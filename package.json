@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "config": "^3.3.2",
+    "config": "^3.3.6",
     "cookie-parser": "~1.4.5",
-    "dateformat": "^4.0.0",
-    "debug": "~4.3.1",
+    "dateformat": "^4.5.1",
+    "debug": "~4.3.2",
     "express": "^4.17.1",
-    "k2hdkc": "^0.9.10",
+    "k2hdkc": "^1.0.2",
     "morgan": "~1.10.0",
-    "rotating-file-stream": "^2.1.3"
+    "rotating-file-stream": "^2.1.5"
   },
   "bin": {
     "k2hr3-api": "./bin/www",
@@ -26,10 +26,10 @@
     "test": "test"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chai-http": "^4.3.0",
-    "eslint": "^7.14.0",
-    "mocha": "^8.2.1",
+    "eslint": "^7.32.0",
+    "mocha": "^9.1.0",
     "nyc": "^15.1.0",
     "publish-please": "^5.5.2"
   },
