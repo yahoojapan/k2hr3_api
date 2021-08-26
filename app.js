@@ -136,7 +136,7 @@ app.use(function(req, res, next)
 		//
 		// case of POST/PUT userToken
 		//
-		if(!apiutil.findStringInArray(apiConf.getCORSIPs(), req.client.remoteAddress)){
+		if(!apiutil.findStringInArray(apiConf.getCORSIPs(), req.client.remoteAddress) && !apiutil.findStringInArray(apiConf.getCORSIPs(), '*')){
 			// [NOTE]
 			// If allowcredauth is true in configuration and password is specified on PUT method,
 			// it allows authorization by credential(username/password).

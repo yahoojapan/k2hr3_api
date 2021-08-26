@@ -2,12 +2,14 @@
   "name": "k2hr3-api",
   "version": "1.0.0",
   "dependencies": {
+    "@kubernetes/client-node": "^0.15.0",
     "body-parser": "^1.19.0",
     "config": "^3.3.6",
     "cookie-parser": "~1.4.5",
     "dateformat": "^4.5.1",
     "debug": "~4.3.2",
     "express": "^4.17.1",
+    "jose": "^3.14.0",
     "k2hdkc": "^1.0.2",
     "morgan": "~1.10.0",
     "rotating-file-stream": "^2.1.5"
