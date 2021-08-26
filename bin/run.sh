@@ -30,8 +30,12 @@ SRCTOP=`cd ${MYSCRIPTDIR}/..; pwd`
 HOST=`hostname`
 
 MYPROCIDFILE=""
-MYMAINPROCIDFILE="/tmp/${PROGRAM_NAME}.pid"
-MYWATCHPROCIDFILE="/tmp/${PROGRAM_NAME}-watch.pid"
+MYPID_BASEDIR="/var/run/antpickax"
+MYPID_TMPDIR="/tmp"
+MYMAINPROCIDFILE=""
+MYWATCHPROCIDFILE=""
+MYMAINPROCIDFILENAME="${PROGRAM_NAME}.pid"
+MYWATCHPROCIDFILENAME="${PROGRAM_NAME}-watch.pid"
 TARGETPROG=""
 WWWPROG="bin/www"
 WATCHPROG="bin/watcher"
@@ -70,13 +74,20 @@ PrintUsage()
 stop_old_process()
 {
 	if [ -f ${MYPROCIDFILE} ]; then
-		ps p `cat ${MYPROCIDFILE}` > /dev/null 2>&1
+		ps ax | grep `cat ${MYPROCIDFILE}` | grep -v grep | grep ${PROGRAM_NAME} > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 			OLDPROCID=`cat ${MYPROCIDFILE}`
-			kill -HUP ${OLDPROCID} `pgrep -d' ' -P ${OLDPROCID}` > /dev/null 2>&1
+			OLD_CIHLD_PIDS=`pgrep -P ${OLDPROCID}`
+			kill -HUP ${OLDPROCID} ${OLD_CIHLD_PIDS} > /dev/null 2>&1
 			if [ $? -ne 0 ]; then
-				echo "[ERROR] could not stop old process."
-				return 1
+				echo "[WARNING] could not stop old process."
+				kill -KILL ${OLDPROCID} ${OLD_CIHLD_PIDS} > /dev/null 2>&1
+
+				ps ax | grep `cat ${MYPROCIDFILE}` | grep -v grep | grep ${PROGRAM_NAME} > /dev/null 2>&1
+				if [ $? -eq 0 ]; then
+					echo "[ERROR] could not stop old process."
+					return 1
+				fi
 			fi
 			echo "[INFO] old process pid file exists, then try to stop it."
 		fi
@@ -226,6 +237,17 @@ while [ $# -ne 0 ]; do
 done
 
 #
+# Check PID directory
+#
+if [ -d ${MYPID_BASEDIR} ]; then
+	MYMAINPROCIDFILE="${MYPID_BASEDIR}/${MYMAINPROCIDFILENAME}"
+	MYWATCHPROCIDFILE="${MYPID_BASEDIR}/${MYWATCHPROCIDFILENAME}"
+else
+	MYMAINPROCIDFILE="${MYPID_TMPDIR}/${MYMAINPROCIDFILENAME}"
+	MYWATCHPROCIDFILE="${MYPID_TMPDIR}/${MYWATCHPROCIDFILENAME}"
+fi
+
+#
 # Check watcher option & set process variables
 #
 if [ ${WATCHER_PROC} -ne 1 -a ${WATCH_ONESHOT} -eq 1 ]; then
@@ -314,7 +336,10 @@ fi
 NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} node ${INSPECTOR_OPT} ${TARGETPROG} ${PROG_EXTRA_OPTIONS}
 
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #
