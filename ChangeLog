@@ -1,3 +1,9 @@
+k2hr3-api (1.0.3) unstable; urgency=low
+
+  * Fixed a bug in k2hr3tokens.js - #45
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 02 Sep 2021 16:01:08 +0900
+
 k2hr3-api (1.0.2) unstable; urgency=low
 
   * Updated README.md for docker image - #43
