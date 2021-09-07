@@ -1,6 +1,6 @@
 {
   "name": "k2hr3-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "dependencies": {
     "@kubernetes/client-node": "^0.15.0",
     "body-parser": "^1.19.0",
