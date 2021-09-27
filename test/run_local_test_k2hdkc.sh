@@ -84,7 +84,7 @@ if [ ${IS_SCRIPT_MODE} -eq 1 ]; then
 	#
 	echo "*** Start : chmpx server node for k2hdkc"
 	echo -n "            "
-	${SRCTOP}/test/auto_control_subprocess.sh -start -key server${KEYWORD} -int 1 chmpx -conf ${SRCTOP}/test/auto_k2hdkc_server.ini -ctlport 18021 -d msg
+	${SRCTOP}/test/auto_control_subprocess.sh -start -key server${KEYWORD} -int 3 chmpx -conf ${SRCTOP}/test/auto_k2hdkc_server.ini -ctlport 18021 -d msg
 	if [ $? -ne 0 ]; then
 		echo "ERROR: could not run chmpx server node for k2hdkc"
 		exit 1
@@ -92,7 +92,7 @@ if [ ${IS_SCRIPT_MODE} -eq 1 ]; then
 
 	echo "*** Start : one k2hdkc process"
 	echo -n "            "
-	${SRCTOP}/test/auto_control_subprocess.sh -start -key server${KEYWORD} -int 1 k2hdkc -conf ${SRCTOP}/test/auto_k2hdkc_server.ini -ctlport 18021 -d msg
+	${SRCTOP}/test/auto_control_subprocess.sh -start -key server${KEYWORD} -int 3 k2hdkc -conf ${SRCTOP}/test/auto_k2hdkc_server.ini -ctlport 18021 -d msg
 	if [ $? -ne 0 ]; then
 		echo "ERROR: one k2hdkc process"
 		exit 1
@@ -100,7 +100,7 @@ if [ ${IS_SCRIPT_MODE} -eq 1 ]; then
 
 	echo "*** Start : chmpx slave node for k2hdkc"
 	echo -n "            "
-	${SRCTOP}/test/auto_control_subprocess.sh -start -key slave${KEYWORD} -int 1 chmpx -conf ${SRCTOP}/test/auto_k2hdkc_slave.ini -ctlport 18031 -d msg
+	${SRCTOP}/test/auto_control_subprocess.sh -start -key slave${KEYWORD} -int 3 chmpx -conf ${SRCTOP}/test/auto_k2hdkc_slave.ini -ctlport 18031 -d msg
 	if [ $? -ne 0 ]; then
 		echo "ERROR: chmpx slave node for k2hdkc"
 		exit 1
@@ -120,7 +120,7 @@ else
 	#
 	echo "*** Stop : chmpx slave node for k2hdkc"
 	echo -n "           "
-	${SRCTOP}/test/auto_control_subprocess.sh -stop -key slave${KEYWORD} -int 1 chmpx
+	${SRCTOP}/test/auto_control_subprocess.sh -stop -key slave${KEYWORD} -int 3 chmpx
 	if [ $? -ne 0 ]; then
 		echo "ERROR: chmpx slave node for k2hdkc"
 		exit 1
@@ -128,7 +128,7 @@ else
 
 	echo "*** Stop : one k2hdkc process"
 	echo -n "           "
-	${SRCTOP}/test/auto_control_subprocess.sh -stop -key server${KEYWORD} -int 1 k2hdkc
+	${SRCTOP}/test/auto_control_subprocess.sh -stop -key server${KEYWORD} -int 3 k2hdkc
 	if [ $? -ne 0 ]; then
 		echo "ERROR: one k2hdkc process"
 		exit 1
@@ -136,7 +136,7 @@ else
 
 	echo "*** Stop : chmpx server node for k2hdkc"
 	echo -n "           "
-	${SRCTOP}/test/auto_control_subprocess.sh -stop -key server${KEYWORD} -int 1 chmpx
+	${SRCTOP}/test/auto_control_subprocess.sh -stop -key server${KEYWORD} -int 3 chmpx
 	if [ $? -ne 0 ]; then
 		echo "ERROR: could not run chmpx server node for k2hdkc"
 		exit 1
