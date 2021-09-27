@@ -2,17 +2,17 @@
   "name": "k2hr3-api",
   "version": "1.0.4",
   "dependencies": {
-    "@kubernetes/client-node": "^0.15.0",
+    "@kubernetes/client-node": "^0.15.1",
     "body-parser": "^1.19.0",
     "config": "^3.3.6",
     "cookie-parser": "~1.4.5",
-    "dateformat": "^4.5.1",
+    "dateformat": "^4.6.3",
     "debug": "~4.3.2",
     "express": "^4.17.1",
-    "jose": "^3.14.0",
+    "jose": "^3.19.0",
     "k2hdkc": "^1.0.2",
     "morgan": "~1.10.0",
-    "rotating-file-stream": "^2.1.5"
+    "rotating-file-stream": "^2.1.6"
   },
   "bin": {
     "k2hr3-api": "./bin/www",
@@ -31,7 +31,7 @@
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "eslint": "^7.32.0",
-    "mocha": "^9.1.0",
+    "mocha": "^9.1.2",
     "nyc": "^15.1.0",
     "publish-please": "^5.5.2"
   },
