@@ -506,7 +506,7 @@ else
 	#
 	# Publish( or test it )
 	#
-	run_cmd npm run publish-please ${PUBLISH_PLEASE_OPT}
+	run_cmd npm run publish-please --production ${PUBLISH_PLEASE_OPT}
 
 	if [ ${PUBLISH_REQUESTED} -eq 1 -a ${IS_PUBLISHER} -eq 1 -a "X${NPM_TOKEN}" != "X" ]; then
 		echo "[INFO] ${PRGNAME} : Succeed publishing npm package, MUST CHECK NPM repository!!"
