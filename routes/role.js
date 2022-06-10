@@ -560,6 +560,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //																extra is any string including Control code, allowed null and '' for  this value.
 //			"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //																tag is any string including Control code, allowed null and '' for  this value.
+//			"inboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																inboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
+//			"outboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																outboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
 //		}
 //		"clear_hostname":	<true/false>
 //		"clear_ips":		<true/false>
@@ -568,11 +572,13 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //	{
 //		"host":	[											=>	specified host as Array(only POST request has this type)
 //			{
-//				"host":		<hostname / ip address>
-//				"port":		<port number>
-//				"cuk":		<container unique key>
-//				"extra":	<extra string data>
-//				"tag":		<string data>
+//				"host":			<hostname / ip address>
+//				"port":			<port number>
+//				"cuk":			<container unique key>
+//				"extra":		<extra string data>
+//				"tag":			<string data>
+//				"inboundip":	<ip address>
+//				"outboundip":	<ip address>
 //			}
 //			...
 //		]
@@ -592,6 +598,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 //																extra is any string including Control code, allowed null and '' for  this value.
 //			"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //																tag is any string including Control code, allowed null and '' for  this value.
+//			"inboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																inboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
+//			"outboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//																outboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
 //		}
 //	}
 //
@@ -671,6 +681,7 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 	var	cuk;
 	var	extra;
 	var	tag;
+	var	host_info;
 	if(!is_host_req){
 		//
 		// request from user token
@@ -745,25 +756,63 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 				tag = apiutil.getSafeString(hostArray[cnt].tag);
 			}
 
-			// set to array
+			// set base host information
 			if(null !== tg_host){
-				hostnameArray.push({
+				host_info = {
 					ip:			null,
 					hostname:	tg_host,
 					port:		port,
 					cuk:		cuk,
 					extra:		extra,
 					tag:		tag
-				});
+				};
 			}else{	// null !== tg_ip
-				ipArray.push({
+				host_info = {
 					ip:			tg_ip,
 					hostname:	null,
 					port:		port, 
 					cuk:		cuk,
 					extra:		extra,
 					tag:		tag
-				});
+				};
+			}
+
+			// set optional keys
+			if(apiutil.isSafeString(hostArray[cnt].inboundip)){
+				if(!apiutil.isIpAddressString(hostArray[cnt].inboundip)){
+					/* eslint-disable indent, no-mixed-spaces-and-tabs */
+					result = {
+								result: 	false,
+								message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].inboundip)
+							 };
+					/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					r3logger.elog(result.message);
+					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+					return;
+				}
+				host_info.inboundip = apiutil.getSafeString(hostArray[cnt].inboundip);
+			}
+
+			if(apiutil.isSafeString(hostArray[cnt].outboundip)){
+				if(!apiutil.isIpAddressString(hostArray[cnt].outboundip)){
+					/* eslint-disable indent, no-mixed-spaces-and-tabs */
+					result = {
+								result: 	false,
+								message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].outboundip)
+							 };
+					/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					r3logger.elog(result.message);
+					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+					return;
+				}
+				host_info.outboundip = apiutil.getSafeString(hostArray[cnt].outboundip);
+			}
+
+			// push array
+			if(null !== tg_host){
+				hostnameArray.push(host_info);
+			}else{	// null !== tg_ip
+				ipArray.push(host_info);
 			}
 		}
 		if(apiutil.isEmptyArray(hostnameArray)){
@@ -849,10 +898,44 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 			}
 		}
 
+		// inboundip(optional)
+		var	inboundip = null;
+		if(apiutil.isSafeString(req.body.host.inboundip)){
+			if(!apiutil.isIpAddressString(req.body.host.inboundip)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				result = {
+							result: 	false,
+							message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.inboundip)
+						 };
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				r3logger.elog(result.message);
+				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+				return;
+			}
+			inboundip = apiutil.getSafeString(req.body.host.inboundip);
+		}
+
+		// outboundip(optional)
+		var	outboundip = null;
+		if(apiutil.isSafeString(req.body.host.outboundip)){
+			if(!apiutil.isIpAddressString(req.body.host.outboundip)){
+				/* eslint-disable indent, no-mixed-spaces-and-tabs */
+				result = {
+							result: 	false,
+							message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.outboundip)
+						 };
+				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				r3logger.elog(result.message);
+				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+				return;
+			}
+			outboundip = apiutil.getSafeString(req.body.host.outboundip);
+		}
+
 		//
 		// Add ip address ---> Role Token or User Token
 		//
-		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag);
+		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag, inboundip, outboundip);
 	}
 
 	//------------------------------
@@ -905,6 +988,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 //	"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //														This value must be encoded by JSON.
 //														tag is any string including Control code, allowed null and '' for  this value.
+//	"inboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														inboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
+//	"outboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														outboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
 //
 // [RoleToken] url argument
 //	"port":			<port number>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/ip/<ip port cuk>"
@@ -918,6 +1005,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 //	"tag":			<string data>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
 //														This value must be encoded by JSON.
 //														tag is any string including Control code, allowed null and '' for  this value.
+//	"inboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														inboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
+//	"outboundip":	<ip address>					=>	key is "yrn:yahoo:<service>::<tenant>:role:<role>/hosts/..."
+//														outboundip is set ip address string. if you do not use proxy/gateway/bridge/etc, you do not need to set this key.
 //
 // [NOTE]
 // This API only set(add/create) host into role. Ether hostname or ip address must be specified.
@@ -1079,8 +1170,44 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		tag		= null;
 	}
 
-	// make host information
+	// make base host information
 	var	host_info = { ip: ip, hostname: hostname, port: port, cuk: cuk, extra: extra, tag: tag };
+
+	// set inboundip(optional)
+	var inboundip = null;
+	if(apiutil.isSafeString(req.query.inboundip)){
+		if(!apiutil.isIpAddressString(req.query.inboundip)){
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			result = {
+						result: 	false,
+						message:	'PUT request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.inboundip)
+					 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+			return;
+		}
+		inboundip			= apiutil.getSafeString(req.query.inboundip);
+		host_info.inboundip	= inboundip;
+	}
+
+	// set outboundip(optional)
+	var outboundip = null;
+	if(apiutil.isSafeString(req.query.outboundip)){
+		if(!apiutil.isIpAddressString(req.query.outboundip)){
+			/* eslint-disable indent, no-mixed-spaces-and-tabs */
+			result = {
+						result: 	false,
+						message:	'PUT request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.outboundip)
+					 };
+			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);				// 400: Bad Request
+			return;
+		}
+		outboundip			= apiutil.getSafeString(req.query.outboundip);
+		host_info.outboundip= outboundip;
+	}
 
 	//------------------------------
 	// add host to role
@@ -1094,7 +1221,7 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		}
 	}else{
 		// Add ip address ---> Role Token or User Token
-		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag);
+		result = k2hr3.addHost(token_info.tenant, name, null, ip, port, cuk, extra, tag, inboundip, outboundip);
 	}
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){

@@ -86,6 +86,12 @@ elif [ "X${NODE_MAJOR_VERSION}" = "X14" ]; then
 	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
 	INSTALLER_BIN="apt-get"
 	INSTALL_QUIET_ARG="-qq"
+	PUBLISHER="false"
+
+elif [ "X${NODE_MAJOR_VERSION}" = "X16" ]; then
+	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
+	INSTALLER_BIN="apt-get"
+	INSTALL_QUIET_ARG="-qq"
 	PUBLISHER="true"
 
 fi

@@ -72,7 +72,7 @@ elif [ "X${DOCKER_IMAGE_OSTYPE}" = "Xubuntu" ]; then
 	PKGMGR_INSTALL_OPT="install -qq -y"
 	PKG_INSTALL_LIST_BUILDER="git gcc g++ make curl"
 	PKG_INSTALL_LIST_BIN="libyaml-0-2 curl"
-	PKG_REPO_SETUP_NODEJS="curl -sL https://deb.nodesource.com/setup_14.x | bash"
+	PKG_REPO_SETUP_NODEJS="curl -sL https://deb.nodesource.com/setup_16.x | bash"
 	PKG_INSTALL_LIST_NODEJS="nodejs"
 
 	#

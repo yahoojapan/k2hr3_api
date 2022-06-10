@@ -146,7 +146,7 @@ function postV1Role(method, token, name, policies, alias)
 	req.end();
 }
 
-function postV1RoleHost(method, is_user_token, token, name, target_host, port, cuk, extra, tag)
+function postV1RoleHost(method, is_user_token, token, name, target_host, port, cuk, extra, tag, inboundip, outboundip)
 {
 	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	strbody		= '';
@@ -171,6 +171,13 @@ function postV1RoleHost(method, is_user_token, token, name, target_host, port, c
 		host_info.cuk				= cuk;
 		host_info.extra				= extra;
 		host_info.tag				= tag;
+
+		if(apiutil.isSafeString(inboundip)){		// not need to check ip address
+			host_info.inboundip		= inboundip;
+		}
+		if(apiutil.isSafeString(outboundip)){		// not need to check ip address
+			host_info.outboundip	= outboundip;
+		}
 
 		var	body					= {	'host': host_info };
 
@@ -208,6 +215,17 @@ function postV1RoleHost(method, is_user_token, token, name, target_host, port, c
 			urlarg		+= JSON.stringify(tag);				// if tag is existing, it includes control codes, so it is converted to JSON.
 			already_set	= true;
 		}
+		if(apiutil.isSafeString(inboundip)){				// not need to check ip address
+			urlarg		+= already_set ? '&inboundip=' : '?inboundip=';
+			urlarg		+= inboundip;
+			already_set	= true;
+		}
+		if(apiutil.isSafeString(outboundip)){				// not need to check ip address
+			urlarg		+= already_set ? '&outboundip=' : '?outboundip=';
+			urlarg		+= outboundip;
+			already_set	= true;
+		}
+
 		headers['Content-Length']	= 0;
 		options.headers				= headers;
 		options.path				= '/v1/role/' + name + encodeURI(urlarg);
@@ -425,25 +443,51 @@ function inputHostType(method)
 									_tag = tag;
 								}
 
-								if(!_is_user_token){
-									// run
-									postV1RoleHost(_method, _is_user_token, _token, _name, null, _port, _cuk, _extra, _tag);
-								}else{
+								cliutil.getConsoleInput('     Inbound IP address - null or string              : ', true, false, function(isbreak, inbound)
+								{
+									if(isbreak){
+										process.exit(0);
+									}
+									var	_inbound;
+									if('' === apiutil.getSafeString(inbound) || apiutil.compareCaseString('null', apiutil.getSafeString(inbound))){
+										_inbound = null;
+									}else{
+										_inbound = inbound;
+									}
 
-									cliutil.getConsoleInput('     Host(specify hostname or ip address)             : ', true, false, function(isbreak, target_host)
+									cliutil.getConsoleInput('     Outbound IP address - null or string             : ', true, false, function(isbreak, outbound)
 									{
 										if(isbreak){
 											process.exit(0);
 										}
-										if(!apiutil.isSafeString(target_host)){
-											process.exit(0);
+										var	_outbound;
+										if('' === apiutil.getSafeString(outbound) || apiutil.compareCaseString('null', apiutil.getSafeString(outbound))){
+											_outbound = null;
+										}else{
+											_outbound = outbound;
 										}
-										var	_target_host = target_host;
 
-										// run
-										postV1RoleHost(_method, _is_user_token, _token, _name, _target_host, _port, _cuk, _extra, _tag);
+										if(!_is_user_token){
+											// run
+											postV1RoleHost(_method, _is_user_token, _token, _name, null, _port, _cuk, _extra, _tag, _inbound, _outbound);
+										}else{
+
+											cliutil.getConsoleInput('     Host(specify hostname or ip address)             : ', true, false, function(isbreak, target_host)
+											{
+												if(isbreak){
+													process.exit(0);
+												}
+												if(!apiutil.isSafeString(target_host)){
+													process.exit(0);
+												}
+												var	_target_host = target_host;
+
+												// run
+												postV1RoleHost(_method, _is_user_token, _token, _name, _target_host, _port, _cuk, _extra, _tag, _inbound, _outbound);
+											});
+										}
 									});
-								}
+								});
 							});
 						});
 					});
