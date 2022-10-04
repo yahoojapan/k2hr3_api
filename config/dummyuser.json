@@ -31,7 +31,7 @@
 	},
 
 	'k2hdkc': {
-		'config':		'test/auto_k2hdkc_slave.ini',
+		'config':		'tests/auto_k2hdkc_slave.ini',
 		'port':			'18031'
 	},
 

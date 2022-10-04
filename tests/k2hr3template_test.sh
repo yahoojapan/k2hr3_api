@@ -252,9 +252,9 @@ fi
 # Checking async mode
 #
 if [ ${INPUT_ASYNCMODE} -eq 0 ]; then
-	TEST_PROG="test/k2hr3template_test.js"
+	TEST_PROG="tests/k2hr3template_test.js"
 else
-	TEST_PROG="test/k2hr3template_test_async.js"
+	TEST_PROG="tests/k2hr3template_test_async.js"
 fi
 
 #

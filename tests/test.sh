@@ -288,25 +288,25 @@ fi
 cd ${SRCTOP}
 if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
 	echo "***** RUN *****"
-	echo "test/auto_init_config_json.sh"
-	echo "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha test/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"
+	echo "tests/auto_init_config_json.sh"
+	echo "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"
 	echo "***************"
 fi
 
-test/auto_init_config_json.sh
+tests/auto_init_config_json.sh
 if [ $? -ne 0 ]; then
 	echo "ERROR: Could not initialize local.json(symbolic link to dummy)"
 	exit 1
 fi
 
-NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha --timeout ${TIMEOUT} test/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}
+NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha --timeout ${TIMEOUT} tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}
 if [ $? -ne 0 ]; then
 	echo "ERROR: The test failed."
-	test/auto_init_config_json.sh -restore
+	tests/auto_init_config_json.sh -restore
 	exit 1
 fi
 
-test/auto_init_config_json.sh -restore
+tests/auto_init_config_json.sh -restore
 if [ $? -ne 0 ]; then
 	echo "ERROR: Could not restore local.json"
 	exit 1
