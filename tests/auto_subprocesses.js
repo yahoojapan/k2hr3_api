@@ -40,25 +40,25 @@ exports.start = function(parentobj)
 	//
 	// Run chmpx for server node
 	//
-	var	result = execSync('test/auto_control_subprocess.sh -start -key server -int 3 chmpx -conf test/auto_k2hdkc_server.ini -ctlport 18021 -d msg');
+	var	result = execSync('tests/auto_control_subprocess.sh -start -key server -int 3 chmpx -conf tests/auto_k2hdkc_server.ini -ctlport 18021 -d msg');
 	console.log('    - run chmpx for server node: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//
 	// Run k2hdkc
 	//
-	result = execSync('test/auto_control_subprocess.sh -start -key server -int 3 k2hdkc -conf test/auto_k2hdkc_server.ini -ctlport 18021 -d msg');
+	result = execSync('tests/auto_control_subprocess.sh -start -key server -int 3 k2hdkc -conf tests/auto_k2hdkc_server.ini -ctlport 18021 -d msg');
 	console.log('    - run k2hdkc: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//
 	// Run chmpx for slave node
 	//
-	result = execSync('test/auto_control_subprocess.sh -start -key slave -int 3 chmpx -conf test/auto_k2hdkc_slave.ini -ctlport 18031 -d msg');
+	result = execSync('tests/auto_control_subprocess.sh -start -key slave -int 3 chmpx -conf tests/auto_k2hdkc_slave.ini -ctlport 18031 -d msg');
 	console.log('    - run chmpx for slave node: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//
 	// Load default test data to k2hdkc
 	//
-	result = execSync('test/k2hdkc_test_load.sh --for_auto_test');
+	result = execSync('tests/k2hdkc_test_load.sh --for_auto_test');
 	console.log('    - loaded test data : ' + String(result));
 	console.log('');
 
@@ -83,19 +83,19 @@ exports.stop = function(parentobj)
 	//
 	// Stop chmpx for slave node
 	//
-	var	result = execSync('test/auto_control_subprocess.sh -stop -key slave -int 3 chmpx');
+	var	result = execSync('tests/auto_control_subprocess.sh -stop -key slave -int 3 chmpx');
 	console.log('    - stop chmpx for slave node: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//
 	// Stop k2hdkc
 	//
-	result = execSync('test/auto_control_subprocess.sh -stop -key server -int 3 k2hdkc');
+	result = execSync('tests/auto_control_subprocess.sh -stop -key server -int 3 k2hdkc');
 	console.log('    - stop k2hdkc: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//
 	// Stop chmpx for slave node
 	//
-	result = execSync('test/auto_control_subprocess.sh -stop -key server -int 3 chmpx');
+	result = execSync('tests/auto_control_subprocess.sh -stop -key server -int 3 chmpx');
 	console.log('    - stop chmpx for server node: ' + String(result).replace(/\r?\n$/g, ''));
 
 	//

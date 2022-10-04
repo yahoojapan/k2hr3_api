@@ -29,10 +29,10 @@ SRCTOP=`cd ${MYSCRIPTDIR}/..; pwd`
 #
 # Parameters
 #
-TEST_PROGRAM=${SRCTOP}/test/k2hr3template_test.sh
-VARS_FILE=${SRCTOP}/test/k2hr3template_test_vars.js
-TEMPL_FILE=${SRCTOP}/test/k2hr3template_test_template.txt
-SUCCESS_FILE=${SRCTOP}/test/k2hr3template_test_template.result
+TEST_PROGRAM=${SRCTOP}/tests/k2hr3template_test.sh
+VARS_FILE=${SRCTOP}/tests/k2hr3template_test_vars.js
+TEMPL_FILE=${SRCTOP}/tests/k2hr3template_test_template.txt
+SUCCESS_FILE=${SRCTOP}/tests/k2hr3template_test_template.result
 EXPANDED_FILE=/tmp/k2hr3template_test_template.result
 
 #
