@@ -112,106 +112,44 @@ check_os()
 	#	PKGMGR_UPDATE_OPT
 	#	PKGMGR_LIST_CMD
 	#
-	_OS_DIST=""
-	if [ -f /etc/centos-release ]; then
-		IS_OS_DEBIAN=0
-		if [ -f /etc/os-release ]; then
-			_OS_VERSION=`cat /etc/os-release | grep '^VERSION_ID=' | sed -e 's/VERSION_ID=//g' -e 's/"//g'`
-			if [ "X${_OS_VERSION}" = "X8" ]; then
-				_OS_DIST="CentOS 8(package manager dnf)"
-				PKGMGR_BIN="dnf"
-				PKGMGR_UPDATE_OPT="update -y -qq"
-				PKGMGR_LIST_CMD="dnf list installed"
-			else
-				_OS_DIST="CentOS 7 or older(package manager yum)"
-				PKGMGR_BIN="yum"
-				PKGMGR_UPDATE_OPT="update -y"
-				PKGMGR_LIST_CMD="yum list installed"
-			fi
-		else
-			grep ' 8' /etc/centos-release >/dev/null 2>&1
-			if [ $? -eq 0 ]; then
-				_OS_DIST="CentOS 8(package manager dnf)"
-				PKGMGR_BIN="dnf"
-				PKGMGR_UPDATE_OPT="update -y -qq"
-				PKGMGR_LIST_CMD="dnf list installed"
-			else
-				_OS_DIST="CentOS 7 or older(package manager yum)"
-				PKGMGR_BIN="yum"
-				PKGMGR_UPDATE_OPT="update -y"
-				PKGMGR_LIST_CMD="yum list installed"
-			fi
-		fi
-	elif [ -f /etc/redhat-release ]; then
-		_OS_DIST="Redhat(package manager yum)"
-		IS_OS_DEBIAN=0
-		PKGMGR_BIN="yum"
-		PKGMGR_UPDATE_OPT="update -y"
-		PKGMGR_LIST_CMD="yum list installed"
 
-	elif [ -f /etc/fedora-release ]; then
-		_OS_DIST="Fedora(package manager dnf)"
+	# shellcheck disable=SC1090
+	. /etc/os-release
+
+	if [ -z "${ID}" ]; then
+		exit_err "Unknown OS distribution."
+	fi
+	if [ "${ID}" = "centos" ]; then
+		if [ -z "${VERSION_ID}" ] || [ "${VERSION_ID}" -eq 7 ]; then
+			IS_OS_DEBIAN=0
+			PKGMGR_BIN="yum"
+			PKGMGR_UPDATE_OPT="update -y"
+			PKGMGR_LIST_CMD="yum list installed"
+		else
+			IS_OS_DEBIAN=0
+			PKGMGR_BIN="dnf"
+			PKGMGR_UPDATE_OPT="update -y -qq"
+			PKGMGR_LIST_CMD="dnf list installed"
+		fi
+	elif [ "${ID}" = "rocky" ]; then
 		IS_OS_DEBIAN=0
 		PKGMGR_BIN="dnf"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="dnf list installed"
 
-	elif [ -f /etc/debian_version ]; then
-		_OS_DIST="Debian(package manager apt)"
+	elif [ "${ID}" = "fedora" ]; then
+		IS_OS_DEBIAN=0
+		PKGMGR_BIN="dnf"
+		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_LIST_CMD="dnf list installed"
+
+	elif [ "${ID}" = "ubuntu" ]; then
 		IS_OS_DEBIAN=1
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="apt list --installed"
 
-	elif [ -f /etc/os-release ]; then
-		_OS_ID=`cat /etc/os-release | grep -e '^ID=' -e '^ID_LIKE=' | sed -e 's/ID=//g' -e 's/ID_LIKE=//g' -e 's/"//g'`
-		echo ${_OS_ID} | grep -e '[cC][eE][nN][tT][oO][sS]' >/dev/null 2>&1
-		if [ $? -eq 0 ]; then
-			_OS_VERSION=`cat /etc/os-release | grep '^VERSION_ID=' | sed -e 's/VERSION_ID=//g' -e 's/"//g'`
-			IS_OS_DEBIAN=0
-			if [ "X${_OS_VERSION}" = "X8" ]; then
-				_OS_DIST="CentOS 8(package manager dnf)"
-				PKGMGR_BIN="dnf"
-				PKGMGR_UPDATE_OPT="update -y -qq"
-				PKGMGR_LIST_CMD="dnf list installed"
-			else
-				_OS_DIST="CentOS 7 or older(package manager yum)"
-				PKGMGR_BIN="yum"
-				PKGMGR_UPDATE_OPT="update -y"
-				PKGMGR_LIST_CMD="yum list installed"
-			fi
-		else
-			echo ${_OS_ID} | grep -e '[rR][hH][eE][lL]' >/dev/null 2>&1
-			if [ $? -eq 0 ]; then
-				_OS_DIST="Redhat(package manager yum)"
-				IS_OS_DEBIAN=0
-				PKGMGR_BIN="yum"
-				PKGMGR_UPDATE_OPT="update -y"
-				PKGMGR_LIST_CMD="yum list installed"
-			else
-				echo ${_OS_ID} | grep -e '[fF][eE][dD][oO][rR][aA]' >/dev/null 2>&1
-				if [ $? -eq 0 ]; then
-					_OS_DIST="Fedora(package manager dnf)"
-					IS_OS_DEBIAN=0
-					PKGMGR_BIN="dnf"
-					PKGMGR_UPDATE_OPT="update -y -qq"
-					PKGMGR_LIST_CMD="dnf list installed"
-				else
-					echo ${_OS_ID} | grep -e '[uU][bB][uU][nN][tT][uU]' -e '[dD][eE][bB][iI][aA][nN]' >/dev/null 2>&1
-					if [ $? -eq 0 ]; then
-						_OS_DIST="Debian or Ubuntu(package manager apt)"
-						IS_OS_DEBIAN=1
-						PKGMGR_BIN="apt-get"
-						PKGMGR_UPDATE_OPT="update -y -qq"
-						PKGMGR_LIST_CMD="apt list --installed"
-					else
-						exit_err "Unknown OS distribution."
-					fi
-				fi
-			fi
-		fi
-	elif [ -f /etc/lsb-release ]; then
-		_OS_DIST="Debian or Ubuntu(package manager apt)"
+	elif [ "${ID}" = "debian" ]; then
 		IS_OS_DEBIAN=1
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
@@ -219,7 +157,7 @@ check_os()
 	else
 		exit_err "Unknown OS distribution."
 	fi
-	output_info "OS is ${_OS_DIST}"
+	output_info "OS is ${PRETTY_NAME}"
 	return 0
 }
 
