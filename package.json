@@ -3,13 +3,13 @@
   "version": "1.0.11",
   "dependencies": {
     "@kubernetes/client-node": "^0.17.1",
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.1",
     "config": "^3.3.8",
     "cookie-parser": "~1.4.6",
     "dateformat": "^4.6.3",
     "debug": "~4.3.4",
-    "express": "^4.18.1",
-    "jose": "^4.9.2",
+    "express": "^4.18.2",
+    "jose": "^4.11.0",
     "k2hdkc": "^1.0.2",
     "morgan": "~1.10.0",
     "rotating-file-stream": "^3.0.4"
@@ -28,12 +28,11 @@
     "test": "test"
   },
   "devDependencies": {
-    "chai": "^4.3.6",
+    "chai": "^4.3.7",
     "chai-http": "^4.3.0",
-    "eslint": "^8.23.1",
-    "mocha": "^10.0.0",
-    "nyc": "^15.1.0",
-    "publish-please": "^5.5.2"
+    "eslint": "^8.27.0",
+    "mocha": "^10.1.0",
+    "nyc": "^15.1.0"
   },
   "scripts": {
     "help": "echo 'command list:\n    npm run start\n    npm run start:prod\n    npm run start:production\n    npm run start:dev\n    npm run start:develop\n    npm run start:dbg\n    npm run start:debug\n    npm run start:debug:break\n    npm run start:debug:nobreak\n    npm run start:watcher:prod\n    npm run start:watcher:production\n    npm run start:watcher:dev\n    npm run start:watcher:develop\n    npm run start:watcher:dbg\n    npm run start:watcher:debug\n    npm run start:watcher:debug:break\n    npm run start:watcher:debug:nobreak\n    npm run start:watcher:oneshot:prod\n    npm run start:watcher:oneshot:production\n    npm run start:watcher:oneshot:dev\n    npm run start:watcher:oneshot:develop\n    npm run start:watcher:oneshot:dbg\n    npm run start:watcher:oneshot:debug\n    npm run start:watcher:oneshot:debug:break\n    npm run start:watcher:oneshot:debug:nobreak\n    npm run stop\n    npm run stop:watcher\n    npm run test\n    npm run test:lint\n    npm run test:cover\n    npm run test:auto:all{:dbg}\n    npm run test:auto:version{:dbg}\n    npm run test:auto:usertokens{:dbg}\n    npm run test:auto:list{:dbg}\n    npm run test:auto:resource{:dbg}\n    npm run test:auto:policy{:dbg}\n    npm run test:auto:role{:dbg}\n    npm run test:auto:service{:dbg}\n    npm run test:auto:acr{:dbg}\n    npm run test:auto:userdata{:dbg}\n    npm run test:auto:extdata{:dbg}\n    npm run test:auto:watcher{:dbg}\n    npm run test:auto:templengine\n    npm run test:auto:templengine:async\n    npm run test:manual:apis:version_get\n    npm run test:manual:apis:usertoken_postput\n    npm run test:manual:apis:usertoken_gethead\n    npm run test:manual:apis:policy_postput\n    npm run test:manual:apis:policy_gethead\n    npm run test:manual:apis:policy_delete\n    npm run test:manual:apis:resource_postput\n    npm run test:manual:apis:resource_gethead\n    npm run test:manual:apis:resource_delete\n    npm run test:manual:apis:role_postput\n    npm run test:manual:apis:role_gethead\n    npm run test:manual:apis:role_delete\n    npm run test:manual:apis:service_postput\n    npm run test:manual:apis:service_gethead\n    npm run test:manual:apis:service_delete\n    npm run test:manual:apis:acr_postput\n    npm run test:manual:apis:acr_get\n    npm run test:manual:apis:acr_delete\n    npm run test:manual:apis:list_gethead\n    npm run test:manual:apis:userdata_get\n    npm run test:manual:apis:extdata_get\n    npm run test:manual:apis:allusertenant_get\n    npm run test:manual:apis:k2hr3keys_get\n    npm run test:manual:load:k2hdkcdata:auto\n    npm run test:manual:load:k2hdkcdata:local\n    npm run test:manual:templengine\n    npm run test:manual:templengine:async\n'",
@@ -121,13 +120,14 @@
     "test:manual:load:k2hdkcdata:auto": "tests/k2hdkc_test_load.sh  --for_auto_test && echo '' && echo 'Load test data for automatically testing - Success' && echo ''",
     "test:manual:load:k2hdkcdata:local": "tests/k2hdkc_test_load.sh --main 33348 --sub 37146 && echo '' && echo 'Load test data for local testing - Success' && echo ''",
     "test:manual:templengine": "tests/auto_template.sh && echo '' && echo 'Test template engine - Success' && echo ''",
-    "test:manual:templengine:async": "tests/auto_template.sh -a && echo '' && echo 'Test asynchronous template engine - Success' && echo ''",
-    "publish-please": "publish-please",
-    "prepublishOnly": "publish-please guard"
+    "test:manual:templengine:async": "tests/auto_template.sh -a && echo '' && echo 'Test asynchronous template engine - Success' && echo ''"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:yahoojapan/k2hr3_api.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/yahoojapan/k2hr3_api/issues",
