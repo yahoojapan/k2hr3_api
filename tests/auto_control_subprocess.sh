@@ -18,153 +18,222 @@
 # REVISION:
 #
 
-#
-# This script starts/stops k2hdkc cluster/chmpx server/chmpx slave processes,
-# and initializes data on k2hdkc for testing.
-#
-#
-# Common
-#
-CMDLINE_PROCESS_NAME=$0
-CMDLINE_ALL_PARAM=$@
-PROGRAM_NAME=`basename ${CMDLINE_PROCESS_NAME}`
-MYSCRIPTDIR=`dirname ${CMDLINE_PROCESS_NAME}`
+#----------------------------------------------------------
+# This script starts/stops k2hdkc cluster/chmpx server/
+# chmpx slave processes, and initializes data on k2hdkc for
+# testing.
+#----------------------------------------------------------
 
+#==========================================================
+# Common Variables
+#==========================================================
+PRGNAME=$(basename "$0")
+SCRIPTDIR=$(dirname "$0")
+SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
+#SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
+
+#==============================================================
+# Utility functions
+#==============================================================
 #
-# Parse arguments
+# Usage
 #
-IS_RUN_MODE=-1
-RUN_INTERVAL=-1
-CHILD_PROCESS_MANAGE_KEY=""
+PrintUsage()
+{
+	echo ""
+	echo "Usage: $1 [ --help(-h) ] [ --start(-str) | --stop(-stp) ] [--key(-k) <key>] [--interval(-i) <sec>] -- <process> <arg>..."
+	echo ""
+	echo "Option:"
+	echo "  --start(-str)         : start process"
+	echo "  --stop(-stp)          : stop process"
+	echo "  --key(-k) <key>       : key name for controling process(a part of pid file name)"
+	echo "  --interval(-i) <sec>  : interval second time"
+	echo ""
+}
+
+#==========================================================
+# Parse options
+#==========================================================
+EXEC_MODE=""
+RUN_INTERVAL=0
+PID_FILENAME_EXT_PART=""
+CHILD_PROCESS_NAME=""
+CHILD_PROCESS_CMD=""
 
 while [ $# -ne 0 ]; do
-	if [ "X$1" = "X--help" -o "X$1" = "X--HELP" -o "X$1" = "X-h" -o "X$1" = "X-H" ]; then
-		echo "${PROGRAM_NAME} [ -help | -start | -stop ] {-key key} {-interval <number>} <process> <arg>..."
-		exit 1
+	if [ -z "$1" ]; then
+		break
 
-	elif [ "X$1" = "X-start" -o "X$1" = "X-START" ]; then
-		if [ ${IS_RUN_MODE} -ne -1 ]; then
-			echo "Already run mode(option) is specified."
+	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+		PrintUsage "${PRGNAME}"
+		exit 0
+
+	elif [ "$1" = "-str" ] || [ "$1" = "-STR" ] || [ "$1" = "--start" ] || [ "$1" = "--START" ]; then
+		if [ -n "${EXEC_MODE}" ]; then
+			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
-		IS_RUN_MODE=1
+		EXEC_MODE="start"
 
-	elif [ "X$1" = "X-stop" -o "X$1" = "X-STOP" ]; then
-		if [ ${IS_RUN_MODE} -ne -1 ]; then
-			echo "Already run mode(option) is specified."
+	elif [ "$1" = "-stp" ] || [ "$1" = "-STP" ] || [ "$1" = "--stop" ] || [ "$1" = "--STOP" ]; then
+		if [ -n "${EXEC_MODE}" ]; then
+			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
-		IS_RUN_MODE=0
+		EXEC_MODE="stop"
 
-	elif [ "X$1" = "X-key" -o "X$1" = "X-KEY" ]; then
-		if [ "X${CHILD_PROCESS_MANAGE_KEY}" != "X" ]; then
-			echo "Already -key option is specified."
+	elif [ "$1" = "-k" ] || [ "$1" = "-K" ] || [ "$1" = "--key" ] || [ "$1" = "--KEY" ]; then
+		if [ -n "${PID_FILENAME_EXT_PART}" ]; then
+			echo "[ERROR] Already --key(-k) option is specified."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "-key option needs parameter"
+			echo "[ERROR] --key(-k) option needs parameter"
 			exit 1
 		fi
-		CHILD_PROCESS_MANAGE_KEY="_$1"
+		PID_FILENAME_EXT_PART="_$1"
 
-	elif [ "X$1" = "X-interval" -o "X$1" = "X-INTERVAL" -o "X$1" = "X-int" -o "X$1" = "X-INT" ]; then
-		if [ ${RUN_INTERVAL} -ne -1 ]; then
-			echo "Already -interval option is specified."
+	elif [ "$1" = "-i" ] || [ "$1" = "-I" ] || [ "$1" = "-int" ] || [ "$1" = "-INT" ] || [ "$1" = "--interval" ] || [ "$1" = "--INTERVAL" ]; then
+		if [ "${RUN_INTERVAL}" -ne 0 ]; then
+			echo "[ERROR] Already --interval(-i) option is specified."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "-interval option needs parameter"
+			echo "[ERROR] --interval(-i) option needs parameter"
 			exit 1
 		fi
-		RUN_INTERVAL=$1
+		if echo "$1" | grep -q '[^0-9]'; then
+			echo "[ERROR] --interval(-i) option parameter must be number(second)"
+			exit 1
+		elif [ "$1" -eq 0 ]; then
+			echo "[ERROR] --interval(-i) option parameter must be positive number(second)"
+			exit 1
+		fi
+		RUN_INTERVAL="$1"
 
-	else
+	elif [ "$1" = "--" ]; then
 		#
 		# Finish to parse option, rest arguments are command and it's args
 		#
+		if [ -n "${CHILD_PROCESS_NAME}" ]; then
+			echo "[ERROR] Already \"-- <process> <arg>...\" option is specified(${CHILD_PROCESS_CMD})"
+			exit 1
+		fi
+		shift
+		if [ -z "$1" ]; then
+			echo "[ERROR] \"-- <process> <arg>...\" option need parameter"
+			exit 1
+		fi
+		CHILD_PROCESS_NAME="$1"
+		CHILD_PROCESS_CMD="$*"
 		break
+
+	else
+		echo "[ERROR] Unknown option $1."
+		exit 1
 	fi
 	shift
 done
 
-if [ $# -eq 0 ]; then
-	echo "There is no process name and arguments"
+#
+# Check execute mode
+#
+if [ -z "${EXEC_MODE}" ]; then
+	echo "[ERROR] You must specify --start(-str) or --stop(-stp) option."
 	exit 1
 fi
-CHILD_PROCESS_NAME=$1
-CHILD_PROCESS_CMD=$@
+
+#
+# Check sub process options
+#
+if [ -z "${CHILD_PROCESS_NAME}" ] || [ -z "${CHILD_PROCESS_CMD}" ]; then
+	echo "[ERROR] No sub process and arguments are specified."
+	exit 1
+fi
 
 #
 # Process pid/log
 #
-CHILD_PROCESS_PIDFILE="/tmp/${PROGRAM_NAME}_${CHILD_PROCESS_NAME}${CHILD_PROCESS_MANAGE_KEY}.pid"
-CHILD_PROCESS_LOGFILE="/tmp/${PROGRAM_NAME}_${CHILD_PROCESS_NAME}${CHILD_PROCESS_MANAGE_KEY}.log"
+CHILD_PROCESS_PIDFILE="/tmp/${PRGNAME}_${CHILD_PROCESS_NAME}${PID_FILENAME_EXT_PART}.pid"
+CHILD_PROCESS_LOGFILE="/tmp/${PRGNAME}_${CHILD_PROCESS_NAME}${PID_FILENAME_EXT_PART}.log"
 
-#
+#==========================================================
 # Execute
-#
-if [ ${IS_RUN_MODE} -eq 1 ]; then
+#==========================================================
+if [ "${EXEC_MODE}" = "start" ]; then
 	#
 	# Start Process
 	#
-	${CHILD_PROCESS_CMD} >${CHILD_PROCESS_LOGFILE} 2>&1 &
+	${CHILD_PROCESS_CMD} >"${CHILD_PROCESS_LOGFILE}" 2>&1 &
 	CHILD_PROCESS_PID=$!
 
-	if [ ${RUN_INTERVAL} -ne -1 -a ${RUN_INTERVAL} -ne 0 ]; then
-		sleep ${RUN_INTERVAL}
+	if [ "${RUN_INTERVAL}" -gt 0 ]; then
+		sleep "${RUN_INTERVAL}"
 	fi
 
-	ps -p ${CHILD_PROCESS_PID} >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "Could not start child process : ${CHILD_PROCESS_CMD}"
+	if ! ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+		echo "[ERROR] Could not start child process : ${CHILD_PROCESS_CMD}"
 		exit 1
 	fi
-	echo ${CHILD_PROCESS_PID} > ${CHILD_PROCESS_PIDFILE}
-	echo "Succeed to start process(${CHILD_PROCESS_PID}) : ${CHILD_PROCESS_CMD}"
+	echo "${CHILD_PROCESS_PID}" >"${CHILD_PROCESS_PIDFILE}"
+
+	echo "[SUCCEED] Start process(${CHILD_PROCESS_PID}) : ${CHILD_PROCESS_CMD}"
 
 else
 	#
 	# Stop Process
 	#
-	if [ -f ${CHILD_PROCESS_PIDFILE} ]; then
-		CHILD_PROCESS_PID=`cat ${CHILD_PROCESS_PIDFILE}`
+	if [ -n "${CHILD_PROCESS_PIDFILE}" ] && [ -f "${CHILD_PROCESS_PIDFILE}" ]; then
 
-		ps -p ${CHILD_PROCESS_PID} >/dev/null 2>&1
-		if [ $? -eq 0 ]; then
-			kill -HUP ${CHILD_PROCESS_PID}
+		CHILD_PROCESS_PID="$(tr -d '\n' < "${CHILD_PROCESS_PIDFILE}")"
 
-			if [ ${RUN_INTERVAL} -ne -1 -a ${RUN_INTERVAL} -ne 0 ]; then
-				sleep ${RUN_INTERVAL}
+		if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+			#
+			# Try stop
+			#
+			if ! kill -HUP "${CHILD_PROCESS_PID}"; then
+				echo "[WARNING] Failed to stop(HUP) process : ${CHILD_PROCESS_NAME}"
+			fi
+			if [ "${RUN_INTERVAL}" -gt 0 ]; then
+				sleep "${RUN_INTERVAL}"
 			fi
 
-			ps -p ${CHILD_PROCESS_PID} >/dev/null 2>&1
-			if [ $? -eq 0 ]; then
-				kill -9 ${CHILD_PROCESS_PID}
-
-				if [ ${RUN_INTERVAL} -ne -1 -a ${RUN_INTERVAL} -ne 0 ]; then
-					sleep ${RUN_INTERVAL}
+			if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+				#
+				# Retry stop
+				#
+				if ! kill -KILL "${CHILD_PROCESS_PID}"; then
+					echo "[WARNING] Failed to stop(KILL) process : ${CHILD_PROCESS_NAME}"
+				fi
+				if [ "${RUN_INTERVAL}" -gt 0 ]; then
+					sleep "${RUN_INTERVAL}"
 				fi
 
-				ps -p ${CHILD_PROCESS_PID} >/dev/null 2>&1
-				if [ $? -eq 0 ]; then
-					echo "Could not stop child process : ${CHILD_PROCESS_CMD}"
+				if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+					echo "[ERROR] Could not stop process : ${CHILD_PROCESS_NAME}"
 					exit 1
 				fi
 			fi
+
+			echo "[SUCCEED] Stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
+		else
+			echo "[SUCCEED] Already stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
 		fi
-		echo "Succeed to stop process : ${CHILD_PROCESS_CMD}(${CHILD_PROCESS_PID})"
-		rm -f ${CHILD_PROCESS_PIDFILE}
+		rm -f "${CHILD_PROCESS_PIDFILE}"
 	else
-		echo "Not found child process pid file : ${CHILD_PROCESS_PIDFILE}"
+		echo "[SUCCEED] Already stop process, because not found child process pid file : ${CHILD_PROCESS_PIDFILE}"
 	fi
 fi
 
 exit 0
 
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #

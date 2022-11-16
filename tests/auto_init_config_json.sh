@@ -18,103 +18,131 @@
 # REVISION:
 #
 
-#
-# This script is checking/creating/Restoring config/local.json(and local-development.json) for test environment
-#
+#----------------------------------------------------------
+# This script is checking/creating/Restoring config/local.json
+# (and local-development.json) for test environment
+#----------------------------------------------------------
+
+#==========================================================
+# Common Variables
+#==========================================================
+PRGNAME=$(basename "$0")
+SCRIPTDIR=$(dirname "$0")
+SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
+SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 
 #
-# Common
+# Variables
 #
-CMDLINE_PROCESS_NAME=$0
-CMDLINE_ALL_PARAM=$@
-PROGRAM_NAME=`basename ${CMDLINE_PROCESS_NAME}`
-MYSCRIPTDIR=`dirname ${CMDLINE_PROCESS_NAME}`
-MYSCRIPTDIR=`cd ${MYSCRIPTDIR}; pwd`
-SRCTOP=`cd ${MYSCRIPTDIR}/..; pwd`
+CONFIGDIR="${SRCTOP}/config"
+LOCAL_JSON="${CONFIGDIR}/local.json"
+LOCAL_JSON_BUP="${LOCAL_JSON}_AUTOTEST_BUP"
+LOCALDEVELOP_JSON="${CONFIGDIR}/local-development.json"
+LOCALDEVELOP_JSON_BUP="${LOCALDEVELOP_JSON}_AUTOTEST_BUP"
+DUMMY_JSON="${CONFIGDIR}/dummyuser.json"
 
-CONFIGDIR=${SRCTOP}/config
-LOCALJSON=${CONFIGDIR}/local.json
-LOCALJSON_BUP=${CONFIGDIR}/local.json_AUTOTEST_BUP
-LOCALDEVELOPJSON=${CONFIGDIR}/local-development.json
-LOCALDEVELOPJSON_BUP=${CONFIGDIR}/local-development.json_AUTOTEST_BUP
-DUMMYJSON=${CONFIGDIR}/dummyuser.json
+#==============================================================
+# Utility functions
+#==============================================================
+#
+# Usage
+#
+PrintUsage()
+{
+	echo ""
+	echo "Usage: $1 [--help(-h)] [--set(-s) | --restore(-r)]"
+	echo ""
+}
 
-#
-# Check options
-#
-PROC_MODE_RESTORE=0
+#==========================================================
+# Parse options
+#==========================================================
+PROC_MODE=""
 
 while [ $# -ne 0 ]; do
-	if [ "X$1" = "X" ]; then
+	if [ -z "$1" ]; then
 		break
 
-	elif [ "X$1" = "X--help" -o "X$1" = "X--HELP" -o "X$1" = "X-h" -o "X$1" = "X-H" ]; then
-		echo "Usage: ${PROGRAM_NAME} [-set(default) | -restore] [--help(-h)]"
+	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "X$1" = "X-set" -o "X$1" = "X-SET" ]; then
-		PROC_MODE_RESTORE=0
+	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--set" ] || [ "$1" = "--SET" ]; then
+		if [ -n "${PROC_MODE}" ]; then
+			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
+			exit 1
+		fi
+		PROC_MODE="set"
 
-	elif [ "X$1" = "X-restore" -o "X$1" = "X-RESTORE" ]; then
-		PROC_MODE_RESTORE=1
+	elif [ "$1" = "-r" ] || [ "$1" = "-R" ] || [ "$1" = "--restore" ] || [ "$1" = "--RESTORE" ]; then
+		if [ -n "${PROC_MODE}" ]; then
+			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
+			exit 1
+		fi
+		PROC_MODE="restore"
 
 	else
 		echo "[ERROR] Unknown option $1"
 		exit 1
 	fi
-
 	shift
 done
 
-#
-# Run
-#
-if [ ${PROC_MODE_RESTORE} -ne 1 ]; then
+if [ -z "${PROC_MODE}" ]; then
+	echo "[ERROR] You must specify --set(-s) or --restore(-r) option."
+	exit 1
+fi
+
+#==========================================================
+# Do work
+#==========================================================
+if [ "${PROC_MODE}" = "set" ]; then
 	#
-	# Set/Create Mode
+	# Set Mode
 	#
 
 	#
 	# Check local.json
 	#
-	if [ -f ${LOCALJSON} ]; then
-		if [ ! -L ${LOCALJSON} ]; then
-			echo "[ERROR] ${LOCALJSON} is existed as real file."
+	if [ -f "${LOCAL_JSON}" ]; then
+		if [ ! -L "${LOCAL_JSON}" ]; then
+			echo "[ERROR] ${LOCAL_JSON} is existed as real file."
 			exit 1
 		fi
-		SLINK_FILE=`readlink ${LOCALJSON}`
-		if [ $? -ne 0 ]; then
-			echo "[ERROR] Could not read link as ${LOCALJSON}"
+
+		if ! SLINK_FILE=$(readlink "${LOCAL_JSON}"); then
+			echo "[ERROR] Could not read link as ${LOCAL_JSON}"
 			exit 1
 		fi
-		if [ "X${SLINK_FILE}" = "X${DUMMYJSON}" ]; then
+
+		if [ "${SLINK_FILE}" = "${DUMMY_JSON}" ]; then
 			#
 			# local.json is already linked to dummyuser.json
 			#
-			echo "[INFO] Already ${LOCALJSON} file is linked ${DUMMYJSON}"
+			echo "[INFO] Already ${LOCAL_JSON} file is linked ${DUMMY_JSON}"
 
 		else
 			#
 			# Make backup and create new symbolic link file
 			#
-			if [ -f ${LOCALJSON_BUP} ]; then
-				echo "[ERROR] Could not rename file ${LOCALJSON} to ${LOCALJSON_BUP}, because ${LOCALJSON_BUP} already exists."
+			if [ -f "${LOCAL_JSON_BUP}" ]; then
+				echo "[ERROR] Could not rename file ${LOCAL_JSON} to ${LOCAL_JSON_BUP}, because ${LOCAL_JSON_BUP} already exists."
 				exit 1
 			fi
 
-			# rename
-			mv ${LOCALJSON} ${LOCALJSON_BUP} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
-				echo "[ERROR] Could not rename file ${LOCALJSON} to ${LOCALJSON_BUP}"
+			#
+			# Rename
+			#
+			if ! mv "${LOCAL_JSON}" "${LOCAL_JSON_BUP}" >/dev/null 2>&1; then
+				echo "[ERROR] Could not rename file ${LOCAL_JSON} to ${LOCAL_JSON_BUP}"
 				exit 1
 			fi
 
 			#
 			# Make symbolic link local.json
 			#
-			ln -s ${DUMMYJSON} ${LOCALJSON} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
-				echo "[ERROR] Could not create symbolic file ${DUMMYJSON} to ${LOCALJSON}"
+			if ! ln -s "${DUMMY_JSON}" "${LOCAL_JSON}" >/dev/null 2>&1; then
+				echo "[ERROR] Could not create symbolic file ${DUMMY_JSON} to ${LOCAL_JSON}"
 				exit 1
 			fi
 		fi
@@ -122,9 +150,8 @@ if [ ${PROC_MODE_RESTORE} -ne 1 ]; then
 		#
 		# There is no local.json, thus only make symbolic link local.json
 		#
-		ln -s ${DUMMYJSON} ${LOCALJSON} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			echo "[ERROR] Could not create symbolic file ${DUMMYJSON} to ${LOCALJSON}"
+		if ! ln -s "${DUMMY_JSON}" "${LOCAL_JSON}" >/dev/null 2>&1; then
+			echo "[ERROR] Could not create symbolic file ${DUMMY_JSON} to ${LOCAL_JSON}"
 			exit 1
 		fi
 	fi
@@ -132,20 +159,20 @@ if [ ${PROC_MODE_RESTORE} -ne 1 ]; then
 	#
 	# Check local-development.json
 	#
-	if [ -f ${LOCALDEVELOPJSON} ]; then
-		if [ -f ${LOCALDEVELOPJSON_BUP} ]; then
-			echo "[ERROR] Could not rename file ${LOCALDEVELOPJSON} to ${LOCALDEVELOPJSON_BUP}, because ${LOCALDEVELOPJSON_BUP} already exists."
+	if [ -f "${LOCALDEVELOP_JSON}" ]; then
+		if [ -f "${LOCALDEVELOP_JSON_BUP}" ]; then
+			echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON} to ${LOCALDEVELOP_JSON_BUP}, because ${LOCALDEVELOP_JSON_BUP} already exists."
 			exit 1
 		fi
 
-		# rename
-		mv ${LOCALDEVELOPJSON} ${LOCALDEVELOPJSON_BUP} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			echo "[ERROR] Could not rename file ${LOCALDEVELOPJSON} to ${LOCALDEVELOPJSON_BUP}"
+		#
+		# Rename
+		#
+		if ! mv "${LOCALDEVELOP_JSON}" "${LOCALDEVELOP_JSON_BUP}" >/dev/null 2>&1; then
+			echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON} to ${LOCALDEVELOP_JSON_BUP}"
 			exit 1
 		fi
 	fi
-
 else
 	#
 	# Restore Mode
@@ -154,66 +181,64 @@ else
 	#
 	# Restore local.json
 	#
-	if [ ! -f ${LOCALJSON_BUP} ]; then
-		if [ -f ${LOCALJSON} ]; then
-			if [ ! -L ${LOCALJSON} ]; then
-				echo "[WARNING] Not found ${LOCALJSON_BUP} and exists ${LOCALJSON} as real file, so nothing to do"
+	if [ ! -f "${LOCAL_JSON_BUP}" ]; then
+		if [ -f "${LOCAL_JSON}" ]; then
+			if [ ! -L "${LOCAL_JSON}" ]; then
+				echo "[WARNING] Not found ${LOCAL_JSON_BUP} and exists ${LOCAL_JSON} as real file, so nothing to do"
 			else
 				#
 				# local.json is symbolic link
 				#
-				SLINK_FILE=`readlink ${LOCALJSON}`
-				if [ $? -ne 0 ]; then
-					echo "[ERROR] Could not read link as ${LOCALJSON}"
+				if ! SLINK_FILE=$(readlink "${LOCAL_JSON}"); then
+					echo "[ERROR] Could not read link as ${LOCAL_JSON}"
 					exit 1
 				fi
 
-				if [ "X${SLINK_FILE}" = "X${DUMMYJSON}" ]; then
+				if [ "${SLINK_FILE}" = "${DUMMY_JSON}" ]; then
 					#
 					# local.json is linked to dummyuser.json
 					#
-					rm -f ${LOCALJSON} >/dev/null 2>&1
-					if [ $? -ne 0 ]; then
-						echo "[ERROR] Could not remove file ${LOCALJSON}"
+					if ! rm -f "${LOCAL_JSON}"; then
+						echo "[ERROR] Could not remove file ${LOCAL_JSON}"
 						exit 1
 					fi
 				else
 					#
 					# local.json is not linked to dummyuser.json
 					#
-					echo "[WARNING] Not found ${LOCALJSON_BUP} and exists ${LOCALJSON} as symbolic link, but it is not linking to dummyuser.json"
+					echo "[WARNING] Not found ${LOCAL_JSON_BUP} and exists ${LOCAL_JSON} as symbolic link, but it is not linking to dummyuser.json"
 				fi
 			fi
 		else
-			echo "[WARNING] Not found ${LOCALJSON_BUP} and ${LOCALJSON}."
+			echo "[WARNING] Not found ${LOCAL_JSON_BUP} and ${LOCAL_JSON}."
 		fi
 	else
-		if [ -f ${LOCALJSON} ]; then
-			if [ ! -L ${LOCALJSON} ]; then
-				echo "[WARNING] ${LOCALJSON} is not created by ${PROGRAM_NAME} program, because it is not symbolic link."
+		if [ -f "${LOCAL_JSON}" ]; then
+			if [ ! -L "${LOCAL_JSON}" ]; then
+				echo "[WARNING] ${LOCAL_JSON} is not created by ${PRGNAME} program, because it is not symbolic link."
 			else
-				SLINK_FILE=`readlink ${LOCALJSON}`
-				if [ $? -ne 0 ]; then
-					echo "[ERROR] Could not read link as ${LOCALJSON}"
+				if ! SLINK_FILE=$(readlink "${LOCAL_JSON}"); then
+					echo "[ERROR] Could not read link as ${LOCAL_JSON}"
 					exit 1
 				fi
-				if [ "X${SLINK_FILE}" != "X${DUMMYJSON}" ]; then
-					echo "[WARNING] ${LOCALJSON} is not created by ${PROGRAM_NAME} program, because it is not symbolic link to ${DUMMYJSON}."
+
+				if [ "${SLINK_FILE}" != "${DUMMY_JSON}" ]; then
+					echo "[WARNING] ${LOCAL_JSON} is not created by ${PRGNAME} program, because it is not symbolic link to ${DUMMY_JSON}."
 				else
 					# remove
-					rm -f ${LOCALJSON} >/dev/null 2>&1
-					if [ $? -ne 0 ]; then
-						echo "[ERROR] Could not remove file ${LOCALJSON}"
+					if ! rm -f "${LOCAL_JSON}"; then
+						echo "[ERROR] Could not remove file ${LOCAL_JSON}"
 						exit 1
 					fi
 				fi
 			fi
 		fi
 
-		# rename
-		mv ${LOCALJSON_BUP} ${LOCALJSON} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			echo "[ERROR] Could not rename file ${LOCALJSON_BUP} to ${LOCALJSON}"
+		#
+		# Rename
+		#
+		if ! mv "${LOCAL_JSON_BUP}" "${LOCAL_JSON}" >/dev/null 2>&1; then
+			echo "[ERROR] Could not rename file ${LOCAL_JSON_BUP} to ${LOCAL_JSON}"
 			exit 1
 		fi
 	fi
@@ -221,16 +246,17 @@ else
 	#
 	# Restore local-development.json
 	#
-	if [ ! -f ${LOCALDEVELOPJSON_BUP} ]; then
-		echo "[INFO] Not found ${LOCALDEVELOPJSON_BUP}, skip restoring ${LOCALDEVELOPJSON}."
+	if [ ! -f "${LOCALDEVELOP_JSON_BUP}" ]; then
+		echo "[INFO] Not found ${LOCALDEVELOP_JSON_BUP}, skip restoring ${LOCALDEVELOP_JSON}."
 	else
-		if [ -f ${LOCALDEVELOPJSON} ]; then
-			echo "[WARNING] ${LOCALDEVELOPJSON} already exists, could not restoring from ${LOCALDEVELOPJSON_BUP}."
+		if [ -f "${LOCALDEVELOP_JSON}" ]; then
+			echo "[WARNING] ${LOCALDEVELOP_JSON} already exists, could not restoring from ${LOCALDEVELOP_JSON_BUP}."
 		else
-			# rename
-			mv ${LOCALDEVELOPJSON_BUP} ${LOCALDEVELOPJSON} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
-				echo "[ERROR] Could not rename file ${LOCALDEVELOPJSON_BUP} to ${LOCALDEVELOPJSON}"
+			#
+			# Rename
+			#
+			if ! mv "${LOCALDEVELOP_JSON_BUP}" "${LOCALDEVELOP_JSON}" >/dev/null 2>&1; then
+				echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON_BUP} to ${LOCALDEVELOP_JSON}"
 				exit 1
 			fi
 		fi
@@ -240,7 +266,10 @@ fi
 exit 0
 
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #

@@ -1,18 +1,14 @@
 #
-# Utility tools for building configure/packages by AntPickax
+# K2HR3 REST API
 #
-# Copyright 2018 Yahoo Japan Corporation.
+# Copyright 2021 Yahoo Japan Corporation.
 #
-# AntPickax provides utility tools for supporting autotools
-# builds.
+# K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers
+# common management information for the cloud.
+# K2HR3 can dynamically manage information as "who", "what", "operate".
+# These are stored as roles, resources, policies in K2hdkc, and the
+# client system can dynamically read and modify these information.
 #
-# These tools retrieve the necessary information from the
-# repository and appropriately set the setting values of
-# configure, Makefile, spec,etc file and so on.
-# These tools were recreated to reduce the number of fixes and
-# reduce the workload of developers when there is a change in
-# the project configuration.
-# 
 # For the full copyright and license information, please view
 # the license file that was distributed with this source code.
 #
@@ -32,9 +28,9 @@
 # It also contains different information(such as packages to install)
 # for each repository.
 #
-# Set following variables according to the DOCKER_IMAGE_OSTYPE variable.
-# The value of the DOCKER_IMAGE_OSTYPE variable matches the name of the
-# base docker image.(ex, alpine/ubuntu/...)
+# Set following variables according to the CI_DOCKER_IMAGE_OSTYPE
+# variable. The value of the CI_DOCKER_IMAGE_OSTYPE variable matches
+# the name of the base docker image.(ex, alpine/ubuntu/...)
 #
 
 #---------------------------------------------------------------------
@@ -58,7 +54,12 @@ RUNNER_INSTALL_PACKAGES=""
 #---------------------------------------------------------------------
 # Variables for each Docker image Type
 #---------------------------------------------------------------------
-if [ "X${DOCKER_IMAGE_OSTYPE}" = "Xalpine" ]; then
+if [ -z "${CI_DOCKER_IMAGE_OSTYPE}" ]; then
+	#
+	# Unknown image OS type : Nothing to do
+	#
+	:
+elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "alpine" ]; then
 	PKGMGR_NAME="apk"
 	PKGMGR_UPDATE_OPT="update -q --no-progress"
 	PKGMGR_INSTALL_OPT="add -q --no-progress --no-cache"
@@ -66,7 +67,7 @@ if [ "X${DOCKER_IMAGE_OSTYPE}" = "Xalpine" ]; then
 	PKG_INSTALL_LIST_BIN="npm libstdc++ yaml"
 	PKG_INSTALL_LIST_NODEJS="nodejs npm"
 
-elif [ "X${DOCKER_IMAGE_OSTYPE}" = "Xubuntu" ]; then
+elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	PKGMGR_NAME="apt-get"
 	PKGMGR_UPDATE_OPT="update -qq -y"
 	PKGMGR_INSTALL_OPT="install -qq -y"

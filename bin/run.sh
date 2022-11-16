@@ -18,281 +18,318 @@
 # REVISION:
 #
 
-#
-# Common
-#
-CMDLINE_PROCESS_NAME=$0
-CMDLINE_ALL_PARAM=$@
-PROGRAM_NAME=`basename ${CMDLINE_PROCESS_NAME}`
-MYSCRIPTDIR=`dirname ${CMDLINE_PROCESS_NAME}`
-MYSCRIPTDIR=`cd ${MYSCRIPTDIR}; pwd`
-SRCTOP=`cd ${MYSCRIPTDIR}/..; pwd`
-HOST=`hostname`
+#==========================================================
+# Common Variables
+#==========================================================
+PRGNAME=$(basename "$0")
+SCRIPTDIR=$(dirname "$0")
+SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
+SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 
-MYPROCIDFILE=""
-MYPID_BASEDIR="/var/run/antpickax"
-MYPID_TMPDIR="/tmp"
-MYMAINPROCIDFILE=""
-MYWATCHPROCIDFILE=""
-MYMAINPROCIDFILENAME="${PROGRAM_NAME}.pid"
-MYWATCHPROCIDFILENAME="${PROGRAM_NAME}-watch.pid"
-TARGETPROG=""
-WWWPROG="bin/www"
-WATCHPROG="bin/watcher"
+#
+# Variables
+#
+CMDLINE_COMMAND="$0"
+CMDLINE_PARAMETERS="$*"
 
+LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
+PID_FILE_BASEDIR="/var/run/antpickax"
+PID_FILE_TMPDIR="/tmp"
+
+MAINPROC_PID_BASENAME="${PRGNAME}.pid"
+WATCHPROC_PID_BASENAME="${PRGNAME}-watch.pid"
+
+TARGET_PROGRAM=""
+MAIN_PROGRAM="bin/www"
+WATCH_PROGRAM="bin/watcher"
+
+PROC_PID_FILE=""
+MAINPROC_PID_FILE=""
+WATCHPROC_PID_FILE=""
+
+#==============================================================
+# Utility functions
+#==============================================================
 #
 # Usage
 #
 PrintUsage()
 {
-	echo "Usage:   $1 [--production(default) | --development]"
-	echo "            [--stop]"
+	echo "Usage:   $1 [--production(-prod) | --development(-dev)]"
+	echo "            [--stop(-s)]"
 	echo "            [--background(-bg) | --foreground(-fg)]"
 	echo "            [--debug(-d) | --debug-nobrk(-dnobrk)]"
-	echo "            [--debuglevel DBG/MSG/WARN/ERR/(custom debug level)]"
-	echo "            [--watcher [--oneshot]]"
+	echo "            [--debuglevel(-dl) DBG/MSG/WARN/ERR/(custom debug level)]"
+	echo "            [--watcher(-w) [--oneshot(-o)]]"
 	echo ""
-	echo "Option:  --production           : Set 'production' to NODE_ENV environment"
-	echo "                                  (This option is default and exclusive with"
-	echo "                                  the '--development' option)"
-	echo "         --development          : Set 'development' to NODE_ENV environment"
-	echo "                                  (exclusive with the '--production' option)"
-	echo "         --stop                 : Stop www or watcher nodejs process"
+	echo "Option:"
+	echo "         --production(-prod)    : [default] Set 'production' to NODE_ENV environment (this is default and exclusive with the '--development' option)"
+	echo "         --development(-dev)    : Set 'development' to NODE_ENV environment (exclusive with the '--production' option)"
+	echo "         --stop(-s)             : Stop www or watcher nodejs process"
+	echo "         --background(-bg)      : Run process background"
+	echo "         --foreground(-fg)      : Run process foreground (this takes precedence over --background(-bg) option)"
 	echo "         --debug(-d)            : Run with nodejs inspector option"
-	echo "         --debug-nobrk(-dnobrk) : Run with nodejs inspector option"
-	echo "                                  (no break at start)"
-	echo "         --debuglevel           : Specify the level of debug output."
-	echo "                                  (DBG/MSG/WARN/ERR/custom debug level)"
-	echo "         --watcher              : Run IP watcher process as daemon"
-	echo "         --oneshot              : Run watcher process only once"
+	echo "         --debug-nobrk(-dnobrk) : Run with nodejs inspector option (no break at start)"
+	echo "         --debuglevel(-dl)      : Specify the level of debug output (DBG/MSG/WARN/ERR/custom debug level)"
+	echo "         --watcher(-w)          : Run IP watcher process as daemon"
+	echo "         --oneshot(-os)         : Run watcher process only once"
 	echo ""
 }
 
 #
-# utility
+# Stop processes
 #
 stop_old_process()
 {
-	if [ -f ${MYPROCIDFILE} ]; then
-		ps ax | grep `cat ${MYPROCIDFILE}` | grep -v grep | grep ${PROGRAM_NAME} > /dev/null 2>&1
-		if [ $? -eq 0 ]; then
-			OLDPROCID=`cat ${MYPROCIDFILE}`
-			OLD_CIHLD_PIDS=`pgrep -P ${OLDPROCID}`
-			kill -HUP ${OLDPROCID} ${OLD_CIHLD_PIDS} > /dev/null 2>&1
-			if [ $? -ne 0 ]; then
-				echo "[WARNING] could not stop old process."
-				kill -KILL ${OLDPROCID} ${OLD_CIHLD_PIDS} > /dev/null 2>&1
-
-				ps ax | grep `cat ${MYPROCIDFILE}` | grep -v grep | grep ${PROGRAM_NAME} > /dev/null 2>&1
-				if [ $? -eq 0 ]; then
-					echo "[ERROR] could not stop old process."
-					return 1
-				fi
-			fi
-			echo "[INFO] old process pid file exists, then try to stop it."
-		fi
+	if [ -z "${PROC_PID_FILE}" ]; then
+		#
+		# Not initialize yet
+		#
+		return 0
 	fi
+
+	if [ ! -f "${PROC_PID_FILE}" ]; then
+		return 0
+	fi
+
+	OLD_PID="$(tr -d '\n' < "${PROC_PID_FILE}")"
+
+
+	if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
+		#
+		# Try to stop(HUP) process and child processes
+		#
+		OLD_CIHLD_PIDS="$(pgrep -P "${OLDPROCID}" | tr '\n' ' ')"
+		if ! /bin/sh -c "kill -HUP ${OLD_PID} ${OLD_CIHLD_PIDS}" >/dev/null 2>&1; then
+			echo "[WARNING] Failed to stop some old processes."
+		fi
+		sleep 1
+
+		#
+		# Check process is running yet
+		#
+		if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
+			#
+			# Try to stop(KILL) process and child processes
+			#
+			if ! /bin/sh -c "kill -KILL ${OLD_PID} ${OLD_CIHLD_PIDS}" >/dev/null 2>&1; then
+				echo "[WARNING] Failed to retry stop some old processes."
+			fi
+			sleep 1
+
+			#
+			# Re-check process is running yet
+			#
+			if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
+				echo "[ERROR] Could not stop old processes."
+				return 1
+			fi
+		fi
+		echo "[INFO] Stop old processes."
+	fi
+	rm -f "${PROC_PID_FILE}"
+
 	return 0
 }
 
-#
-# Parse arguments
-#
-DEBUG_ENV_CUSTOM=""
-DEBUG_ENV_LEVEL=0
-INSPECTOR_OPT=""
+#==========================================================
+# Parse options and check environments
+#==========================================================
 NODE_ENV_VALUE=""
 FOREGROUND=0
 BACKGROUND=0
 STOP_OLD_PROCESS=0
+INSPECTOR_OPT=""
+DEBUG_ENV_LEVEL=0
+DEBUG_ENV_CUSTOM=""
 WATCHER_PROC=0
 WATCH_ONESHOT=0
 
 while [ $# -ne 0 ]; do
-	if [ "X$1" = "X" ]; then
+	if [ -z "$1" ]; then
 		break
 
-	elif [ "X$1" = "X--help" -o "X$1" = "X--HELP" -o "X$1" = "X-h" -o "X$1" = "X-H" ]; then
-		PrintUsage ${PROGRAM_NAME}
+	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "X$1" = "X--background" -o "X$1" = "X--BACKGROUND" -o "X$1" = "X-bg" -o "X$1" = "X-BG" ]; then
+	elif [ "$1" = "prod" ] || [ "$1" = "-PROD" ] || [ "$1" = "--production" ] || [ "$1" = "--PRODUCTION" ]; then
+		if [ -n "${NODE_ENV_VALUE}" ]; then
+			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
+			exit 1
+		fi
+		NODE_ENV_VALUE="production"
+
+	elif [ "$1" = "-dev" ] || [ "$1" = "-DEV" ] || [ "$1" = "--development" ] || [ "$1" = "--DEVELOPMENT" ]; then
+		if [ -n "${NODE_ENV_VALUE}" ]; then
+			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
+			exit 1
+		fi
+		NODE_ENV_VALUE="development"
+
+	elif [ "$1" = "-bg" ] || [ "$1" = "-BG" ] || [ "$1" = "--background" ] || [ "$1" = "--BACKGROUND" ]; then
 		#
 		# Not check multi same option...
 		#
 		BACKGROUND=1
 
-	elif [ "X$1" = "X--foreground" -o "X$1" = "X--FOREGROUND" -o "X$1" = "X-fg" -o "X$1" = "X-FG" ]; then
+	elif [ "$1" = "--foreground" ] || [ "$1" = "--FOREGROUND" ] || [ "$1" = "-fg" ] || [ "$1" = "-FG" ]; then
 		#
 		# Not check multi same option...
 		#
 		FOREGROUND=1
 
-	elif [ "X$1" = "X--stop" -o "X$1" = "X--STOP" -o "X$1" = "X-STOP" -o "X$1" = "X-stop" ]; then
-		if [ ${STOP_OLD_PROCESS} -ne 0 ]; then
-			echo "ERROR: already specified --stop option"
+	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--stop" ] || [ "$1" = "--STOP" ]; then
+		if [ "${STOP_OLD_PROCESS}" -ne 0 ]; then
+			echo "[ERROR] already specified --stop(-s) option"
 			exit 1
 		fi
 		STOP_OLD_PROCESS=1
 
-	elif [ "X$1" = "X--production" -o "X$1" = "X--PRODUCTION" ]; then
-		if [ "X${NODE_ENV_VALUE}" != "X" ]; then
-			echo "ERROR: already specified --production or --development option"
+	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debug" ] || [ "$1" = "--DEBUG" ]; then
+		if [ -n "${INSPECTOR_OPT}" ]; then
+			echo "[ERROR] already specified --debug(-d) or --debug-nobrk(-dnobrk) option"
 			exit 1
 		fi
-		NODE_ENV_VALUE="production"
+		INSPECTOR_OPT="--inspect-brk=${LOCAL_HOSTNAME}:9229"
 
-	elif [ "X$1" = "X--development" -o "X$1" = "X--DEVELOPMENT" ]; then
-		if [ "X${NODE_ENV_VALUE}" != "X" ]; then
-			echo "ERROR: already specified --production or --development option"
+	elif [ "$1" = "-dnobrk" ] || [ "$1" = "-DNOBRK" ] || [ "$1" = "--debug-nobrk" ] || [ "$1" = "--DEBUG-NOBRK" ]; then
+		if [ -n "${INSPECTOR_OPT}" ]; then
+			echo "[ERROR] already specified --debug(-d) or --debug-nobrk(-dnobrk) option"
 			exit 1
 		fi
-		NODE_ENV_VALUE="development"
+		INSPECTOR_OPT="--inspect=${LOCAL_HOSTNAME}:9229"
 
-	elif [ "X$1" = "X--debug" -o "X$1" = "X--DEBUG" -o "X$1" = "X-d" -o "X$1" = "X-D" ]; then
-		if [ "X${INSPECTOR_OPT}" != "X" ]; then
-			echo "ERROR: already specified --debug or --debug-nobrk option"
-			exit 1
-		fi
-		INSPECTOR_OPT="--inspect-brk=${HOST}:9229"
-
-	elif [ "X$1" = "X--debug-nobrk" -o "X$1" = "X--DEBUG-NOBRK" -o "X$1" = "X-dnobrk" -o "X$1" = "X-DNOBRK" ]; then
-		if [ "X${INSPECTOR_OPT}" != "X" ]; then
-			echo "ERROR: already specified --debug or --debug-nobrk option"
-			exit 1
-		fi
-		INSPECTOR_OPT="--inspect=${HOST}:9229"
-
-	elif [ "X$1" = "X--debuglevel" -o "X$1" = "X--DEBUGLEVEL" ]; then
-		#
-		# DEBUG option
-		#
+	elif [ "$1" = "-dl" ] || [ "$1" = "-DL" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
 		shift
 		if [ $# -eq 0 ]; then
-			echo "ERROR: --debuglevel option needs parameter(dbg/msg/warn/err)"
+			echo "[ERROR] --debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
-
-		if [ "X$1" = "Xdbg" -o "X$1" = "XDBG" -o "X$1" = "Xdebug" -o "X$1" = "XDEBUG" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
-				echo "ERROR: --debuglevel option already is set"
+		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
-			if [ ${DEBUG_ENV_LEVEL} -lt 4 ]; then
-				DEBUG_ENV_LEVEL=4
-			fi
-
-		elif [ "X$1" = "Xmsg" -o "X$1" = "XMSG" -o "X$1" = "Xmessage" -o "X$1" = "XMESSAGE" -o "X$1" = "Xinfo" -o "X$1" = "XINFO" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
-				echo "ERROR: --debuglevel option already is set"
+			DEBUG_ENV_LEVEL=4
+		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
-			if [ ${DEBUG_ENV_LEVEL} -lt 3 ]; then
-				DEBUG_ENV_LEVEL=3
-			fi
-
-		elif [ "X$1" = "Xwarn" -o "X$1" = "XWARN" -o "X$1" = "Xwarning" -o "X$1" = "XWARNING" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
-				echo "ERROR: --debuglevel option already is set"
+			DEBUG_ENV_LEVEL=3
+		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
-			if [ ${DEBUG_ENV_LEVEL} -lt 2 ]; then
-				DEBUG_ENV_LEVEL=2
-			fi
-
-		elif [ "X$1" = "Xerr" -o "X$1" = "XERR" -o "X$1" = "Xerror" -o "X$1" = "XERROR" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
-				echo "ERROR: --debuglevel option already is set"
+			DEBUG_ENV_LEVEL=2
+		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
-			if [ ${DEBUG_ENV_LEVEL} -lt 1 ]; then
-				DEBUG_ENV_LEVEL=1
-			fi
-
+			DEBUG_ENV_LEVEL=1
 		else
-			if [ "X${DEBUG_ENV_CUSTOM}" != "X" ]; then
+			#
+			# Custom debug level value
+			#
+			if [ -n "${DEBUG_ENV_CUSTOM}" ]; then
 				DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM},"
 			fi
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
 
-	elif [ "X$1" = "X--watcher" -o "X$1" = "X--WATCHER" -o "X$1" = "X--watch" -o "X$1" = "X--WATCH" -o "X$1" = "X-w" -o "X$1" = "X-W" ]; then
-		if [ ${WATCHER_PROC} -ne 0 ]; then
-			echo "ERROR: already specified --watcher option"
+	elif [ "$1" = "-w" ] || [ "$1" = "-W" ] || [ "$1" = "--watcher" ] || [ "$1" = "--WATCHER" ] || [ "$1" = "--watch" ] || [ "$1" = "--WATCH" ]; then
+		if [ "${WATCHER_PROC}" -ne 0 ]; then
+			echo "[ERROR] already specified --watcher(-w) option"
 			exit 1
 		fi
 		WATCHER_PROC=1
 
-	elif [ "X$1" = "X--oneshot" -o "X$1" = "X--ONESHOT" -o "X$1" = "X-os" -o "X$1" = "X-OS" ]; then
-		if [ ${WATCH_ONESHOT} -ne 0 ]; then
-			echo "ERROR: already specified --oneshot option"
+	elif [ "$1" = "-os" ] || [ "$1" = "-OS" ] || [ "$1" = "--oneshot" ] || [ "$1" = "--ONESHOT" ]; then
+		if [ "${WATCH_ONESHOT}" -ne 0 ]; then
+			echo "[ERROR] already specified --oneshot(-os) option"
 			exit 1
 		fi
 		WATCH_ONESHOT=1
 
 	else
-		echo "WARNING: Unknown option $1 is specified, it is ignored."
+		echo "[WARNING] Unknown option $1 is specified, it is ignored."
 	fi
 	shift
 done
 
 #
-# Check PID directory
+# Check NODE_ENV_VALUE
 #
-if [ -d ${MYPID_BASEDIR} ]; then
-	MYMAINPROCIDFILE="${MYPID_BASEDIR}/${MYMAINPROCIDFILENAME}"
-	MYWATCHPROCIDFILE="${MYPID_BASEDIR}/${MYWATCHPROCIDFILENAME}"
-else
-	MYMAINPROCIDFILE="${MYPID_TMPDIR}/${MYMAINPROCIDFILENAME}"
-	MYWATCHPROCIDFILE="${MYPID_TMPDIR}/${MYWATCHPROCIDFILENAME}"
+if [ -z "${NODE_ENV_VALUE}" ]; then
+	NODE_ENV_VALUE="production"
 fi
 
 #
 # Check watcher option & set process variables
 #
-if [ ${WATCHER_PROC} -ne 1 -a ${WATCH_ONESHOT} -eq 1 ]; then
+if [ "${WATCHER_PROC}" -ne 1 ] && [ "${WATCH_ONESHOT}" -eq 1 ]; then
     echo "[ERROR] invalid option is specified, --oneshot(-os) must be specified with --watcher(-w)."
     exit 1
 fi
-if [ ${WATCHER_PROC} -ne 1 ]; then
-	MYPROCIDFILE=${MYMAINPROCIDFILE}
-	TARGETPROG=${WWWPROG}
-else
-	MYPROCIDFILE=${MYWATCHPROCIDFILE}
-	TARGETPROG=${WATCHPROG}
 
-	if [ ${WATCH_ONESHOT} -eq 1 ]; then
+#----------------------------------------------------------
+# Set pid file varibales
+#----------------------------------------------------------
+PROG_EXTRA_OPTIONS=""
+
+#
+# Check PID directory exists
+#
+if [ -d "${PID_FILE_BASEDIR}" ]; then
+	MAINPROC_PID_FILE="${PID_FILE_BASEDIR}/${MAINPROC_PID_BASENAME}"
+	WATCHPROC_PID_FILE="${PID_FILE_BASEDIR}/${WATCHPROC_PID_BASENAME}"
+else
+	MAINPROC_PID_FILE="${PID_FILE_TMPDIR}/${MAINPROC_PID_BASENAME}"
+	WATCHPROC_PID_FILE="${PID_FILE_TMPDIR}/${WATCHPROC_PID_BASENAME}"
+fi
+
+#
+# PID files
+#
+if [ ${WATCHER_PROC} -ne 1 ]; then
+	PROC_PID_FILE="${MAINPROC_PID_FILE}"
+	TARGET_PROGRAM="${MAIN_PROGRAM}"
+else
+	PROC_PID_FILE="${WATCHPROC_PID_FILE}"
+	TARGET_PROGRAM="${WATCH_PROGRAM}"
+
+	if [ "${WATCH_ONESHOT}" -eq 1 ]; then
 		PROG_EXTRA_OPTIONS="--oneshot"
 	fi
 fi
 
+#==========================================================
+# Do work
+#==========================================================
 #
-# NODE_ENV_VALUE
+# Check background
 #
-if [ "X${NODE_ENV_VALUE}" = "X" ]; then
-	NODE_ENV_VALUE="production"
-fi
-
-#
-# Check run background
-#
-if [ ${BACKGROUND} -eq 1 -a ${FOREGROUND} -eq 0 ]; then
+if [ "${BACKGROUND}" -eq 1 ] && [ "${FOREGROUND}" -eq 0 ]; then
 	#
 	# Run another process as child
 	#
-	${CMDLINE_PROCESS_NAME} ${CMDLINE_ALL_PARAM} -fg > /dev/null 2>&1 &
+	"${CMDLINE_COMMAND}" "${CMDLINE_PARAMETERS}" -fg > /dev/null 2>&1 &
 	exit 0
 fi
 
 #
 # Stop old process if exists
 #
-stop_old_process
-if [ $? -ne 0 ]; then
-	exit $?
+if ! stop_old_process; then
+	exit 1
 fi
-if [ ${STOP_OLD_PROCESS} -eq 1 ]; then
-	rm -f ${MYPROCIDFILE}
+if [ "${STOP_OLD_PROCESS}" -eq 1 ]; then
+	#
+	# Only sto pole processes
+	#
 	exit 0
 fi
 
@@ -300,40 +337,49 @@ fi
 # Make NODE_DEBUG environment
 #
 DEBUG_ENV_PARAM=""
-if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_DBG"
-elif [ ${DEBUG_ENV_LEVEL} -ge 3 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 3 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_MSG"
-elif [ ${DEBUG_ENV_LEVEL} -ge 2 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 2 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_WAN"
-elif [ ${DEBUG_ENV_LEVEL} -ge 1 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 1 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_ERR"
 else
 	DEBUG_ENV_PARAM="LOGLEVEL_SILENT"
 fi
-
-if [ "X${DEBUG_ENV_CUSTOM}" != "X" ]; then
-	if [ "X${DEBUG_ENV_PARAM}" != "X" ]; then
+if [ -n "${DEBUG_ENV_CUSTOM}" ]; then
+	if [ -n "${DEBUG_ENV_PARAM}" ]; then
 		DEBUG_ENV_PARAM="${DEBUG_ENV_PARAM},"
 	fi
 	DEBUG_ENV_PARAM="${DEBUG_ENV_PARAM}${DEBUG_ENV_CUSTOM}"
 fi
 
 #
-# Push my process id
+# Push this process id to PID file
 #
-echo $$ > ${MYPROCIDFILE}
+if ! echo "$$" > "${PROC_PID_FILE}"; then
+	echo "[ERROR] Could create PID file(${PROC_PID_FILE}) and push this process PID."
+	exit 1
+fi
 
 #
-# Executing
+# Run
 #
-cd ${SRCTOP}
-if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
+cd "${SRCTOP}" || exit 1
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	echo "***** RUN *****"
-	echo "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} node ${INSPECTOR_OPT} ${TARGETPROG} ${PROG_EXTRA_OPTIONS}"
+	echo "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} node ${INSPECTOR_OPT} ${TARGET_PROGRAM} ${PROG_EXTRA_OPTIONS}"
 	echo ""
 fi
-NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} node ${INSPECTOR_OPT} ${TARGETPROG} ${PROG_EXTRA_OPTIONS}
+
+EXIT_CODE=0
+if ! NODE_PATH="${NODE_PATH}" NODE_ENV="${NODE_ENV_VALUE}" NODE_DEBUG="${DEBUG_ENV_PARAM}" node "${INSPECTOR_OPT} ${TARGET_PROGRAM} ${PROG_EXTRA_OPTIONS}"; then
+	EXIT_CODE="$?"
+	echo "[INFO] Process exited with exit code: $?"
+fi
+
+exit "${EXIT_CODE}"
 
 #
 # Local variables:

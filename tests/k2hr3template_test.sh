@@ -18,279 +18,322 @@
 # REVISION:
 #
 
-#
-# Common
-#
-PROGRAM_NAME=`basename $0`
-MYSCRIPTDIR=`dirname $0`
-MYSCRIPTDIR=`cd ${MYSCRIPTDIR}; pwd`
-SRCTOP=`cd ${MYSCRIPTDIR}/..; pwd`
-HOST=`hostname`
+#==========================================================
+# Common Variables
+#==========================================================
+PRGNAME=$(basename "$0")
+SCRIPTDIR=$(dirname "$0")
+SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
+SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 
+#
+# Variables
+#
+LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
+DEFAULT_TEST_PROG="tests/k2hr3template_test.js"
+ASYNC_TEST_PROG="tests/k2hr3template_test_async.js"
+
+#==============================================================
+# Utility functions
+#==============================================================
 #
 # Usage
 #
 PrintUsage()
 {
 	echo "Usage: $1 [--inspect(-i)]"
-	echo "                             [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
-	echo "                             [--varlist(-v) \"variables JSON file path\"]"
-	echo "                             {--templ(-t) \"template file path\" | --string(-s) \"template string\"}"
-	echo "                             {--async(-a)}"
+	echo "          [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
+	echo "          [--varlist(-v) \"variables JSON file path\"]"
+	echo "          {--templ(-t) \"template file path\" | --string(-s) \"template string\"}"
+	echo "          {--async(-a)}"
 	echo ""
 	echo "       If you do not specify input file path or template string,"
 	echo "       $1 prompts you to enter a template string from stdin."
 	echo ""
 }
 
-#
-# Parse arguments
-#
+#==========================================================
+# Parse options
+#==========================================================
 INPUT_TEMPLFILE=""
 INPUT_TEMPLSTR=""
 INPUT_VARFILE=""
 INPUT_ASYNCMODE=0
-DEBUG_OPTION=""
-DEBUG_PIPE_LINE=""
-DEBUG_ENV_CUSTOM=""
+DEBUG_USE_INSPECT=0
 DEBUG_ENV_LEVEL=0
+DEBUG_ENV_CUSTOM=""
 
-OPTCOUNT=$#
-while [ ${OPTCOUNT} -ne 0 ]; do
-	if [ "X$1" = "X" ]; then
+while [ $# -ne 0 ]; do
+	if [ -z "$1" ]; then
 		break
 
-	elif [ "X$1" = "X--help" -o "X$1" = "X--HELP" -o "X$1" = "X-h" -o "X$1" = "X-H" ]; then
-		PrintUsage ${PROGRAM_NAME}
+	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "X$1" = "X--inspect" -o "X$1" = "X--INSPECT" -o "X$1" = "X-i" -o "X$1" = "X-I" ]; then
-		DEBUG_OPTION="--inspect --debug-brk"
-		DEBUG_PIPE_LINE="sed s/127.0.0.1/${HOST}/"
+	elif [ "$1" = "-i" ] || [ "$1" = "-I" ] || [ "$1" = "--inspect" ] || [ "$1" = "--INSPECT" ]; then
+		if [ "${DEBUG_USE_INSPECT}" -ne 0 ]; then
+			echo "[ERROR] Already specified --inspect(-i) option"
+			exit 1
+		fi
+		DEBUG_USE_INSPECT=1
 
-	elif [ "X$1" = "X--debuglevel" -o "X$1" = "X--DEBUGLEVEL" -o "X$1" = "X-d" -o "X$1" = "X-D" ]; then
+	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
 		#
 		# DEBUG option
 		#
-		OPTCOUNT=`expr ${OPTCOUNT} - 1`
-		if [ ${OPTCOUNT} -eq 0 ]; then
-			echo "ERROR: --debuglevel(-d) option needs parameter(dbg/msg/warn/err)"
+		shift
+		if [ $# -eq 0 ]; then
+			echo "[ERROR] --debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
-		shift
-
-		if [ "X$1" = "Xdbg" -o "X$1" = "XDBG" -o "X$1" = "Xdebug" -o "X$1" = "XDEBUG" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -lt 4 ]; then
-				DEBUG_ENV_LEVEL=4
+		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
+				exit 1
 			fi
-
-		elif [ "X$1" = "Xmsg" -o "X$1" = "XMSG" -o "X$1" = "Xmessage" -o "X$1" = "XMESSAGE" -o "X$1" = "Xinfo" -o "X$1" = "XINFO" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -lt 3 ]; then
-				DEBUG_ENV_LEVEL=3
+			DEBUG_ENV_LEVEL=4
+		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
+				exit 1
 			fi
-
-		elif [ "X$1" = "Xwarn" -o "X$1" = "XWARN" -o "X$1" = "Xwarning" -o "X$1" = "XWARNING" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -lt 2 ]; then
-				DEBUG_ENV_LEVEL=2
+			DEBUG_ENV_LEVEL=3
+		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
+				exit 1
 			fi
-
-		elif [ "X$1" = "Xerr" -o "X$1" = "XERR" -o "X$1" = "Xerror" -o "X$1" = "XERROR" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -lt 1 ]; then
-				DEBUG_ENV_LEVEL=1
+			DEBUG_ENV_LEVEL=2
+		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
+				echo "[ERROR] --debuglevel(-dl) option already is set"
+				exit 1
 			fi
-
+			DEBUG_ENV_LEVEL=1
 		else
-			if [ "X${DEBUG_ENV_CUSTOM}" != "X" ]; then
+			#
+			# Custom debug level value
+			#
+			if [ -n "${DEBUG_ENV_CUSTOM}" ]; then
 				DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM},"
 			fi
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
 
-	elif [ "X$1" = "X--varlist" -o "X$1" = "X--VARLIST" -o "X$1" = "X-v" -o "X$1" = "X-V" ]; then
+	elif [ "$1" = "-v" ] || [ "$1" = "-V" ] || [ "$1" = "--varlist" ] || [ "$1" = "--VARLIST" ]; then
 		#
 		# input variable list file path
 		#
-		OPTCOUNT=`expr ${OPTCOUNT} - 1`
-		if [ ${OPTCOUNT} -eq 0 ]; then
-			echo "ERROR: --varlist(-v) option needs parameter( input variable JSON file path )"
+		if [ -n "${INPUT_VARFILE}" ]; then
+			echo "[ERROR] Already specified variable list file ${INPUT_VARFILE}"
 			exit 1
 		fi
 		shift
-
-		if [ "X${INPUT_VARFILE}" != "X" ]; then
-			echo "ERROR: specified variable list file \"$1\", but already specified variable list file \"${INPUT_VARFILE}\""
+		if [ $# -eq 0 ]; then
+			echo "[ERROR] --varlist(-v) option needs parameter( input variable JSON file path )"
 			exit 1
 		fi
-		if [ ! -f $1 ]; then
-			echo "ERROR: could not find variable list file \"$1\""
+		if [ ! -f "$1" ]; then
+			echo "[ERROR] could not find variable list file $1"
 			exit 1
 		fi
-		INPUT_VARFILE=$1
+		INPUT_VARFILE="$1"
 
-	elif [ "X$1" = "X--template" -o "X$1" = "X--TEMPLATE" -o "X$1" = "X--templ" -o "X$1" = "X--TEMPL" -o "X$1" = "X-t" -o "X$1" = "X-T" ]; then
+	elif [ "$1" = "-t" ] || [ "$1" = "-T" ] || [ "$1" = "--templ" ] || [ "$1" = "--TEMPL" ] || [ "$1" = "--template" ] || [ "$1" = "--TEMPLATE" ]; then
 		#
 		# input template file path
 		#
-		OPTCOUNT=`expr ${OPTCOUNT} - 1`
-		if [ ${OPTCOUNT} -eq 0 ]; then
-			echo "ERROR: --templ(-t) option needs parameter( input template file path )"
+		if [ -n "${INPUT_TEMPLFILE}" ]; then
+			echo "[ERROR] Already specified template file ${INPUT_TEMPLFILE}"
+			exit 1
+		fi
+		if [ -n "${INPUT_TEMPLSTR}" ]; then
+			echo "[ERROR] Already specified template string \"${INPUT_TEMPLSTR}\""
 			exit 1
 		fi
 		shift
+		if [ $# -eq 0 ]; then
+			echo "[ERROR] --templ(-t) option needs parameter( input template file path )"
+			exit 1
+		fi
+		if [ ! -f "$1" ]; then
+			echo "[ERROR] could not find template file $1"
+			exit 1
+		fi
+		INPUT_TEMPLFILE="$1"
 
-		if [ "X${INPUT_TEMPLFILE}" != "X" ]; then
-			echo "ERROR: specified template file \"$1\", but already specified template file \"${INPUT_TEMPLFILE}\""
-			exit 1
-		fi
-		if [ "X${INPUT_TEMPLSTR}" != "X" ]; then
-			echo "ERROR: specified template file \"$1\", but already specified template string \"${INPUT_TEMPLSTR}\""
-			exit 1
-		fi
-		if [ ! -f $1 ]; then
-			echo "ERROR: could not find template file \"$1\""
-			exit 1
-		fi
-		INPUT_TEMPLFILE=$1
-
-	elif [ "X$1" = "X--string" -o "X$1" = "X--STRING" -o "X$1" = "X--str" -o "X$1" = "X--STR" -o "X$1" = "X-s" -o "X$1" = "X-S" ]; then
+	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--str" ] || [ "$1" = "--STR" ] || [ "$1" = "--string" ] || [ "$1" = "--STRING" ]; then
 		#
 		# input template string
 		#
-		OPTCOUNT=`expr ${OPTCOUNT} - 1`
-		if [ ${OPTCOUNT} -eq 0 ]; then
-			echo "ERROR: --string(-s) option needs parameter( input template string )"
+		if [ -n "${INPUT_TEMPLSTR}" ]; then
+			echo "[ERROR] Already specified template string ${INPUT_TEMPLSTR}"
+			exit 1
+		fi
+		if [ -n "${INPUT_TEMPLFILE}" ]; then
+			echo "[ERROR] Already specified template file ${INPUT_TEMPLFILE}"
 			exit 1
 		fi
 		shift
-
-		if [ "X${INPUT_TEMPLFILE}" != "X" ]; then
-			echo "ERROR: specified template string \"$1\", but already specified template file \"${INPUT_TEMPLFILE}\""
+		if [ $# -eq 0 ]; then
+			echo "[ERROR] --string(-s) option needs parameter( input template string )"
 			exit 1
 		fi
-		if [ "X${INPUT_TEMPLSTR}" != "X" ]; then
-			echo "ERROR: specified template string \"$1\", but already specified template string \"${INPUT_TEMPLSTR}\""
-			exit 1
-		fi
-		INPUT_TEMPLSTR=$1
+		INPUT_TEMPLSTR="$1"
 
-	elif [ "X$1" = "X--async" -o "X$1" = "X--ASYNC" -o "X$1" = "X-a" -o "X$1" = "X-A" ]; then
+	elif [ "$1" = "-a" ] || [ "$1" = "-A" ] || [ "$1" = "--async" ] || [ "$1" = "--ASYNC" ]; then
 		#
 		# async mode
 		#
-		if [ ${INPUT_ASYNCMODE} -ne 0 ]; then
-			echo "ERROR: --async(-a) option is already specified"
+		if [ "${INPUT_ASYNCMODE}" -ne 0 ]; then
+			echo "[ERROR] --async(-a) option is already specified"
 			exit 1
 		fi
 		INPUT_ASYNCMODE=1
 
 	else
-		echo "ERROR: unknown option \"$1\""
-		echo ""
-		PrintUsage ${PROGRAM_NAME}
-		exit 0
+		echo "[ERROR] unknown option $1"
+		exit 1
 	fi
-
-	OPTCOUNT=`expr ${OPTCOUNT} - 1`
 	shift
 done
+
+#----------------------------------------------------------
+# Set varibales and files
+#----------------------------------------------------------
+#
+# Checking async mode
+#
+if [ "${INPUT_ASYNCMODE}" -eq 0 ]; then
+	TEST_PROG="${DEFAULT_TEST_PROG}"
+else
+	TEST_PROG="${ASYNC_TEST_PROG}"
+fi
 
 #
 # Make NODE_DEBUG environment
 #
 DEBUG_ENV_PARAM=""
-if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_DBG"
-elif [ ${DEBUG_ENV_LEVEL} -ge 3 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 3 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_MSG"
-elif [ ${DEBUG_ENV_LEVEL} -ge 2 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 2 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_WAN"
-elif [ ${DEBUG_ENV_LEVEL} -ge 1 ]; then
+elif [ "${DEBUG_ENV_LEVEL}" -ge 1 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_ERR"
+else
+	DEBUG_ENV_PARAM="LOGLEVEL_SILENT"
+fi
+if [ -n "${DEBUG_ENV_CUSTOM}" ]; then
+	if [ -n "${DEBUG_ENV_PARAM}" ]; then
+		DEBUG_ENV_PARAM="${DEBUG_ENV_PARAM},"
+	fi
+	DEBUG_ENV_PARAM="${DEBUG_ENV_PARAM}${DEBUG_ENV_CUSTOM}"
 fi
 
 #
-# Template file
+# Create Template file
 #
-rm -f /tmp/${PROGRAM_NAME}.templ.*
+rm -f /tmp/"${PRGNAME}".templ.*
 
-if [ "X${INPUT_TEMPLFILE}" = "X" ]; then
+if [ -z "${INPUT_TEMPLFILE}" ]; then
 	#
 	# Temporary template file
 	#
-	INPUT_TEMPLFILE="/tmp/${PROGRAM_NAME}.templ.$$"
-	echo -n "" > ${INPUT_TEMPLFILE}
+	INPUT_TEMPLFILE="/tmp/${PRGNAME}.templ.$$"
 
-	if [ "X${INPUT_TEMPLSTR}" != "X" ]; then
+	if [ "${INPUT_TEMPLSTR}" != "" ]; then
 		#
 		# Put input template string to temporary file
 		#
-		echo "${INPUT_TEMPLSTR}" >> ${INPUT_TEMPLFILE}
-
+		if ! echo "${INPUT_TEMPLSTR}" >"${INPUT_TEMPLFILE}"; then
+			echo "[ERROR] Could not create ${INPUT_TEMPLFILE} file"
+			exit 1
+		fi
 	else
 		#
 		# Get template string from stdin
 		#
+		if ! touch "${INPUT_TEMPLFILE}"; then
+			echo "[ERROR] Could not create ${INPUT_TEMPLFILE} file"
+			exit 1
+		fi
+
 		echo "---------------------------------------------------------------"
 		echo " Please input template string."
 		echo " You can end template string input by entering \"EOF\"."
 		echo "---------------------------------------------------------------"
 
-		while true; do
-			echo -n "> "
-			read TEMPLLINE
+		IS_EOF=0
+		while [ "${IS_EOF}" -eq 0 ]; do
+			printf '> '
+			read -r TEMPLLINE
 
-			if [ "X${TEMPLLINE}" = "XEOF" -o "X${TEMPLLINE}" = "Xeof" ]; then
-				break;
+			if [ "${TEMPLLINE}" = "EOF" ] || [ "${TEMPLLINE}" = "eof" ]; then
+				IS_EOF=1
+			else
+				echo "${TEMPLLINE}" >> "${INPUT_TEMPLFILE}"
 			fi
-			echo "${TEMPLLINE}" >> ${INPUT_TEMPLFILE}
 		done
 		echo ""
 	fi
 fi
 
 #
-# Checking async mode
-#
-if [ ${INPUT_ASYNCMODE} -eq 0 ]; then
-	TEST_PROG="tests/k2hr3template_test.js"
-else
-	TEST_PROG="tests/k2hr3template_test_async.js"
-fi
-
-#
 # Input template string
 #
-if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	echo "---------------------------------------------------------------"
 	echo " Template string"
 	echo "---------------------------------------------------------------"
-	cat ${INPUT_TEMPLFILE}
-	echo ""
+	sed -e 's/^/  /g' "${INPUT_TEMPLFILE}"
 	echo "---------------------------------------------------------------"
 fi
 
-#
-# Executing
-#
-cd ${SRCTOP}
-if [ "X${DEBUG_PIPE_LINE}" = "X" ]; then
-	if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
-		echo "***** Run *****"
-		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG}"
-		echo ""
-	fi
-	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG}
+#==========================================================
+# Do work
+#==========================================================
+cd "${SRCTOP}" || exit 1
+
+if [ "${DEBUG_USE_INSPECT}" -eq 1 ]; then
+	DEBUG_INSPECT_OPTION="--inspect"
+	DEBUG_BREAK_OPTION="--debug-brk"
+	DEBUG_PRINT_OPTIONS="${DEBUG_INSPECT_OPTION} ${DEBUG_BREAK_OPTION} "
+	DEBUG_PRINT_PIPELINE=" | sed -e 's/127.0.0.1/${LOCAL_HOSTNAME}/'"
 else
-	if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
-		echo "***** Run *****"
-		echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG} 2>&1 | ${DEBUG_PIPE_LINE}"
-		echo ""
-	fi
-	NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_OPTION} ${TEST_PROG} 2>&1 | ${DEBUG_PIPE_LINE}
+	DEBUG_PRINT_OPTIONS=""
+	DEBUG_PRINT_PIPELINE=""
 fi
 
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
+	echo "***** Run *****"
+	echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_PRINT_OPTIONS}${TEST_PROG}${DEBUG_PRINT_PIPELINE}"
+	echo ""
+fi
+
+if [ "${DEBUG_USE_INSPECT}" -eq 1 ]; then
+	if ! NODE_PATH="${NODE_PATH}" NODE_DEBUG="${DEBUG_ENV_PARAM}" R3TEMPLFILE="${INPUT_TEMPLFILE}" R3VARFILE="${INPUT_VARFILE}" node "${DEBUG_INSPECT_OPTION}" "${DEBUG_BREAK_OPTION}" "${TEST_PROG}" 2>&1 | sed -e "s/127.0.0.1/${LOCAL_HOSTNAME}/"; then
+		EXIT_CODE="$?"
+		echo "[ERROR] Failed to run test with error code : ${EXIT_CODE}"
+		exit 1
+	fi
+else
+	if ! NODE_PATH="${NODE_PATH}" NODE_DEBUG="${DEBUG_ENV_PARAM}" R3TEMPLFILE="${INPUT_TEMPLFILE}" R3VARFILE="${INPUT_VARFILE}" node "${TEST_PROG}"; then
+		EXIT_CODE="$?"
+		echo "[ERROR] Failed to run test with error code : ${EXIT_CODE}"
+		exit 1
+	fi
+fi
+
+exit 0
+
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #
