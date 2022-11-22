@@ -51,6 +51,11 @@ UPDATE_LIBPATH=
 #
 RUNNER_INSTALL_PACKAGES=""
 
+#
+# Directory name to Dockerfile.templ file
+#
+DOCKERFILE_TEMPL_SUBDIR="templ"
+
 #---------------------------------------------------------------------
 # Variables for each Docker image Type
 #---------------------------------------------------------------------

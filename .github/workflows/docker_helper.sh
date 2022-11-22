@@ -651,6 +651,7 @@ echo "  CI_DEFAULT_IMAGE_TAGGING    = ${CI_DEFAULT_IMAGE_TAGGING}"
 echo "  CI_FORCE_PUSH               = ${CI_FORCE_PUSH}"
 echo "  CI_DO_PUSH                  = ${CI_DO_PUSH}"
 echo ""
+echo "  DOCKERFILE_TEMPL_SUBDIR     = ${DOCKERFILE_TEMPL_SUBDIR}"
 echo "  PKGMGR_NAME                 = ${PKGMGR_NAME}"
 echo "  PKGMGR_UPDATE_OPT           = ${PKGMGR_UPDATE_OPT}"
 echo "  PKGMGR_INSTALL_OPT          = ${PKGMGR_INSTALL_OPT}"
@@ -748,11 +749,6 @@ fi
 #
 PRNINFO "Create Dockerfile from ${DOCKER_TEMPL_FILE}"
 
-#
-# Create each Dockerfile
-#
-PRNINFO "Create Dockerfile from ${DOCKER_TEMPL_FILE}"
-
 if [ -n "${PKG_INSTALL_LIST_BUILDER}" ]; then
 	PKG_INSTALL_BUILDER_COMMAND="${PKGMGR_NAME} ${PKGMGR_INSTALL_OPT} ${PKG_INSTALL_LIST_BUILDER}"
 else
@@ -792,7 +788,7 @@ sed -e "s#%%GIT_DOMAIN_URL%%#${CI_GIT_URL}#g"							\
 	-e "s#%%PKG_INSTALL_BIN%%#${PKG_INSTALL_BIN_COMMAND}#g"				\
 	-e "s#%%UPDATE_LIBPATH%%#${UPDATE_LIBPATH}#g"						\
 	-e "s#%%BUILD_ENV%%#${BUILDER_ENVIRONMENT}#g"						\
-	"${SRCTOP}/templ/${DOCKER_TEMPL_FILE}"								> "${SRCTOP}/${DOCKER_FILE}"
+	"${SRCTOP}/${DOCKERFILE_TEMPL_SUBDIR}/${DOCKER_TEMPL_FILE}"			> "${SRCTOP}/${DOCKER_FILE}"
 
 # shellcheck disable=SC2181
 if [ $? -ne 0 ]; then
