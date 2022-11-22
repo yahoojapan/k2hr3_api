@@ -24,15 +24,11 @@
 
 #----------------------------------------------------------
 # Docker Image Helper for container on Github Actions
-#
-# This script is image builder for NodeJS project without
-# binary building
-#
 #----------------------------------------------------------
 
-#==============================================================
+#==========================================================
 # Common setting
-#==============================================================
+#==========================================================
 #
 # Instead of pipefail(for shells not support "set -o pipefail")
 #
@@ -62,15 +58,14 @@ SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
 SRCTOP=$(cd "${SCRIPTDIR}/../.." || exit 1; pwd)
 
 #
-# Files
+# Directories / Files
 #
-PACKAGEJSON_FILEPATH="${SRCTOP}/package.json"
 DOCKER_TEMPL_FILE="Dockerfile.templ"
 DOCKER_FILE="Dockerfile"
 
-#==============================================================
+#==========================================================
 # Utility functions and variables for messaging
-#==============================================================
+#==========================================================
 #
 # Utilities for message
 #
@@ -156,7 +151,7 @@ func_usage()
 	echo "  Option:"
 	echo "    --help(-h)                                print help"
 	echo "    --imagetype-vars-file(-f) <file path>     specify the file path to imagetype variable(deafult. \"imagetypevars.sh\")"
-	echo "    --imageinfo(-i)           <image info>    specify infomration about "base docker image", "base docker dev image", "os type tag" and "default flag" (ex. \"k2hdkc:latest,k2hdkc-dev:latest,alpine,default\")"
+	echo "    --imageinfo(-i)           <image info>    specify infomration about "base docker image", "base docker dev image", "os type tag" and "default flag" (ex. \"alpine:latest,alpine:latest,alpine,default\")"
 	echo "    --organization(-o)        <organization>  specify organaization name on DockerHub(default. \"antpickax\")"
 	echo "    --imagenames(-n)          <image name>    specify build image names, separate multiple names with commas(ex. \"target,target-dev\")"
 	echo "    --imageversion(-v)        <version>       the value of this option is set automatically and is usually not specified.(ex. \"1.0.0\")"
@@ -173,18 +168,70 @@ func_usage()
 	echo "    ENV_GIT_URL               git domain url.                               ( same as option '--giturl(-g)' or environment 'GITHUB_SERVER_URL' )"
 	echo "    ENV_FORCE_PUSH            force the release package to push: true/false ( same as option '--push(-p)' and '--notpush(-np)' )"
 	echo ""
-	echo "    This program uses folowing environment variable internally:"
+	echo "    This program uses folowing environment variable internally."
 	echo "      GITHUB_SERVER_URL"
 	echo "      GITHUB_REPOSITORY"
 	echo "      GITHUB_REF"
 	echo "      GITHUB_EVENT_NAME"
 	echo "      GITHUB_EVENT_PATH"
 	echo ""
+	echo "  Node: \"--imageinfo(-i)\" option"
+	echo "    Specify the \"baseimage\" in the following format: \"<base image tag>,<base dev image tag>,<OS tag name>(,<default tag flag>)\""
+	echo "      <base image tag>:     specify the Docker image name(ex. \"alpine:latest\")"
+	echo "      <base dev image tag>: specify the Docker image name(ex. \"alpine:latest\")"
+	echo "      <OS tag name>:        OS tag attached to the created Docker image"
+	echo "      <default tag flag>:   If you want to use the created Docker image as the default image, specify \"default\"."
+	echo ""
 	echo "  Note:"
 	echo "    Specifying the above options will create the image shown in the example below:"
 	echo "      antpickax/image:1.0.0-alpine  (imagetag is \"alpine\")"
 	echo "      antpickax/image:1.0.0         (imagetag is not specified)"
 	echo ""
+}
+
+#==============================================================
+# Customizable execution function
+#==============================================================
+#
+# Get version from repository package
+#
+# [NOTE]
+# Set "REPOSITORY_PACKAGE_VERSION" environment
+#
+get_repository_package_version()
+{
+	REPOSITORY_PACKAGE_VERSION=""
+	return 0
+}
+
+#
+# Print custom variables
+#
+print_custom_variabels()
+{
+	return 0
+}
+
+#
+# Preprocessing
+#
+run_preprocess()
+{
+	return 0
+}
+
+#
+# Custom Dockerfile conversion
+#
+# $1	: Dockerfile path
+#
+custom_dockerfile_conversion()
+{
+	if [ -z "$1" ] || [ ! -f "$1" ]; then
+		PRNERR "Dockerfile path($1) is empty or not existed."
+		return 1
+	fi
+	return 0
 }
 
 #==========================================================
@@ -333,112 +380,6 @@ else
 fi
 
 #----------------------------------------------------------
-# Check options for default value
-#----------------------------------------------------------
-#
-# The file for customization
-#
-if [ -n "${OPT_IMAGEVAR_FILE}" ]; then
-	CI_IMAGEVAR_FILE="${OPT_IMAGEVAR_FILE}"
-elif [ -n "${ENV_IMAGEVAR_FILE}" ]; then
-	if [ ! -f "${ENV_IMAGEVAR_FILE}" ]; then
-		PRNERR "The \"ENV_IMAGEVAR_FILE\" environment value(${ENV_IMAGEVAR_FILE}) is not existed file path."
-		exit 1
-	fi
-	CI_IMAGEVAR_FILE="${ENV_IMAGEVAR_FILE}"
-elif [ -f "${SCRIPTDIR}/imagetypevars.sh" ]; then
-	CI_IMAGEVAR_FILE="${SCRIPTDIR}/imagetypevars.sh"
-else
-	CI_IMAGEVAR_FILE=""
-fi
-
-#
-# Information about github url
-#
-if [ -n "${OPT_GIT_URL}" ]; then
-	CI_GIT_URL="${OPT_GIT_URL}"
-elif [ -n "${ENV_GIT_URL}" ]; then
-	CI_GIT_URL="${ENV_GIT_URL}"
-elif [ -n "${GITHUB_SERVER_URL}" ]; then
-	CI_GIT_URL="${GITHUB_SERVER_URL}"
-else
-	CI_GIT_URL="https://github.com"
-fi
-
-#
-# Infomration about Docker hub
-#
-if [ -n "${OPT_DOCKER_HUB_ORG}" ]; then
-	CI_DOCKER_HUB_ORG="${OPT_DOCKER_HUB_ORG}"
-elif [ -n "${ENV_DOCKER_HUB_ORG}" ]; then
-	CI_DOCKER_HUB_ORG="${ENV_DOCKER_HUB_ORG}"
-else
-	CI_DOCKER_HUB_ORG="antpickax"
-fi
-
-#
-# Docker image name and version from package.json
-#
-# [NOTE]
-# Please note that the first value of the package.json file is used for "version" and "name".
-#
-if [ ! -f "${PACKAGEJSON_FILEPATH}" ]; then
-	PRNERR "${PACKAGEJSON_FILEPATH} is not existed."
-	exit 1
-fi
-PACKAGEJSON_PACKAGE_NAME="$(grep '"name":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/name://g' -e 's/ //g' | tr -d '\n')"
-PACKAGEJSON_PACKAGE_VERSION="$(grep '"version":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/version://g' -e 's/ //g' | tr -d '\n')"
-
-#
-# GITHUB_REF Environments
-#
-if [ -n "${GITHUB_REF}" ] && echo "${GITHUB_REF}" | grep -q 'refs/tags/'; then
-	TAGGED_VERSION="$(echo "${GITHUB_REF}" | sed -e 's#refs/tags/v##g' -e 's#refs/tags/##g' | tr -d '\n')"
-else
-	TAGGED_VERSION=""
-fi
-
-#
-# image version
-#
-if [ -n "${OPT_IMAGE_VERSION}" ]; then
-	CI_IMAGE_VERSION="${OPT_IMAGE_VERSION}"
-elif [ -n "${ENV_IMAGE_VERSION}" ]; then
-	CI_IMAGE_VERSION="${ENV_IMAGE_VERSION}"
-else
-	#
-	# Default image version from github tag or package.json
-	#
-	if [ -n "${TAGGED_VERSION}" ]; then
-		CI_IMAGE_VERSION=${TAGGED_VERSION}
-	else
-		if [ -n "${PACKAGEJSON_PACKAGE_VERSION}" ]; then
-			CI_IMAGE_VERSION="${PACKAGEJSON_PACKAGE_VERSION}"
-		else
-			#
-			# Not found image version
-			#
-			CI_IMAGE_VERSION="0.0.0"
-		fi
-	fi
-fi
-
-if [ -n "${OPT_FORCE_PUSH}" ]; then
-	CI_FORCE_PUSH="${OPT_FORCE_PUSH}"
-elif [ -n "${ENV_FORCE_PUSH}" ]; then
-	if echo "${ENV_FORCE_PUSH}" | grep -q -i '^true$'; then
-		CI_FORCE_PUSH="true"
-	elif echo "${ENV_FORCE_PUSH}" | grep -q -i '^false$'; then
-		CI_FORCE_PUSH="false"
-	else
-		PRNERR "\"ENV_FORCE_PUSH\" value is wrong."
-		exit 1
-	fi
-else
-	CI_FORCE_PUSH=""
-fi
-
-#----------------------------------------------------------
 # Variables from image inforamtion
 #----------------------------------------------------------
 #
@@ -481,6 +422,127 @@ if [ -n "${CI_DOCKER_IMAGE_DEFAULT_TAG}" ] && [ "${CI_DOCKER_IMAGE_DEFAULT_TAG}"
 	CI_DEFAULT_IMAGE_TAGGING=1
 else
 	CI_DEFAULT_IMAGE_TAGGING=0
+fi
+
+PRNSUCCESS "Parsed options and checked environments"
+
+#==========================================================
+# Load variables from custom file
+#==========================================================
+PRNTITLE "Load variables from custom file"
+
+#
+# The file for customization
+#
+if [ -n "${OPT_IMAGEVAR_FILE}" ]; then
+	CI_IMAGEVAR_FILE="${OPT_IMAGEVAR_FILE}"
+elif [ -n "${ENV_IMAGEVAR_FILE}" ]; then
+	if [ ! -f "${ENV_IMAGEVAR_FILE}" ]; then
+		PRNERR "The \"ENV_IMAGEVAR_FILE\" environment value(${ENV_IMAGEVAR_FILE}) is not existed file path."
+		exit 1
+	fi
+	CI_IMAGEVAR_FILE="${ENV_IMAGEVAR_FILE}"
+elif [ -f "${SCRIPTDIR}/imagetypevars.sh" ]; then
+	CI_IMAGEVAR_FILE="${SCRIPTDIR}/imagetypevars.sh"
+else
+	CI_IMAGEVAR_FILE=""
+fi
+
+#
+# Load variables from custom file
+#
+if [ -n "${CI_IMAGEVAR_FILE}" ] && [ -f "${CI_IMAGEVAR_FILE}" ]; then
+	PRNINFO "Load ${CI_IMAGEVAR_FILE} for local variables."
+	. "${CI_IMAGEVAR_FILE}"
+fi
+
+PRNSUCCESS "Loaded variables from custom file"
+
+#==========================================================
+# Check options for default value
+#==========================================================
+PRNTITLE "Check options for default value"
+
+#
+# Information about github url
+#
+if [ -n "${OPT_GIT_URL}" ]; then
+	CI_GIT_URL="${OPT_GIT_URL}"
+elif [ -n "${ENV_GIT_URL}" ]; then
+	CI_GIT_URL="${ENV_GIT_URL}"
+elif [ -n "${GITHUB_SERVER_URL}" ]; then
+	CI_GIT_URL="${GITHUB_SERVER_URL}"
+else
+	CI_GIT_URL="https://github.com"
+fi
+
+#
+# Infomration about Docker hub
+#
+if [ -n "${OPT_DOCKER_HUB_ORG}" ]; then
+	CI_DOCKER_HUB_ORG="${OPT_DOCKER_HUB_ORG}"
+elif [ -n "${ENV_DOCKER_HUB_ORG}" ]; then
+	CI_DOCKER_HUB_ORG="${ENV_DOCKER_HUB_ORG}"
+else
+	CI_DOCKER_HUB_ORG="antpickax"
+fi
+
+#
+# Set "REPOSITORY_PACKAGE_VERSION" variable
+#
+if ! get_repository_package_version; then
+	PRNERR "Failed to run get_repository_package_version function."
+	exit 1
+fi
+
+#
+# GITHUB_REF Environments
+#
+if [ -n "${GITHUB_REF}" ] && echo "${GITHUB_REF}" | grep -q 'refs/tags/'; then
+	TAGGED_VERSION="$(echo "${GITHUB_REF}" | sed -e 's#refs/tags/v##g' -e 's#refs/tags/##g' | tr -d '\n')"
+else
+	TAGGED_VERSION=""
+fi
+
+#
+# image version
+#
+if [ -n "${OPT_IMAGE_VERSION}" ]; then
+	CI_IMAGE_VERSION="${OPT_IMAGE_VERSION}"
+elif [ -n "${ENV_IMAGE_VERSION}" ]; then
+	CI_IMAGE_VERSION="${ENV_IMAGE_VERSION}"
+else
+	#
+	# Default image version from github tag or package.json
+	#
+	if [ -n "${TAGGED_VERSION}" ]; then
+		CI_IMAGE_VERSION=${TAGGED_VERSION}
+	else
+		if [ -n "${REPOSITORY_PACKAGE_VERSION}" ]; then
+			CI_IMAGE_VERSION="${REPOSITORY_PACKAGE_VERSION}"
+		else
+			#
+			# Not found image version
+			#
+			PRNWARN "Not found image version thus use default image version(0.0.0)."
+			CI_IMAGE_VERSION="0.0.0"
+		fi
+	fi
+fi
+
+if [ -n "${OPT_FORCE_PUSH}" ]; then
+	CI_FORCE_PUSH="${OPT_FORCE_PUSH}"
+elif [ -n "${ENV_FORCE_PUSH}" ]; then
+	if echo "${ENV_FORCE_PUSH}" | grep -q -i '^true$'; then
+		CI_FORCE_PUSH="true"
+	elif echo "${ENV_FORCE_PUSH}" | grep -q -i '^false$'; then
+		CI_FORCE_PUSH="false"
+	else
+		PRNERR "\"ENV_FORCE_PUSH\" value is wrong."
+		exit 1
+	fi
+else
+	CI_FORCE_PUSH=""
 fi
 
 #----------------------------------------------------------
@@ -557,19 +619,7 @@ else
 	fi
 fi
 
-PRNSUCCESS  "Parsed options and checked environments"
-
-#==========================================================
-# Load variables from custom file
-#==========================================================
-PRNTITLE "Load variables from custom file"
-
-if [ -n "${CI_IMAGEVAR_FILE}" ] && [ -f "${CI_IMAGEVAR_FILE}" ]; then
-	PRNINFO "Load ${CI_IMAGEVAR_FILE} for local variables."
-	. "${CI_IMAGEVAR_FILE}"
-fi
-
-PRNSUCCESS "Loaded variables from custom file"
+PRNSUCCESS "Check options for default value"
 
 #==========================================================
 # Print information
@@ -583,8 +633,7 @@ echo ""
 echo "  DOCKER_TEMPL_FILE           = ${DOCKER_TEMPL_FILE}"
 echo "  DOCKER_FILE                 = ${DOCKER_FILE}"
 echo ""
-echo "  PACKAGEJSON_PACKAGE_NAME    = ${PACKAGEJSON_PACKAGE_NAME}"
-echo "  PACKAGEJSON_PACKAGE_VERSION = ${PACKAGEJSON_PACKAGE_VERSION}"
+echo "  REPOSITORY_PACKAGE_VERSION  = ${REPOSITORY_PACKAGE_VERSION}"
 echo ""
 echo "  CI_IMAGEVAR_FILE            = ${CI_IMAGEVAR_FILE}"
 echo "  CI_DOCKER_IMAGE_INFO        = ${CI_DOCKER_IMAGE_INFO}"
@@ -607,11 +656,14 @@ echo "  PKGMGR_UPDATE_OPT           = ${PKGMGR_UPDATE_OPT}"
 echo "  PKGMGR_INSTALL_OPT          = ${PKGMGR_INSTALL_OPT}"
 echo "  PKG_INSTALL_LIST_BUILDER    = ${PKG_INSTALL_LIST_BUILDER}"
 echo "  PKG_INSTALL_LIST_BIN        = ${PKG_INSTALL_LIST_BIN}"
-echo "  PKG_REPO_SETUP_NODEJS       = ${PKG_REPO_SETUP_NODEJS}"
-echo "  PKG_INSTALL_LIST_NODEJS     = ${PKG_INSTALL_LIST_NODEJS}"
 echo "  BUILDER_ENVIRONMENT         = ${BUILDER_ENVIRONMENT}"
 echo "  UPDATE_LIBPATH              = ${UPDATE_LIBPATH}"
 echo "  RUNNER_INSTALL_PACKAGES     = ${RUNNER_INSTALL_PACKAGES}"
+
+#
+# Printing additional custom variables
+#
+print_custom_variabels
 
 PRNSUCCESS "Printed all local variables"
 
@@ -684,6 +736,19 @@ PRNTITLE "Create Dockerfile from template"
 cd "${SRCTOP}" || exit 1
 
 #
+# Preprocessing
+#
+if ! run_preprocess; then
+	PRNERR "Failed to run run_preprocess function."
+	exit 1
+fi
+
+#
+# Create each Dockerfile
+#
+PRNINFO "Create Dockerfile from ${DOCKER_TEMPL_FILE}"
+
+#
 # Create each Dockerfile
 #
 PRNINFO "Create Dockerfile from ${DOCKER_TEMPL_FILE}"
@@ -713,29 +778,10 @@ if [ -z "${UPDATE_LIBPATH}" ]; then
 	UPDATE_LIBPATH=":"
 fi
 
-if [ -n "${PKG_REPO_SETUP_NODEJS}" ]; then
-	PKG_REPO_SETUP_NODEJS_COMMAND="${PKG_REPO_SETUP_NODEJS}"
-else
-	#
-	# Set no-operation command
-	#
-	PKG_REPO_SETUP_NODEJS_COMMAND=":"
-fi
-
-if [ -n "${PKG_INSTALL_LIST_NODEJS}" ]; then
-	PKG_INSTALL_NODEJS_COMMAND="${PKGMGR_NAME} ${PKGMGR_INSTALL_OPT} ${PKG_INSTALL_LIST_NODEJS}"
-else
-	#
-	# Set no-operation command
-	#
-	PKG_INSTALL_NODEJS_COMMAND=":"
-fi
-
 #
-# Create dockerfile from template
+# Create dockerfile from template(Common conversion)
 #
-sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
-	-e "s#%%GIT_DOMAIN_URL%%#${CI_GIT_URL}#g"							\
+sed -e "s#%%GIT_DOMAIN_URL%%#${CI_GIT_URL}#g"							\
 	-e "s#%%DOCKER_IMAGE_BASE%%#${CI_DOCKER_IMAGE_BASE}#g"				\
 	-e "s#%%DOCKER_IMAGE_DEV_BASE%%#${CI_DOCKER_IMAGE_DEV_BASE}#g"		\
 	-e "s#%%DOCKER_GIT_ORGANIZATION%%#${CI_DOCKER_GIT_ORGANIZATION}#g"	\
@@ -744,15 +790,21 @@ sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
 	-e "s#%%PKG_UPDATE%%#${PKGMGR_NAME} ${PKGMGR_UPDATE_OPT}#g"			\
 	-e "s#%%PKG_INSTALL_BUILDER%%#${PKG_INSTALL_BUILDER_COMMAND}#g"		\
 	-e "s#%%PKG_INSTALL_BIN%%#${PKG_INSTALL_BIN_COMMAND}#g"				\
-	-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
-	-e "s#%%PKG_INSTALL_NODEJS%%#${PKG_INSTALL_NODEJS_COMMAND}#g"		\
 	-e "s#%%UPDATE_LIBPATH%%#${UPDATE_LIBPATH}#g"						\
 	-e "s#%%BUILD_ENV%%#${BUILDER_ENVIRONMENT}#g"						\
 	"${SRCTOP}/templ/${DOCKER_TEMPL_FILE}"								> "${SRCTOP}/${DOCKER_FILE}"
 
 # shellcheck disable=SC2181
 if [ $? -ne 0 ]; then
-	PRNERR "Failed to creating ${DOCKER_FILE} from ${DOCKER_TEMPL_FILE}."
+	PRNERR "Failed to creating ${DOCKER_FILE} from ${DOCKER_TEMPL_FILE} (Common conversion)."
+	exit 1
+fi
+
+#
+# Custom dockerfile conversion
+#
+if ! custom_dockerfile_conversion "${SRCTOP}/${DOCKER_FILE}"; then
+	PRNERR "Failed to custom dockerfile(${SRCTOP}/${DOCKER_FILE}) conversion."
 	exit 1
 fi
 

@@ -82,6 +82,133 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	BUILDER_ENVIRONMENT="ENV DEBIAN_FRONTEND=noninteractive"
 fi
 
+#---------------------------------------------------------------
+# Override function for processing
+#---------------------------------------------------------------
+# [NOTE]
+# The following functions allow customization of processing.
+# You can write your own processing by overriding each function.
+#
+# get_repository_package_version()
+#	Definition of a function that sets a variable to give the
+#	version number of the Docker image when no tag or version
+#	number is explicitly given.
+#
+# print_custom_variabels()
+#	Definition of a function to display(for github actions logs)
+#	if variables other than those required by default are defined
+#	in this file(imagetypevar.sh) or if variables are created,
+#
+# run_preprocess()
+#	Define this function when preprocessing for Docker Image
+#	creation is required.
+#
+# custom_dockerfile_conversion()
+#	Define this function when you need to modify your Dockerfile.
+#
+
+#
+# Variables in using following function
+#
+PACKAGEJSON_FILEPATH="${SRCTOP}/package.json"
+
+#
+# Get version from repository package
+#
+# [NOTE]
+# Set "REPOSITORY_PACKAGE_VERSION" environment
+#
+# The following variables will be used, so please set them in advance:
+#	PACKAGEJSON_FILEPATH	: path to package.json
+#
+get_repository_package_version()
+{
+	if [ ! -f "${PACKAGEJSON_FILEPATH}" ]; then
+		PRNERR "${PACKAGEJSON_FILEPATH} is not existed."
+		return 1
+	fi
+	if ! REPOSITORY_PACKAGE_VERSION="$(grep '"version":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/version://g' -e 's/ //g' | tr -d '\n')"; then
+		PRNERR "Failed to get version number from ${PACKAGEJSON_FILEPATH} file"
+		return 1
+	fi
+	return 0
+}
+
+#
+# Print custom variables
+#
+print_custom_variabels()
+{
+	echo "  PKG_INSTALL_LIST_NODEJS     = ${PKG_INSTALL_LIST_NODEJS}"
+	echo "  PKG_REPO_SETUP_NODEJS       = ${PKG_REPO_SETUP_NODEJS}"
+	return 0
+}
+
+#
+# Custom dockerfile conversion
+#
+# $1	: Dockerfile path
+#
+# The following variables will be used, so please set them in advance:
+#	PACKAGEJSON_FILEPATH		: path to package.json
+#	PKG_REPO_SETUP_NODEJS		: setup NodeJS repository command string if need
+#	PKG_INSTALL_LIST_NODEJS		: install package lis for nodejs
+#	PKGMGR_NAME					: package manageer name
+#	PKGMGR_INSTALL_OPT			: the option for installing by package manager
+#
+custom_dockerfile_conversion()
+{
+	if [ -z "$1" ] || [ ! -f "$1" ]; then
+		PRNERR "Dockerfile path($1) is empty or not existed."
+		return 1
+	fi
+	_TMP_DOCKERFILE_PATH="$1"
+
+	#
+	# Package name
+	#
+	if [ ! -f "${PACKAGEJSON_FILEPATH}" ]; then
+		PRNERR "${PACKAGEJSON_FILEPATH} is not existed."
+		return 1
+	fi
+	if ! PACKAGEJSON_PACKAGE_NAME="$(grep '"name":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/name://g' -e 's/ //g' | tr -d '\n')"; then
+		PRNERR "Failed to get package name from ${PACKAGEJSON_FILEPATH} file"
+		return 1
+	fi
+
+	#
+	# Check varibales and set default values
+	#
+	if [ -n "${PKG_REPO_SETUP_NODEJS}" ]; then
+		PKG_REPO_SETUP_NODEJS_COMMAND="${PKG_REPO_SETUP_NODEJS}"
+	else
+		#
+		# Set no-operation command
+		#
+		PKG_REPO_SETUP_NODEJS_COMMAND=":"
+	fi
+	if [ -n "${PKG_INSTALL_LIST_NODEJS}" ]; then
+		PKG_INSTALL_NODEJS_COMMAND="${PKGMGR_NAME} ${PKGMGR_INSTALL_OPT} ${PKG_INSTALL_LIST_NODEJS}"
+	else
+		#
+		# Set no-operation command
+		#
+		PKG_INSTALL_NODEJS_COMMAND=":"
+	fi
+
+	sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
+		-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
+		-e "s#%%PKG_INSTALL_NODEJS%%#${PKG_INSTALL_NODEJS_COMMAND}#g"		\
+		-i "${_TMP_DOCKERFILE_PATH}"
+
+	# shellcheck disable=SC2181
+	if [ $? -ne 0 ]; then
+		PRNERR "Failed to converting ${_TMP_DOCKERFILE_PATH}"
+		return 1
+	fi
+	return 0
+}
+
 #
 # Local variables:
 # tab-width: 4
