@@ -209,25 +209,25 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
 		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
 		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
 		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
-			if [ ${DEBUG_ENV_LEVEL} -ne 0 ]; then
+			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi

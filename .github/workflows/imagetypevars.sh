@@ -201,13 +201,11 @@ custom_dockerfile_conversion()
 		PKG_INSTALL_NODEJS_COMMAND=":"
 	fi
 
-	sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
-		-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
-		-e "s#%%PKG_INSTALL_NODEJS%%#${PKG_INSTALL_NODEJS_COMMAND}#g"		\
-		-i "${_TMP_DOCKERFILE_PATH}"
+	if ! sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
+			-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
+			-e "s#%%PKG_INSTALL_NODEJS%%#${PKG_INSTALL_NODEJS_COMMAND}#g"		\
+			-i "${_TMP_DOCKERFILE_PATH}"; then
 
-	# shellcheck disable=SC2181
-	if [ $? -ne 0 ]; then
 		PRNERR "Failed to converting ${_TMP_DOCKERFILE_PATH}"
 		return 1
 	fi
