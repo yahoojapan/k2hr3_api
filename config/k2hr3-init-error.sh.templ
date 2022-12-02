@@ -21,7 +21,7 @@
 SCRIPTNAME="k2hr3-init"
 LOGFILE="/var/log/${SCRIPTNAME}.log"
 
-echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}[ERROR]: Invalid userdata for creating k2hr3-init script was specified(detail error = {{= %K2HR3_ERROR_MSG% }})" | tee -a ${LOGFILE}
+echo "$(date "+%Y-%m-%d %H:%M:%S,%3N") - ${SCRIPTNAME}[ERROR]: Invalid userdata for creating k2hr3-init script was specified(detail error = {{= %K2HR3_ERROR_MSG% }})" | tee -a "${LOGFILE}"
 exit 1
 
 #

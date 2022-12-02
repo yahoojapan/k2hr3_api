@@ -294,7 +294,7 @@ fi
 #==========================================================
 cd "${SRCTOP}" || exit 1
 
-if [ ${DEBUG_ENV_LEVEL} -ge 4 ]; then
+if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	echo "***** RUN *****"
 	echo "${AUTO_INIT_SH} --set"
 	echo "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} NODE_LOGGER=${NODE_LOGGER} NODE_CONFIG_DIR= node_modules/.bin/mocha tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"

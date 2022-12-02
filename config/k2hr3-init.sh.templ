@@ -21,8 +21,8 @@
 #----------------------------------------------------------
 # Sudo command
 #----------------------------------------------------------
-CURRENTUSER=`id -un`
-if [ "X${CURRENTUSER}" = "Xroot" ]; then
+CURRENTUSER=$(id -un)
+if [ -n "${CURRENTUSER}" ] && [ "${CURRENTUSER}" = "root" ]; then
 	SUDOCMD=""
 else
 	SUDOCMD="sudo"
@@ -81,7 +81,7 @@ output_raw()
 	#
 	_LOCAL_LEVEL=$1
 	shift
-	echo "`date "+%Y-%m-%d %H:%M:%S,%3N"` - ${SCRIPTNAME}${_LOCAL_LEVEL}: $@" | ${SUDOCMD} tee -a ${LOGFILE}
+	echo "$(date '+%Y-%m-%d %H:%M:%S,%3N') - ${SCRIPTNAME}${_LOCAL_LEVEL}: $*" | "${SUDOCMD}" tee -a "${LOGFILE}"
 }
 
 exit_err()
@@ -113,7 +113,6 @@ check_os()
 	#	PKGMGR_LIST_CMD
 	#
 
-	# shellcheck disable=SC1090
 	. /etc/os-release
 
 	if [ -z "${ID}" ]; then
@@ -166,12 +165,10 @@ check_os()
 #
 update_package_local_db()
 {
-	if [ ${IS_UPDATE_PKG_LOCAL_DB} -ne 0 ]; then
+	if [ "${IS_UPDATE_PKG_LOCAL_DB}" -ne 0 ]; then
 		return 0
 	fi
-
-	${SUDOCMD} ${PKGMGR_BIN} ${PKGMGR_UPDATE_OPT}
-	if [ $? -ne 0 ]; then
+	if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} ${PKGMGR_UPDATE_OPT}"; then
 		exit_err "Failed updating packages before installing curl"
 	fi
 	output_info "Success updating package repository caches"
@@ -184,8 +181,7 @@ update_package_local_db()
 #
 check_curl()
 {
-	curl --version >/dev/null 2>&1
-	if [ $? -eq 0 ]; then
+	if command -v curl >/dev/null 2>&1; then
 		output_info "curl is already installed."
 		return 0
 	fi
@@ -194,8 +190,7 @@ check_curl()
 	update_package_local_db
 
 	# Install curl
-	${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl
-	if [ $? -ne 0 ]; then
+	if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl"; then
 		exit_err "Failed installing curl"
 	fi
 	output_info "Success installing curl"
@@ -212,16 +207,20 @@ check_create_file()
 	# $2: value
 	# $3: file mode
 	#
-	_LOCAL_CC_FILE=$1
-	_LOCAL_CC_VALUE=$2
+	_LOCAL_CC_FILE="$1"
+	_LOCAL_CC_VALUE="$2"
 	if [ $# -gt 2 ]; then
-		_LOCAL_CC_MODE=$3
+		_LOCAL_CC_MODE="$3"
 	else
 		_LOCAL_CC_MODE=0644
 	fi
 
-	if [ -f ${_LOCAL_CC_FILE} ]; then
-		_LOCAL_CC_TMP=`cat ${_LOCAL_CC_FILE} 2>/dev/null | tr -d '\n' 2>/dev/null`
+	if [ -f "${_LOCAL_CC_FILE}" ]; then
+		_LOCAL_CC_TMP=$(tr -d '\n' < "${_LOCAL_CC_FILE}" 2>/dev/null)
+
+		# [NOTE]
+		# Since the condition becomes complicated, use "X"(temporary word).
+		#
 		if [ "X${_LOCAL_CC_TMP}" = "X${_LOCAL_CC_VALUE}" ]; then
 			# Same value, thus nothing to do
 			return 0
@@ -229,14 +228,12 @@ check_create_file()
 	fi
 
 	# Put file
-	echo -n "${_LOCAL_CC_VALUE}" > ${_LOCAL_CC_FILE} 2>/dev/null
-	if [ $? -ne 0 ]; then
+	if ! printf '%s' "${_LOCAL_CC_VALUE}" >"${_LOCAL_CC_FILE}" 2>/dev/null; then
 		exit_err "Could not put the value to ${_LOCAL_CC_FILE}"
 	fi
 
 	# file permit
-	chmod ${_LOCAL_CC_MODE} ${_LOCAL_CC_FILE} 2>/dev/null
-	if [ $? -ne 0 ]; then
+	if ! chmod "${_LOCAL_CC_MODE}" "${_LOCAL_CC_FILE}" 2>/dev/null; then
 		exit_err "Could not change mode ${_LOCAL_CC_MODE} to ${_LOCAL_CC_FILE}"
 	fi
 	output_info "Succeed to save the value to ${_LOCAL_CC_FILE}"
@@ -252,11 +249,13 @@ load_value_with_default()
 	# $1:	file path
 	# $2:	default value
 	#
-	if [ ! -f $1 ]; then
+	if [ -z "$1" ] || [ ! -f "$1" ]; then
 		_RESULT_VALUE="$2"
 	else
-		_RESULT_VALUE=`cat $1 2>/dev/null | tr -d '\n' 2>/dev/null`
-		if [ "X${_RESULT_VALUE}" = "X" ]; then
+		if ! _RESULT_VALUE=$(tr -d '\n' < "$1" 2>/dev/null); then
+			_RESULT_VALUE="$2"
+		fi
+		if [ -z "${_RESULT_VALUE}" ]; then
 			_RESULT_VALUE="$2"
 		fi
 	fi
@@ -269,16 +268,15 @@ load_value_with_default()
 #
 setup_packagecloudio_repo()
 {
-	if [ ${SETUP_PC_REPO} -eq 1 ]; then
+	if [ "${SETUP_PC_REPO}" -eq 1 ]; then
 		return 0
 	fi
-	if [ ${IS_OS_DEBIAN} -eq 1 ]; then
+	if [ "${IS_OS_DEBIAN}" -eq 1 ]; then
 		_SCRIPT_NAME="script.deb.sh"
 	else
 		_SCRIPT_NAME="script.rpm.sh"
 	fi
-	curl -s https://packagecloud.io/install/repositories/antpickax/stable/${_SCRIPT_NAME} | ${SUDOCMD} bash
-	if [ $? -ne 0 ]; then
+	if ! curl -s https://packagecloud.io/install/repositories/antpickax/stable/"${_SCRIPT_NAME}" | "${SUDOCMD}" bash; then
 		exit_err "Could not setup packagecloud.io repository."
 	fi
 	SETUP_PC_REPO=1
@@ -303,8 +301,7 @@ is_install_package()
 	update_package_local_db
 
 	# Check package installed
-	${SUDOCMD} ${PKGMGR_LIST_CMD} | sed 's/\./ /g' | awk '{print $1}' | grep "^$1$" >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_LIST_CMD}" | sed 's/\./ /g' | awk '{print $1}' | grep -q "^$1$"; then
 		# package is not installed.
 		return 1
 	fi
@@ -326,13 +323,11 @@ install_package()
 	update_package_local_db
 
 	# check package installed
-	is_install_package ${_TMP_INSTALL_PKGNAME}
-	if [ $? -eq 0 ]; then
+	if is_install_package "${_TMP_INSTALL_PKGNAME}"; then
 		output_info "${_TMP_INSTALL_PKGNAME} pacakge is already installed."
 	else
 		# Install package
-		${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
+		if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME}" >/dev/null 2>&1; then
 			exit_err "Failed installing ${_TMP_INSTALL_PKGNAME} package"
 		fi
 		output_info "Success installing ${_TMP_INSTALL_PKGNAME} pacakge"
@@ -351,35 +346,33 @@ get_install_packages()
 	#
 	_INSTALL_PKGS_PC=0
 	if [ $# -gt 3 ]; then
-		if [ $4 -eq 1 ]; then
+		if [ -n "$4" ] && [ "$4" -eq 1 ]; then
 			_INSTALL_PKGS_PC=1
 		fi
 	fi
 
 	# Try to get key's value in resource
-	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
-	if [ $? -ne 0 ]; then
+	if ! _GET_RESULT=$(curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1); then
 		output_info "There is no keyname($3), then no package is installed."
 		return 0
 	fi
 
 	# Check response(expect -> "result": true)
-	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# setup packakecloud.io repository
-	if [ ${_INSTALL_PKGS_PC} -eq 1 ]; then
+	if [ "${_INSTALL_PKGS_PC}" -eq 1 ]; then
 		setup_packagecloudio_repo
 	fi
 
 	# pacakges
-	INSTALL_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	INSTALL_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
 	for _package in ${INSTALL_PKGS}; do
 		install_package "${_package}"
 	done
@@ -400,33 +393,28 @@ start_systemd_service()
 	#
 
 	# Try to get key's value in resource
-	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
-	if [ $? -ne 0 ]; then
+	if ! _GET_RESULT=$(curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1); then
 		output_info "There is no keyname($3), then no package is installed."
 		return 0
 	fi
 
 	# Check response(expect -> "result": true)
-	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
 
 	# check and start/enable systemd service
 	for _package in ${_TMP_LIST_PKGS}; do
-		${SUDOCMD} systemctl is-active ${_package} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			${SUDOCMD} systemctl is-enabled ${_package} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
-				${SUDOCMD} systemctl enable ${_package} >/dev/null 2>&1
-				if [ $? -ne 0 ]; then
+		if ! "${SUDOCMD}" systemctl is-active "${_package}" >/dev/null 2>&1; then
+			if ! "${SUDOCMD}" systemctl is-enabled "${_package}" >/dev/null 2>&1; then
+				if ! "${SUDOCMD}" systemctl enable "${_package}" >/dev/null 2>&1; then
 					output_warn "Could not enable ${_package} systemd(pacakge)"
 				else
 					output_info "Success enable ${_package} systemd(pacakge)"
@@ -435,8 +423,7 @@ start_systemd_service()
 				output_info "${_package} systemd(pacakge) is aready enabled."
 			fi
 
-			${SUDOCMD} systemctl start ${_package} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
+			if ! "${SUDOCMD}" systemctl start "${_package}" >/dev/null 2>&1; then
 				output_warn "Could not start ${_package} systemd(pacakge)"
 			else
 				output_info "Success start ${_package} systemd(pacakge)"
@@ -460,46 +447,41 @@ stop_systemd_service()
 	#
 
 	# Try to get key's value in resource
-	_GET_RESULT=`curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1`
-	if [ $? -ne 0 ]; then
+	if ! _GET_RESULT=$(curl -s -S -X GET -H "Content-Type: application/json" -H "$1" "$2" 2>&1); then
 		output_info "There is no keyname($3), then no package is installed."
 		return 0
 	fi
 
 	# Check response(expect -> "result": true)
-	echo ${_GET_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=`echo ${_GET_RESULT} | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g'`
+	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
 
 	# make reverse list
-	_TMP_REV_LIST_PKGS=
+	_TMP_REV_LIST_PKGS=""
 	for _package in ${_TMP_LIST_PKGS}; do
 		_TMP_REV_LIST_PKGS="${_package} ${_TMP_REV_LIST_PKGS}"
 	done
 
 	# check and stop systemd service
 	for _package in ${_TMP_REV_LIST_PKGS}; do
-		${SUDOCMD} systemctl is-active ${_package} >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
+		if ! "${SUDOCMD}" systemctl is-active "${_package}" >/dev/null 2>&1; then
 			output_info "${_package}(pacakge) is not active as systemd.service(timer) or not systemd.service(timer), then skip it."
 		else
-			${SUDOCMD} systemctl stop ${_package} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
+			if ! "${SUDOCMD}" systemctl stop "${_package}" >/dev/null 2>&1; then
 				output_warn "Could not stop ${_package} systemd(pacakge)"
 			else
 				output_info "Success stop ${_package} systemd(pacakge)"
 			fi
 
-			${SUDOCMD} systemctl disable ${_package} >/dev/null 2>&1
-			if [ $? -ne 0 ]; then
+			if ! "${SUDOCMD}" systemctl disable "${_package}" >/dev/null 2>&1; then
 				output_warn "Could not disable ${_package} systemd(pacakge)"
 			else
 				output_info "Success disable ${_package} systemd(pacakge)"
@@ -521,15 +503,13 @@ register_host()
 	# $2: url(toward role)
 	# $3: role name(for only using message)
 	#
-	_REGISTER_RESULT=`curl -s -S -X PUT -H "$1" "$2" 2>&1`
-	if [ $? -ne 0 ]; then
+	if ! _REGISTER_RESULT=$(curl -s -S -X PUT -H "$1" "$2" 2>&1); then
 		exit_err "Could not register to role member with curl error(${_REGISTER_RESULT})"
 	fi
 	# Check response(expect -> "result": true)
-	echo ${_REGISTER_RESULT} | tr '[:lower:]' '[:upper:]' | grep '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,' >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if ! echo "${_REGISTER_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_REGISTER_RESULT_MSG=`echo ${_REGISTER_RESULT} | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g'`
+		_REGISTER_RESULT_MSG=$(echo "${_REGISTER_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		exit_err "Failed to put access for registering by ${_REGISTER_RESULT_MSG}"
 	fi
 	output_info "Success setting this host to k2hr3 role($3)"
@@ -545,8 +525,10 @@ delete_host()
 	# $1: url(toward role)
 	# $2: role name(for only using message)
 	#
-	_DELETE_RESULT=`curl -s -S -X DELETE -o /dev/null -w "%{http_code}\n" "$1" 2>&1`
-	if [ "X${_DELETE_RESULT}" != "X204" ]; then
+	if ! _DELETE_RESULT=$(curl -s -S -X DELETE -o /dev/null -w "%{http_code}\n" "$1" 2>&1); then
+		exit_err "Could not delete(unregister) host from role member with curl error"
+	fi
+	if [ -z "${_DELETE_RESULT}" ] || [ "${_DELETE_RESULT}" != "204" ]; then
 		exit_err "Could not delete(unregister) host from role member with curl error(${_DELETE_RESULT})"
 	fi
 	output_info "Success deleting(unregister) this host from k2hr3 role($2)"
@@ -559,37 +541,36 @@ delete_host()
 #
 # Set program name and log file
 #
-SCRIPTDIR=`dirname $0`
-SCRIPTDIR=`(cd ${SCRIPTDIR}; pwd)`
-echo ${SCRIPTDIR} | grep '^/var/lib/cloud' >/dev/null 2>&1
-if [ $? -eq 0 ]; then
+SCRIPTDIR=$(dirname "${0}")
+SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
+
+if echo "${SCRIPTDIR}" | grep -q '^/var/lib/cloud'; then
 	SCRIPTNAME="k2hr3-init"
-	LOGFILE="/var/log/${SCRIPTNAME}.log"
 else
-	SCRIPTNAME=`basename $0`
-	LOGFILE="/var/log/${SCRIPTNAME}.log"
+	SCRIPTNAME=$(basename "${0}")
 fi
+LOGFILE="/var/log/${SCRIPTNAME}.log"
 
 #
 # Set script mode
 #
 SCRIPTMODE=
 while [ $# -ne 0 ]; do
-	if [ "X$1" = "X" ]; then
+	if [ -z "$1" ]; then
 		break;
 
-	elif [ "X$1" = "X-h" -o "X$1" = "X-H" -o "X$1" = "X--HELP" -o "X$1" = "X--help" ]; then
-		func_usage ${SCRIPTNAME}
+	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--HELP" ] || [ "$1" = "--help" ]; then
+		func_usage "${SCRIPTNAME}"
 		exit 0
 
-	elif [ "X$1" = "X-r" -o "X$1" = "X-R" -o "X$1" = "X--register" -o "X$1" = "X--REGISTER" ]; then
-		if [ "X${SCRIPTMODE}" != "X" ]; then
+	elif [ "$1" = "-r" ] || [ "$1" = "-R" ] || [ "$1" = "--register" ] || [ "$1" = "--REGISTER" ]; then
+		if [ -n "${SCRIPTMODE}" ]; then
 			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
 		fi
 		SCRIPTMODE="r"
 
-	elif [ "X$1" = "X-d" -o "X$1" = "X-D" -o "X$1" = "X--delete" -o "X$1" = "X--DELETE" ]; then
-		if [ "X${SCRIPTMODE}" != "X" ]; then
+	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--delete" ] || [ "$1" = "--DELETE" ]; then
+		if [ -n "${SCRIPTMODE}" ]; then
 			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
 		fi
 		SCRIPTMODE="d"
@@ -599,7 +580,7 @@ while [ $# -ne 0 ]; do
 	fi
 	shift
 done
-if [ "X${SCRIPTMODE}" = "X" ]; then
+if [ -z "${SCRIPTMODE}" ]; then
 	# Set default values
 	SCRIPTMODE="r"
 fi
@@ -655,11 +636,12 @@ INSTANCE_ID_FILE="${CLOUDINIT_DATA_DIR}/instance-id"
 #
 K2HR3_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
 K2HR3_ROLE_NAME="{{= %K2HR3_ROLE_NAME% }}"
-K2HR3_RESOURCE_NAME=`echo ${K2HR3_ROLE_NAME} | sed -e 's/:[rR][oO][lL][eE]:/:resource:/g'`
+K2HR3_RESOURCE_NAME=$(echo "${K2HR3_ROLE_NAME}" | sed -e 's/:[rR][oO][lL][eE]:/:resource:/g')
 K2HR3_ROLE_TENANT="{{= %K2HR3_ROLE_TENANT% }}"
 K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}"
 K2HR3_ERROR_MSG="{{= %K2HR3_ERROR_MSG% }}"
-if [ "X${K2HR3_ERROR_MSG}" != "X" -a "X${K2HR3_ERROR_MSG}" != "Xnull" ]; then
+
+if [ -n "${K2HR3_ERROR_MSG}" ] && [ "${K2HR3_ERROR_MSG}" != "null" ]; then
 	exit_err "The script template has failed(${K2HR3_ERROR_MSG}) to be expanded and cannot be executed anymore."
 fi
 
@@ -678,7 +660,7 @@ check_curl
 #
 # Processing by mode
 #
-if [ "X${SCRIPTMODE}" = "Xr" ]; then
+if [ "${SCRIPTMODE}" = "r" ]; then
 	#
 	# Register and Install packages and Start services
 	#
@@ -693,13 +675,11 @@ if [ "X${SCRIPTMODE}" = "Xr" ]; then
 	#
 	# Cehck output directory
 	#
-	if [ ! -d ${K2HR3_ETC_DIR} ]; then
-		${SUDOCMD} mkdir -p ${K2HR3_ETC_DIR}
-		if [ $? -ne 0 ]; then
+	if [ ! -d "${K2HR3_ETC_DIR}" ]; then
+		if ! "${SUDOCMD}" mkdir -p "${K2HR3_ETC_DIR}"; then
 			exit_err "Could not make directory ${K2HR3_ETC_DIR}"
 		fi
-		${SUDOCMD} chmod 0777 ${K2HR3_ETC_DIR}
-		if [ $? -ne 0 ]; then
+		if ! "${SUDOCMD}" chmod 0777 "${K2HR3_ETC_DIR}"; then
 			output_warn "Could not change permission ${K2HR3_ETC_DIR}"
 		fi
 	fi
@@ -707,21 +687,22 @@ if [ "X${SCRIPTMODE}" = "Xr" ]; then
 	#
 	# Generate values
 	#
-	if [ ! -f ${INSTANCE_ID_FILE} ]; then
+	if [ ! -f "${INSTANCE_ID_FILE}" ]; then
 		exit_err "Could not read ${INSTANCE_ID_FILE}"
 	fi
-	INSTANCE_ID=`cat ${INSTANCE_ID_FILE} 2>/dev/null | tr -d '\n' 2>/dev/null`
-	if [ "X${INSTANCE_ID}" = "X" ]; then
+	if ! INSTANCE_ID=$(tr -d '\n' < "${INSTANCE_ID_FILE}" 2>/dev/null); then
+		exit_err "Unknown Instance Id in ${INSTANCE_ID_FILE}"
+	fi
+	if [ -z "${INSTANCE_ID}" ]; then
 		exit_err "Unknown Instance Id in ${INSTANCE_ID_FILE}"
 	fi
 	CUK_VALUE="${INSTANCE_ID}"
 	CUK_PARAMETER="cuk=${INSTANCE_ID}"
 	EXTRA_PARAMETER="extra=openstack-auto-v1"
-	LOCAL_HOSTNAME=`hostname`
-	if [ "X${LOCAL_HOSTNAME}" = "X" ]; then
+	TAG_PARAMETER="tag=${LOCAL_HOSTNAME}"
+	if ! LOCAL_HOSTNAME=$(hostname); then
 		output_warn "Local hostname is empty"
 	fi
-	TAG_PARAMETER="tag=${LOCAL_HOSTNAME}"
 
 	#
 	# Register this host to K2HR3
@@ -771,12 +752,13 @@ else
 	# Load parameters( the value used when registering has priority )
 	#
 	output_info "Loading values from files under ${K2HR3_ETC_DIR} directory"
-	LOAD_K2HR3_ROLE_TOKEN=`load_value_with_default   "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}"`
-	LOAD_K2HR3_ROLE_NAME=`load_value_with_default    "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}"`
-	LOAD_CUK_PARAMETER=`load_value_with_default      "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}"`
-	LOAD_EXTRA_PARAMETER=`load_value_with_default    "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}"`
-	LOAD_TAG_PARAMETER=`load_value_with_default      "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}"`
-	LOAD_K2HR3_API_HOST_URI=`load_value_with_default "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}"`
+	# shellcheck disable=SC2034
+	LOAD_K2HR3_ROLE_TOKEN=$(load_value_with_default   "${K2HR3_ROLE_TOKEN_FILE}"   "${K2HR3_ROLE_TOKEN}")
+	LOAD_K2HR3_ROLE_NAME=$(load_value_with_default    "${K2HR3_ROLE_NAME_FILE}"    "${K2HR3_ROLE_NAME}")
+	LOAD_CUK_PARAMETER=$(load_value_with_default      "${K2HR3_CUK_PARAM_FILE}"    "${CUK_PARAMETER}")
+	LOAD_EXTRA_PARAMETER=$(load_value_with_default    "${K2HR3_EXTRA_PARAM_FILE}"  "${EXTRA_PARAMETER}")
+	LOAD_TAG_PARAMETER=$(load_value_with_default      "${K2HR3_TAG_PARAM_FILE}"    "${TAG_PARAMETER}")
+	LOAD_K2HR3_API_HOST_URI=$(load_value_with_default "${K2HR3_API_HOST_URI_FILE}" "${K2HR3_API_HOST_URI}")
 
 	#
 	# API URI
@@ -800,15 +782,15 @@ else
 	# Remove files
 	#
 	output_info "Remove files under ${K2HR3_ETC_DIR} directory"
-	${SUDOCMD} rm -f ${K2HR3_ROLE_TOKEN_FILE}
-	${SUDOCMD} rm -f ${K2HR3_ROLE_NAME_FILE}
-	${SUDOCMD} rm -f ${K2HR3_ROLE_TENANT_FILE}
-	${SUDOCMD} rm -f ${K2HR3_CUK_VALUE_FILE}
-	${SUDOCMD} rm -f ${K2HR3_CUK_PARAM_FILE}
-	${SUDOCMD} rm -f ${K2HR3_EXTRA_PARAM_FILE}
-	${SUDOCMD} rm -f ${K2HR3_TAG_PARAM_FILE}
-	${SUDOCMD} rm -f ${K2HR3_API_ARG_FILE}
-	${SUDOCMD} rm -f ${K2HR3_API_HOST_URI_FILE}
+	"${SUDOCMD}" rm -f "${K2HR3_ROLE_TOKEN_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_ROLE_NAME_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_ROLE_TENANT_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_CUK_VALUE_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_CUK_PARAM_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_EXTRA_PARAM_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_TAG_PARAM_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_API_ARG_FILE}"
+	"${SUDOCMD}" rm -f "${K2HR3_API_HOST_URI_FILE}"
 
 	#
 	# Finish
