@@ -102,6 +102,7 @@ jobs:
 
   dockerimage:
     runs-on: ubuntu-latest
+    needs: build
 
     #
     # build matrix for containers
@@ -120,14 +121,14 @@ jobs:
         # Specify the "baseimage" in the following format:
         #    <base image tag>,<base dev image tag>,<OS tag name>(,<default tag flag>)
         #
-        # <base image tag>:     specify the Docker image name(ex. "k2hdkc:latest")
-        # <base dev image tag>: specify the Docker image name(ex. "k2hdkc-dev:latest")
+        # <base image tag>:     specify the Docker image name(ex. "alpine:latest")
+        # <base dev image tag>: specify the Docker image name(ex. "alpine:latest")
         # <OS tag name>:        OS tag attached to the created Docker image
         # <default tag flag>:   If you want to use the created Docker image as the default image, specify "default".
         #
         imageinfo:
-          - antpickax/k2hdkc:latest,antpickax/k2hdkc-dev:latest,alpine,default
-          - antpickax/k2hdkc:latest-ubuntu,antpickax/k2hdkc-dev:latest-ubuntu,ubuntu
+          - alpine:3.17,alpine:3.17,alpine,default
+          - ubuntu:22.04,ubuntu:22.04,ubuntu
 
     #
     # Run building and pushing helper
@@ -170,17 +171,23 @@ jobs:
       #    DOCKER_HUB_ORG             : Docker Hub organization to push(ex. "antpickax")
       #    IMAGETYPE_VARS_FILE        : specify custom variables file
       #    FORCE_DOCKER_PUSH          : specify force push(true) or not push(false)
+      #    USE_PACKAGECLOUD_REPO      : true means using pacakgecloud.io repo, false is not using
+      #    PACKAGECLOUD_OWNER         : owner name as a part of path to packagcloud.io for publishing/downloading
+      #    PACKAGECLOUD_DOWNLOAD_REPO : repo name as a part of path to packagcloud.io for downloading
       #
       # [REQUIRED]
       # DOCKER_HUB_USERNAME and DOCKER_HUB_ACCESSTOKEN is required to read and push docker images!
       #
       - name: Set docker image build environments from secrets
         run: |
-          echo "ENV_DOCKER_IMAGE_INFO=${{ matrix.imageinfo }}"        >> "${GITHUB_ENV}"
-          echo "ENV_IMAGE_NAMES=k2hr3-api"                            >> "${GITHUB_ENV}"
-          echo "ENV_IMAGEVAR_FILE=${{ secrets.IMAGETYPE_VARS_FILE }}" >> "${GITHUB_ENV}"
-          echo "ENV_DOCKER_HUB_ORG=${{ secrets.DOCKER_HUB_ORG }}"     >> "${GITHUB_ENV}"
-          echo "ENV_FORCE_PUSH=${{ secrets.FORCE_DOCKER_PUSH }}"      >> "${GITHUB_ENV}"
+          echo "ENV_DOCKER_IMAGE_INFO=${{ matrix.imageinfo }}"                            >> "${GITHUB_ENV}"
+          echo "ENV_IMAGE_NAMES=k2hr3-api"                                                >> "${GITHUB_ENV}"
+          echo "ENV_IMAGEVAR_FILE=${{ secrets.IMAGETYPE_VARS_FILE }}"                     >> "${GITHUB_ENV}"
+          echo "ENV_DOCKER_HUB_ORG=${{ secrets.DOCKER_HUB_ORG }}"                         >> "${GITHUB_ENV}"
+          echo "ENV_FORCE_PUSH=${{ secrets.FORCE_DOCKER_PUSH }}"                          >> "${GITHUB_ENV}"
+          echo "ENV_USE_PACKAGECLOUD_REPO=${{ secrets.USE_PACKAGECLOUD_REPO }}"           >> "${GITHUB_ENV}"
+          echo "ENV_PACKAGECLOUD_OWNER=${{ secrets.PACKAGECLOUD_OWNER }}"                 >> "${GITHUB_ENV}"
+          echo "ENV_PACKAGECLOUD_DOWNLOAD_REPO=${{ secrets.PACKAGECLOUD_DOWNLOAD_REPO }}" >> "${GITHUB_ENV}"
 
       #
       # Run building and pushing

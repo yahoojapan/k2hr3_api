@@ -36,14 +36,25 @@
 #---------------------------------------------------------------------
 # Default values
 #---------------------------------------------------------------------
+# [NOTE]
+# If IMAGE_CMD_BASE(DEV) is set to empty, "['/bin/sh', '-c', 'tail -f /dev/null']"
+# will be set as the default value.
+#
 PKGMGR_NAME=
 PKGMGR_UPDATE_OPT=
 PKGMGR_INSTALL_OPT=
-PKG_INSTALL_LIST_BUILDER=
-PKG_INSTALL_LIST_BIN=
-PKG_REPO_SETUP_NODEJS=
-PKG_INSTALL_LIST_NODEJS=
-BUILDER_ENVIRONMENT=
+PKGMGR_UNINSTALL_OPT=
+PRE_PROCESS=
+POST_PROCESS=
+IMAGE_CMD_BASE=
+IMAGE_CMD_DEV=
+PKG_INSTALL_CURL=
+PKG_INSTALL_BASE=
+PKG_INSTALL_DEV=
+PKG_UNINSTALL_BASE=
+PKG_UNINSTALL_DEV=
+BUILDER_CONFIGURE_FLAG=
+SETUP_ENVIRONMENT=
 UPDATE_LIBPATH=
 
 #
@@ -68,18 +79,21 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "alpine" ]; then
 	PKGMGR_NAME="apk"
 	PKGMGR_UPDATE_OPT="update -q --no-progress"
 	PKGMGR_INSTALL_OPT="add -q --no-progress --no-cache"
-	PKG_INSTALL_LIST_BUILDER="git build-base python3 yaml"
-	PKG_INSTALL_LIST_BIN="npm libstdc++ yaml"
-	PKG_INSTALL_LIST_NODEJS="nodejs npm"
+	PKGMGR_UNINSTALL_OPT="del -q --purge --no-progress --no-cache"
+	PKG_INSTALL_CURL="curl"
+	PKG_INSTALL_BASE="g++ make nodejs npm python3 k2hdkc-dev"
+	PKG_REPO_SETUP_NODEJS=""
+	NPM_INSTALL_BASE=""
 
 elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	PKGMGR_NAME="apt-get"
 	PKGMGR_UPDATE_OPT="update -qq -y"
 	PKGMGR_INSTALL_OPT="install -qq -y"
-	PKG_INSTALL_LIST_BUILDER="git gcc g++ make curl"
-	PKG_INSTALL_LIST_BIN="libyaml-0-2 curl"
-	PKG_REPO_SETUP_NODEJS="curl -sL https://deb.nodesource.com/setup_16.x | bash"
-	PKG_INSTALL_LIST_NODEJS="nodejs"
+	PKGMGR_UNINSTALL_OPT="purge --auto-remove -q -y"
+	PKG_INSTALL_CURL="curl"
+	PKG_INSTALL_BASE="g++ make nodejs k2hdkc-dev"
+	PKG_REPO_SETUP_NODEJS="curl -sL https://deb.nodesource.com/setup_18.x | bash"
+	NPM_INSTALL_BASE=""
 
 	#
 	# For installing tzdata with another package(ex. git)
@@ -93,6 +107,10 @@ fi
 # [NOTE]
 # The following functions allow customization of processing.
 # You can write your own processing by overriding each function.
+#
+# set_custom_variables()
+#	This function sets common variables used in the following
+#	customizable functions.
 #
 # get_repository_package_version()
 #	Definition of a function that sets a variable to give the
@@ -113,18 +131,54 @@ fi
 #
 
 #
-# Variables in using following function
+# Set Variables used in custom function
 #
-PACKAGEJSON_FILEPATH="${SRCTOP}/package.json"
+set_custom_variables()
+{
+	#
+	# Variables for NodeJS products
+	#
+	PACKAGEJSON_FILEPATH="${SRCTOP}/package.json"
+
+	#
+	# Get package name
+	#
+	if ! PACKAGE_NAME="$(grep '"name":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/name://g' -e 's/ //g' | tr -d '\n')"; then
+		PRNERR "Failed to get package name from ${PACKAGEJSON_FILEPATH} file"
+		return 1
+	fi
+
+	#
+	# NodeJS repository setup
+	#
+	if [ -n "${PKG_REPO_SETUP_NODEJS}" ]; then
+		PKG_REPO_SETUP_NODEJS_COMMAND="${PKG_REPO_SETUP_NODEJS}"
+	else
+		#
+		# Set no-operation command
+		#
+		PKG_REPO_SETUP_NODEJS_COMMAND=":"
+	fi
+
+	#
+	# Npm install packages
+	#
+	if [ -n "${NPM_INSTALL_BASE}" ]; then
+		NPM_INSTALL_BASE_COMMAND="${NPM_INSTALL_BASE}"
+	else
+		#
+		# Set default package
+		#
+		NPM_INSTALL_BASE_COMMAND="npm install -g ${PACKAGE_NAME}"
+	fi
+	return 0
+}
 
 #
 # Get version from repository package
 #
 # [NOTE]
 # Set "REPOSITORY_PACKAGE_VERSION" environment
-#
-# The following variables will be used, so please set them in advance:
-#	PACKAGEJSON_FILEPATH	: path to package.json
 #
 get_repository_package_version()
 {
@@ -144,8 +198,19 @@ get_repository_package_version()
 #
 print_custom_variabels()
 {
-	echo "  PKG_INSTALL_LIST_NODEJS     = ${PKG_INSTALL_LIST_NODEJS}"
-	echo "  PKG_REPO_SETUP_NODEJS       = ${PKG_REPO_SETUP_NODEJS}"
+	echo "  PACKAGEJSON_FILEPATH          = ${PACKAGEJSON_FILEPATH}"
+	echo "  PACKAGE_NAME                  = ${PACKAGE_NAME}"
+	echo "  PKG_REPO_SETUP_NODEJS_COMMAND = ${PKG_REPO_SETUP_NODEJS_COMMAND}"
+	echo "  NPM_INSTALL_BASE_COMMAND      = ${NPM_INSTALL_BASE_COMMAND}"
+
+	return 0
+}
+
+#
+# Preprocessing
+#
+run_preprocess()
+{
 	return 0
 }
 
@@ -155,11 +220,8 @@ print_custom_variabels()
 # $1	: Dockerfile path
 #
 # The following variables will be used, so please set them in advance:
-#	PACKAGEJSON_FILEPATH		: path to package.json
-#	PKG_REPO_SETUP_NODEJS		: setup NodeJS repository command string if need
-#	PKG_INSTALL_LIST_NODEJS		: install package lis for nodejs
-#	PKGMGR_NAME					: package manageer name
-#	PKGMGR_INSTALL_OPT			: the option for installing by package manager
+#	PACKAGE_NAME					: package name
+#	PKG_REPO_SETUP_NODEJS_COMMAND	: Setup repository for NodeJS
 #
 custom_dockerfile_conversion()
 {
@@ -169,41 +231,9 @@ custom_dockerfile_conversion()
 	fi
 	_TMP_DOCKERFILE_PATH="$1"
 
-	#
-	# Package name
-	#
-	if [ ! -f "${PACKAGEJSON_FILEPATH}" ]; then
-		PRNERR "${PACKAGEJSON_FILEPATH} is not existed."
-		return 1
-	fi
-	if ! PACKAGEJSON_PACKAGE_NAME="$(grep '"name":' "${PACKAGEJSON_FILEPATH}" | head -1 | sed -e 's/"//g' -e 's/,//g' -e 's/name://g' -e 's/ //g' | tr -d '\n')"; then
-		PRNERR "Failed to get package name from ${PACKAGEJSON_FILEPATH} file"
-		return 1
-	fi
-
-	#
-	# Check varibales and set default values
-	#
-	if [ -n "${PKG_REPO_SETUP_NODEJS}" ]; then
-		PKG_REPO_SETUP_NODEJS_COMMAND="${PKG_REPO_SETUP_NODEJS}"
-	else
-		#
-		# Set no-operation command
-		#
-		PKG_REPO_SETUP_NODEJS_COMMAND=":"
-	fi
-	if [ -n "${PKG_INSTALL_LIST_NODEJS}" ]; then
-		PKG_INSTALL_NODEJS_COMMAND="${PKGMGR_NAME} ${PKGMGR_INSTALL_OPT} ${PKG_INSTALL_LIST_NODEJS}"
-	else
-		#
-		# Set no-operation command
-		#
-		PKG_INSTALL_NODEJS_COMMAND=":"
-	fi
-
-	if ! sed -e "s#%%DOCKER_IMAGE_NAME%%#${PACKAGEJSON_PACKAGE_NAME}#g"			\
+	if ! sed -e "s#%%PACKAGE_NAME%%#${PACKAGE_NAME}#g"							\
 			-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
-			-e "s#%%PKG_INSTALL_NODEJS%%#${PKG_INSTALL_NODEJS_COMMAND}#g"		\
+			-e "s#%%NPM_INSTALL_BASE%%#${NPM_INSTALL_BASE_COMMAND}#g"			\
 			-i "${_TMP_DOCKERFILE_PATH}"; then
 
 		PRNERR "Failed to converting ${_TMP_DOCKERFILE_PATH}"

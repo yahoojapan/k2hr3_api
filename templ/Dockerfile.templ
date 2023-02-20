@@ -19,70 +19,53 @@
 #
 
 # [NOTE]
-# This file expects the following variables to replace.
-#	GIT_DOMAIN_URL				(ex. "https://github.com" from GITHUB_SERVER_URL environment)
-#	DOCKER_IMAGE_NAME			(ex. "k2hr3-api")
-#	DOCKER_IMAGE_BASE			(ex. "antpickax/k2hdkc:latest")
-#	DOCKER_IMAGE_DEV_BASE		(ex. "antpickax/k2hdkc-dev:latest")
-#	DOCKER_GIT_ORGANIZATION		(ex. "antpickax")
-#	DOCKER_GIT_REPOSITORY		(ex. "xxxxx")
-#	DOCKER_GIT_BRANCH			(ex. "yyyyy")
+# This file expects the following variables to be expanded by autoconf.
+#	PACKAGE_NAME
+#
+# Also, replace the following variables.
+#	DOCKER_IMAGE_BASE			(ex. "alpine:latest")
+#	PRE_PROCESS					(ex. ":")
+#	POST_PROCESS				(ex. ":")
+#	IMAGE_CMD_BASE				(ex. "['/bin/sh', '-c', 'tail -f /dev/null']" as default)
 #	PKG_UPDATE					(ex. "apk update -q --no-progress")
-#	PKG_INSTALL_BUILDER			(ex. "apk add -q --no-progress --no-cache git build-base openssl libtool automake autoconf procps")
-#	PKG_INSTALL_BIN				(ex. "apk add -q --no-progress --no-cache libstdc++")
-#	PKG_REPO_SETUP_NODEJS		(ex. "curl -sL https://deb.nodesource.com/setup_14.x | bash")
-#	PKG_INSTALL_NODEJS			(ex. "apk add -q --no-progress --no-cache nodejs npm")
-#	BUILD_ENV					(ex, "ENV DEBIAN_FRONTEND=noninteractive")
+#	PKG_INSTALL_CURL			(ex. "apk add -q --no-progress --no-cache git build-base openssl libtool automake autoconf procps")
+#	PKG_INSTALL_BASE			(ex. "apk add -q --no-progress --no-cache antpickax-package...")
+#	SETUP_PC_REPO				(ex. "curl -s https://packagecloud.io/install/repositories/yahoojapan/stable/script.alpine.sh | sh")
+#	SETUP_ENV					(ex. "ENV DEBIAN_FRONTEND=noninteractive")
 #	UPDATE_LIBPATH				(ex. "ldconfig", if want no-operation, specify ":")
-#
-
-#
-# Builder
-#
-FROM %%DOCKER_IMAGE_DEV_BASE%% AS %%DOCKER_IMAGE_NAME%%-builder
-
-MAINTAINER antpickax
-WORKDIR /
-
-%%BUILD_ENV%%
-
-RUN set -x && \
-	%%PKG_UPDATE%% && \
-	%%PKG_INSTALL_BUILDER%% && \
-	%%PKG_REPO_SETUP_NODEJS%% && \
-	%%PKG_INSTALL_NODEJS%% && \
-	npm install -g npm && \
-	git clone %%GIT_DOMAIN_URL%%/%%DOCKER_GIT_ORGANIZATION%%/%%DOCKER_GIT_REPOSITORY%%.git && \
-	cd %%DOCKER_GIT_REPOSITORY%% && \
-	git checkout %%DOCKER_GIT_BRANCH%% && \
-	npm install --save-dev && \
-	rm -rf .eslintrc.js .git .github .gitignore .npmignore .publishrc .auditignore templ/Dockerfile.templ test config/development.json config/dummyuser.json config/extdata-dummy.sh.templ && \
-	cd / && \
-	tar cvzf %%DOCKER_IMAGE_NAME%%.tgz %%DOCKER_GIT_REPOSITORY%%
+#	PKG_UNINSTALL_BASE			(ex. "apk del package...")
+#	PKG_REPO_SETUP_NODEJS		(ex. "curl -sL https://deb.nodesource.com/setup_18.x | bash" for ubuntu)
+#	NPM_INSTALL_BASE			(ex. "npm install -g k2hr3-api")
 
 #
 # Image for main
 #
-FROM %%DOCKER_IMAGE_BASE%% AS %%DOCKER_IMAGE_NAME%%
+FROM %%DOCKER_IMAGE_BASE%% AS %%PACKAGE_NAME%%
 
 MAINTAINER antpickax
 WORKDIR /
 
+%%SETUP_ENV%%
+
 RUN set -x && \
+	%%PRE_PROCESS%% && \
 	%%PKG_UPDATE%% && \
-	%%PKG_INSTALL_BIN%% && \
+	%%PKG_INSTALL_CURL%% && \
+	%%SETUP_PC_REPO%% && \
 	%%PKG_REPO_SETUP_NODEJS%% && \
-	%%PKG_INSTALL_NODEJS%% && \
-	npm install -g npm
+	%%PKG_INSTALL_BASE%% && \
+	%%NPM_INSTALL_BASE%% && \
+	%%UPDATE_LIBPATH%% && \
+	%%PKG_UNINSTALL_BASE%% && \
+	%%POST_PROCESS%%
 
-COPY --from=%%DOCKER_IMAGE_NAME%%-builder /%%DOCKER_IMAGE_NAME%%.tgz /%%DOCKER_IMAGE_NAME%%.tgz
+CMD %%IMAGE_CMD_BASE%%
 
-RUN cd /usr/lib/node_modules && \
-	tar xvzf /%%DOCKER_IMAGE_NAME%%.tgz && \
-	rm /%%DOCKER_IMAGE_NAME%%.tgz && \
-	%%UPDATE_LIBPATH%%
-
-# [NOTE]
-# Rplace command : /usr/lib/node_modules/k2hr3_api/bin/run.sh -fg --production
 #
-CMD ["/bin/sh"]
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
+#
