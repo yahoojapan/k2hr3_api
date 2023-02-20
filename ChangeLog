@@ -1,3 +1,21 @@
+k2hr3-api (1.0.12) unstable; urgency=low
+
+  * Changed flows for packaging and bulding docker image - #74
+  * Updated header and footer in comment lines - #73
+  * Updated issue/pullrequest templates - #72
+  * Reviewed ShellCheck processing again - #71
+  * Reviewed ShellCheck processing and fixed bugs - #70
+  * Eliminated unnecessary copies in nodejs_helper.sh - #69
+  * Fixed a bug in docker_helper.sh - #68
+  * Fixed docker_helper.sh and imagetypevars.sh - #67
+  * Shared Docker image build logic with other products - #66
+  * Updated github actions and nodejs version, and fixed bugs - #65
+  * Unified OS judgment to /etc/os-release - #64
+  * Renamed the test directory to tests and auto_test.sh to test.sh - #63
+  * Cleaned up package.json and updated related package versions - #62
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 20 Feb 2023 20:21:38 +0900
+
 k2hr3-api (1.0.11) unstable; urgency=low
 
   * Added config value as unscopedtoken expire for oidc - #60
