@@ -1,3 +1,9 @@
+k2hr3-api (1.0.13) unstable; urgency=low
+
+  * Updated building/packaging scripts - #76
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 06 Mar 2023 22:04:36 +0900
+
 k2hr3-api (1.0.12) unstable; urgency=low
 
   * Changed flows for packaging and bulding docker image - #74
