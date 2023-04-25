@@ -94,7 +94,6 @@ stop_old_process()
 
 	OLD_PID="$(tr -d '\n' < "${PROC_PID_FILE}")"
 
-
 	if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
 		#
 		# Try to stop(HUP) process and child processes
@@ -374,9 +373,9 @@ if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 fi
 
 EXIT_CODE=0
-if ! NODE_PATH="${NODE_PATH}" NODE_ENV="${NODE_ENV_VALUE}" NODE_DEBUG="${DEBUG_ENV_PARAM}" node "${INSPECTOR_OPT} ${TARGET_PROGRAM} ${PROG_EXTRA_OPTIONS}"; then
+if ! /bin/sh -c "NODE_PATH=${NODE_PATH} NODE_ENV=${NODE_ENV_VALUE} NODE_DEBUG=${DEBUG_ENV_PARAM} node ${INSPECTOR_OPT} ${TARGET_PROGRAM} ${PROG_EXTRA_OPTIONS}"; then
 	EXIT_CODE="$?"
-	echo "[INFO] Process exited with exit code: $?"
+	echo "[INFO] Process exited with exit code: ${EXIT_CODE}"
 fi
 
 exit "${EXIT_CODE}"
