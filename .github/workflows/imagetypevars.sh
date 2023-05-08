@@ -156,7 +156,7 @@ set_custom_variables()
 			PRNERR "Failed to get version number from ${PACKAGEJSON_FILEPATH} file"
 			return 1
 		fi
-		PACKAGE_VERSION_SUFFIX="@${PACKAGE_VERSION_SUFFIX}"
+		PACKAGE_VERSION_SUFFIX="@${PACKAGEJSON_VERSION}"
 	else
 		PACKAGE_VERSION_SUFFIX=""
 	fi
