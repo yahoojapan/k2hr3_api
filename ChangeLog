@@ -1,3 +1,9 @@
+k2hr3-api (1.0.18) unstable; urgency=low
+
+  * Fixed require line about jose package, and updated dependencies - #87
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 09 May 2023 19:06:12 +0900
+
 k2hr3-api (1.0.17) unstable; urgency=low
 
   * Fixed a bug in imagetypevars.sh script - #85
