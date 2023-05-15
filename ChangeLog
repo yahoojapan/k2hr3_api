@@ -1,3 +1,9 @@
+k2hr3-api (1.0.19) unstable; urgency=low
+
+  * Bumped up the version number to update the Docker image
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 15 May 2023 13:49:31 +0900
+
 k2hr3-api (1.0.18) unstable; urgency=low
 
   * Fixed require line about jose package, and updated dependencies - #87
