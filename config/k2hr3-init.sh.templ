@@ -112,13 +112,9 @@ check_os()
 	#	PKGMGR_UPDATE_OPT
 	#	PKGMGR_LIST_CMD
 	#
-
 	. /etc/os-release
 
-	if [ -z "${ID}" ]; then
-		exit_err "Unknown OS distribution."
-	fi
-	if [ "${ID}" = "centos" ]; then
+	if echo "${ID}" | grep -q -i "centos"; then
 		if [ -z "${VERSION_ID}" ] || [ "${VERSION_ID}" -eq 7 ]; then
 			IS_OS_DEBIAN=0
 			PKGMGR_BIN="yum"
@@ -130,31 +126,32 @@ check_os()
 			PKGMGR_UPDATE_OPT="update -y -qq"
 			PKGMGR_LIST_CMD="dnf list installed"
 		fi
-	elif [ "${ID}" = "rocky" ]; then
+	elif echo "${ID}" | grep -q -i "rocky"; then
 		IS_OS_DEBIAN=0
 		PKGMGR_BIN="dnf"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="dnf list installed"
 
-	elif [ "${ID}" = "fedora" ]; then
+	elif echo "${ID}" | grep -q -i "fedora"; then
 		IS_OS_DEBIAN=0
 		PKGMGR_BIN="dnf"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="dnf list installed"
 
-	elif [ "${ID}" = "ubuntu" ]; then
+	elif echo "${ID}" | grep -q -i "ubuntu"; then
 		IS_OS_DEBIAN=1
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="apt list --installed"
 
-	elif [ "${ID}" = "debian" ]; then
+	elif echo "${ID}" | grep -q -i "debian"; then
 		IS_OS_DEBIAN=1
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_LIST_CMD="apt list --installed"
+
 	else
-		exit_err "Unknown OS distribution."
+		exit_err "Unknown OS distribution(${ID})."
 	fi
 	output_info "OS is ${PRETTY_NAME}"
 	return 0
