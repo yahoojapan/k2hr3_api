@@ -1,3 +1,9 @@
+k2hr3-api (1.0.20) unstable; urgency=low
+
+  * Fixed a bug in OS determination processing - #90
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 19 May 2023 19:17:33 +0900
+
 k2hr3-api (1.0.19) unstable; urgency=low
 
   * Bumped up the version number to update the Docker image
