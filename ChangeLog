@@ -1,3 +1,9 @@
+k2hr3-api (1.0.21) unstable; urgency=low
+
+  * Changed partially scripts(command) in package.json - #92
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 29 May 2023 10:36:24 +0900
+
 k2hr3-api (1.0.20) unstable; urgency=low
 
   * Fixed a bug in OS determination processing - #90
