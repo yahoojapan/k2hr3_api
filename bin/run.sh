@@ -77,6 +77,44 @@ PrintUsage()
 }
 
 #
+# Using ALL_CHILD_PIDS global variable
+#
+get_all_pid_list()
+{
+	if [ -z "${ALL_CHILD_PIDS}" ]; then
+		return 0
+	fi
+	_ADD_PIDS=0
+	for _ONE_PID in ${ALL_CHILD_PIDS}; do
+		if _CIHLD_PIDS=$(pgrep -P "${_ONE_PID}"); then
+			for _ONE_CPID in ${_CIHLD_PIDS}; do
+				_FOUND_PID=0
+				for _ONE_PPID in ${ALL_CHILD_PIDS}; do
+					if [ "${_ONE_CPID}" = "${_ONE_PPID}" ]; then
+						_FOUND_PID=1
+						break
+					fi
+				done
+				if [ "${_FOUND_PID}" -eq 0 ]; then
+					#
+					# Add child PID
+					#
+					ALL_CHILD_PIDS="${ALL_CHILD_PIDS} ${_ONE_CPID}"
+					_ADD_PIDS=1
+				fi
+			done
+		fi
+	done
+	if [ "${_ADD_PIDS}" -eq 1 ]; then
+		#
+		# Reentrant for check adding PIDs
+		#
+		get_all_pid_list
+	fi
+	return 0
+}
+
+#
 # Stop processes
 #
 stop_old_process()
@@ -92,38 +130,42 @@ stop_old_process()
 		return 0
 	fi
 
-	OLD_PID="$(tr -d '\n' < "${PROC_PID_FILE}")"
+	ALL_CHILD_PIDS="$(tr -d '\n' < "${PROC_PID_FILE}")"
 
-	if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
+	if pgrep -f "${PRGNAME}" | grep -q "${ALL_CHILD_PIDS}"; then
+		#
+		# List up all chid processes
+		#
+		get_all_pid_list
+
 		#
 		# Try to stop(HUP) process and child processes
 		#
-		OLD_CIHLD_PIDS="$(pgrep -P "${OLD_PID}" | tr '\n' ' ')"
-		if ! /bin/sh -c "kill -HUP ${OLD_PID} ${OLD_CIHLD_PIDS}" >/dev/null 2>&1; then
-			echo "[WARNING] Failed to stop some old processes."
-		fi
+		for _ONE_PID in ${ALL_CHILD_PIDS}; do
+			kill -HUP "${_ONE_PID}" >/dev/null 2>&1
+		done
 		sleep 1
 
 		#
-		# Check process is running yet
+		# If processes are running yet, try to kill it.
 		#
-		if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
-			#
-			# Try to stop(KILL) process and child processes
-			#
-			if ! /bin/sh -c "kill -KILL ${OLD_PID} ${OLD_CIHLD_PIDS}" >/dev/null 2>&1; then
-				echo "[WARNING] Failed to retry stop some old processes."
+		for _ONE_PID in ${ALL_CHILD_PIDS}; do
+			if ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+				kill -KILL "${_ONE_PID}" >/dev/null 2>&1
 			fi
-			sleep 1
+		done
+		sleep 1
 
-			#
-			# Re-check process is running yet
-			#
-			if pgrep -f "${PRGNAME}" | grep -q "${OLD_PID}"; then
+		#
+		# Result
+		#
+		for _ONE_PID in ${ALL_CHILD_PIDS}; do
+			if ps -p "${_ONE_PID}" >/dev/null 2>&1; then
 				echo "[ERROR] Could not stop old processes."
 				return 1
 			fi
-		fi
+		done
+
 		echo "[INFO] Stop old processes."
 	fi
 	rm -f "${PROC_PID_FILE}"
