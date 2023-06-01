@@ -98,7 +98,7 @@ stop_old_process()
 		#
 		# Try to stop(HUP) process and child processes
 		#
-		OLD_CIHLD_PIDS="$(pgrep -P "${OLDPROCID}" | tr '\n' ' ')"
+		OLD_CIHLD_PIDS="$(pgrep -P "${OLD_PID}" | tr '\n' ' ')"
 		if ! /bin/sh -c "kill -HUP ${OLD_PID} ${OLD_CIHLD_PIDS}" >/dev/null 2>&1; then
 			echo "[WARNING] Failed to stop some old processes."
 		fi
