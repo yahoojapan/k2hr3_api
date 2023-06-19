@@ -82,9 +82,9 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 				expect(res.files).to.be.an('object');											// response has some files from 'multipart/mixed'
 				expect(res.files[null]).to.be.an('object');										// check only first(null) position( [TODO] checking another )
 				expect(res.files[null].size).to.be.a('number');									// file has size member
-				expect(res.files[null].path).to.be.an('string').to.not.empty;					// file has temporary path
-				expect(res.files[null].name).to.be.an('string').to.not.empty;					// file has real name
-				expect(res.files[null].type).to.be.an('string').to.not.empty;					// file is set 'content-type'
+				expect(res.files[null].filepath).to.be.an('string').to.not.empty;				// file has temporary path
+				expect(res.files[null].originalFilename).to.be.an('string').to.not.empty;		// file has real name
+				expect(res.files[null].mimetype).to.be.an('string').to.not.empty;				// file is set 'content-type'
 				done();
 			});
 	});
@@ -109,9 +109,9 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 				expect(res.files).to.be.an('object');											// response has some files from 'multipart/mixed'
 				expect(res.files[null]).to.be.an('object');										// check only first(null) position( [TODO] checking another )
 				expect(res.files[null].size).to.be.a('number');									// file has size member
-				expect(res.files[null].path).to.be.an('string').to.not.empty;					// file has temporary path
-				expect(res.files[null].name).to.be.an('string').to.not.empty;					// file has real name
-				expect(res.files[null].type).to.be.an('string').to.not.empty;					// file is set 'content-type'
+				expect(res.files[null].filepath).to.be.an('string').to.not.empty;				// file has temporary path
+				expect(res.files[null].originalFilename).to.be.an('string').to.not.empty;		// file has real name
+				expect(res.files[null].mimetype).to.be.an('string').to.not.empty;				// file is set 'content-type'
 				done();
 			});
 	});
@@ -135,9 +135,9 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 				expect(res.files).to.be.an('object');											// response has some files from 'multipart/mixed'
 				expect(res.files[null]).to.be.an('object');										// check only first(null) position( [TODO] checking another )
 				expect(res.files[null].size).to.be.a('number');									// file has size member
-				expect(res.files[null].path).to.be.an('string').to.not.empty;					// file has temporary path
-				expect(res.files[null].name).to.be.an('string').to.not.empty;					// file has real name
-				expect(res.files[null].type).to.be.an('string').to.not.empty;					// file is set 'content-type'
+				expect(res.files[null].filepath).to.be.an('string').to.not.empty;				// file has temporary path
+				expect(res.files[null].originalFilename).to.be.an('string').to.not.empty;		// file has real name
+				expect(res.files[null].mimetype).to.be.an('string').to.not.empty;				// file is set 'content-type'
 				done();
 			});
 	});
@@ -148,6 +148,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 
 		chai.request(app)
 			.get(uri)
+			.set('user-agent', '')
 			.set('content-type', 'application/octet-stream')
 			.set('accept-encoding', 'identity')													// Chai send gzip encoding as default, thus we set 'identity'
 			.end(function(err, res){
@@ -167,6 +168,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 
 		chai.request(app)
 			.get(uri)
+			.set('user-agent', '')
 			.set('accept-encoding', '')															// Chai send gzip encoding as default, thus we set ''
 			.end(function(err, res){
 				expect(res).to.have.status(400);
@@ -191,7 +193,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 			.end(function(err, res){
 				expect(res).to.have.status(200);
 				expect(res).to.be.an('object');
-				expect(res.body).to.be.an('object').to.be.empty;										// body is empty because it must be 'application/json'
+				expect(res.body).be.instanceof(Buffer);													// body is empty because it must be 'application/json'
 				expect(res.text).to.be.a('undefined');													// text is empty because it must be 'text/plain'
 				expect(res.files).to.be.a('undefined');													// files is empty because it must be 'text/plain'
 				expect(res.header).to.be.an('object');													// check response header
@@ -219,7 +221,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 			.end(function(err, res){
 				expect(res).to.have.status(200);
 				expect(res).to.be.an('object');
-				expect(res.body).to.be.an('object').to.be.empty;										// body is empty because it must be 'application/json'
+				expect(res.body).be.instanceof(Buffer);													// body is empty because it must be 'application/json'
 				expect(res.text).to.be.a('undefined');													// text is empty because it must be 'text/plain'
 				expect(res.files).to.be.a('undefined');													// files is empty because it must be 'text/plain'
 				expect(res.header).to.be.an('object');													// check response header
@@ -246,7 +248,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 			.end(function(err, res){
 				expect(res).to.have.status(200);
 				expect(res).to.be.an('object');
-				expect(res.body).to.be.an('object').to.be.empty;										// body is empty because it must be 'application/json'
+				expect(res.body).be.instanceof(Buffer);													// body is empty because it must be 'application/json'
 				expect(res.text).to.be.a('undefined');													// text is empty because it must be 'text/plain'
 				expect(res.files).to.be.a('undefined');													// files is empty because it must be 'text/plain'
 				expect(res.header).to.be.an('object');													// check response header
@@ -265,6 +267,7 @@ describe('API : USERDATA', function(){					// eslint-disable-line no-undef
 
 		chai.request(app)
 			.get(uri)
+			.set('user-agent', '')
 			.set('content-type', 'application/octet-stream')
 			.set('accept-encoding', 'gzip')
 			.end(function(err, res){

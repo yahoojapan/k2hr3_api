@@ -174,6 +174,7 @@ describe('API : EXTDATA', function(){					// eslint-disable-line no-undef
 
 		chai.request(app)
 			.get(uri)
+			.set('user-agent', '')
 			.set('content-type', 'application/octet-stream')
 			.set('user-agent', ua)
 			.set('accept-encoding', 'identity')													// Chai send gzip encoding as default, thus we set 'identity'
@@ -194,6 +195,7 @@ describe('API : EXTDATA', function(){					// eslint-disable-line no-undef
 
 		chai.request(app)
 			.get(uri)
+			.set('user-agent', '')
 			.set('content-type', 'application/octet-stream')
 			.set('accept-encoding', 'identity')													// Chai send gzip encoding as default, thus we set 'identity'
 			.end(function(err, res){
