@@ -64,6 +64,7 @@ function getV1Role(token, name, is_expand)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{
@@ -130,6 +131,7 @@ function getV1RoleToken(token, name, expire)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{
@@ -191,6 +193,7 @@ function getV1RoleTokenList(token, name, expand)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{
@@ -264,6 +267,7 @@ function headV1Role(token, roleyrn, port, cuk)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{

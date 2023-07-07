@@ -126,6 +126,7 @@ function postV1Policy(method, token, name, effect, action, resource, alias)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{

@@ -1,7 +1,7 @@
 /*
  * K2HR3 REST API
  *
- * Copyright 2017 Yahoo Japan Corporation.
+ * Copyright 2023 Yahoo Japan Corporation.
  *
  * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
  * common management information for the cloud.
@@ -13,7 +13,7 @@
  * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
- * CREATE:   Wed Jun 8 2017
+ * CREATE:   Mon Jun 3 2023
  * REVISION:
  *
  */
@@ -26,7 +26,6 @@ var	https		= require('https');
 var	cacerts		= require('../lib/cacerts');
 var	apiutil		= require('../lib/k2hr3apiutil');
 var cliutil		= require('../lib/k2hr3cliutil');
-var	r3keys		= require('../lib/k2hr3keys').getK2hr3Keys;
 
 // Debug logging objects
 var r3logger	= require('../lib/dbglogging');
@@ -36,31 +35,39 @@ var r3logger	= require('../lib/dbglogging');
 //
 var hostname = apiutil.getSafeString(process.env.APIHOST);
 var	hostport = apiutil.getSafeString(process.env.APIPORT);
-var	is_https	= apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
+var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 
 //
 // Request API for test
 //
-function getV1Policy(token, name, service)
+function getV1Tenant(token, name, is_expand)
 {
-	var	urlarg		= '';
-	if(apiutil.isSafeString(service)){
-		urlarg		= encodeURI('?service=' + service);
+	var	path;
+	var	urlarg;
+	if(apiutil.isSafeString(name)){
+		path	= '/v1/tenant/' + name;
+		urlarg	= '';
+	}else{
+		path	= '/v1/tenant';
+		if(is_expand){
+			urlarg = encodeURI('?expand=true');
+		}else{
+			urlarg = encodeURI('?expand=false');
+		}
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-						'X-Auth-Token':		token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/policy/' + name + urlarg,
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':					hostname,
+		'port':					hostport,
+		'path': 				path + urlarg,
+		'method':				'GET',
+		'headers':				headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -107,24 +114,20 @@ function getV1Policy(token, name, service)
 	req.end();
 }
 
-function headV1Policy(tenant, name, action, resource)
+function headV1Tenant(token, name)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0
-					  };
-	var	urlarg		= '?resource=' + resource + '&action=' + action;
-	if(apiutil.isSafeString(tenant)){
-		urlarg		+= '&tenant=' + tenant;
-	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/policy/' + name + encodeURI(urlarg),
-						'method':			'HEAD',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/tenant/' + name,
+		'method':			'HEAD',
+		'headers':			headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -174,95 +177,85 @@ function headV1Policy(tenant, name, action, resource)
 //
 // run
 //
-cliutil.getConsoleInput('Method(GET/HEAD)             : ', true, false, function(isbreak, method)
+cliutil.getConsoleInput('Method(GET/HEAD)                     : ', true, false, function(isbreak, method)
 {
 	if(isbreak){
 		process.exit(0);
 	}
-
 	var	_method = method;
-	if(apiutil.compareCaseString('get', _method)){
 
-		cliutil.getConsoleInput('Service name(allow empty)    : ', true, false, function(isbreak, service)
-		{
-			if(isbreak){
-				process.exit(0);
-			}
-			var	_service = apiutil.isSafeString(service) ? apiutil.getSafeString(service) : null;
+	cliutil.getConsoleInput('Unscoped(or Scoped) user token       : ', true, false, function(isbreak, token)
+	{
+		if(isbreak){
+			process.exit(0);
+		}
+		var	_token = token;
 
-			cliutil.getConsoleInput('Scoped user token for tenant : ', true, false, function(isbreak, token)
+		if(apiutil.compareCaseString('get', _method)){
+			cliutil.getConsoleInput('Tenant name(null is get tenant list) : ', true, false, function(isbreak, tenant)
 			{
 				if(isbreak){
 					process.exit(0);
 				}
-				var	_token = token;
 
-				cliutil.getConsoleInput('Policy name                  : ', true, false, function(isbreak, name)
-				{
-					if(isbreak){
-						process.exit(0);
-					}
-					var	_name = name;
+				if(apiutil.isSafeString(tenant)){
+					var	_tenant = apiutil.getSafeString(tenant);
 
-					// run
-					getV1Policy(_token, _name, _service);
-				});
-			});
-		});
+					//
+					// Run
+					//
+					getV1Tenant(_token, _tenant, false);
 
-	}else if(apiutil.compareCaseString('head', _method)){
-		cliutil.getConsoleInput('Tenant name(allow null)      : ', true, false, function(isbreak, tenant)
-		{
-			if(isbreak){
-				process.exit(0);
-			}
-			var	_tenant = null;
-			if('' === apiutil.getSafeString(tenant) || apiutil.compareCaseString('null', apiutil.getSafeString(tenant))){
-				_tenant = null;
-			}else{
-				_tenant = tenant;
-			}
-
-			cliutil.getConsoleInput('Policy name                  : ', true, false, function(isbreak, name)
-			{
-				if(isbreak){
-					process.exit(0);
-				}
-				var	_name = name;
-
-				cliutil.getConsoleInput('Action(read/write)           : ', true, false, function(isbreak, action)
-				{
-					if(isbreak){
-						process.exit(0);
-					}
-					var	keys	= r3keys();
-					var	_action = apiutil.getSafeString(action);
-					if(keys.VALUE_READ !== _action && keys.VALUE_WRITE !== _action){
-						process.exit(0);
-					}
-
-					cliutil.getConsoleInput('Resource                     : ', true, false, function(isbreak, resource)
+				}else{
+					cliutil.getConsoleInput('Expand tenant list(yes(default)/no)  : ', true, false, function(isbreak, expand)
 					{
 						if(isbreak){
 							process.exit(0);
 						}
-						var	_resource = null;
-						if('' === apiutil.getSafeString(resource) || apiutil.compareCaseString('null', apiutil.getSafeString(resource))){
-							_resource = null;
+
+						var	_is_expand;
+						if('' === apiutil.getSafeString(expand) || apiutil.compareCaseString('null', apiutil.getSafeString(expand))){
+							_is_expand = true;
+						}else if(apiutil.compareCaseString('yes', apiutil.getSafeString(expand)) || apiutil.compareCaseString('true', apiutil.getSafeString(expand))){
+							_is_expand = true;
+						}else if(apiutil.compareCaseString('no', apiutil.getSafeString(expand)) || apiutil.compareCaseString('false', apiutil.getSafeString(expand))){
+							_is_expand = false;
 						}else{
-							_resource = resource;
+							console.log('function expand must be empty or yes(true) or no(false) : ' + expand);
+							process.exit(0);
 						}
 
-						// run
-						headV1Policy(_tenant, _name, _action, _resource);
+						//
+						// Run
+						//
+						getV1Tenant(_token, null, _is_expand);
 					});
-				});
+				}
 			});
-		});
-	}else{
-		console.log('method must be GET or HEAD : ' + _method);
-		process.exit(0);
-	}
+
+		}else if(apiutil.compareCaseString('head', _method)){
+			cliutil.getConsoleInput('Tenant name                          : ', true, false, function(isbreak, tenant)
+			{
+				if(isbreak){
+					process.exit(0);
+				}
+
+				if(!apiutil.isSafeString(tenant)){
+					console.log('method HEAD must specify tenant name');
+					process.exit(0);
+				}
+				var	_tenant = apiutil.getSafeString(tenant);
+
+				//
+				// Run
+				//
+				headV1Tenant(_token, _tenant);
+			});
+		}else{
+			console.log('method must be GET or HEAD : ' + _method);
+			process.exit(0);
+		}
+	});
 });
 
 /*

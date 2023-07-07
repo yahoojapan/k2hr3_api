@@ -139,6 +139,7 @@ function deleteV1Resource(token_type, token, name, data_type, keynames, aliases,
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{

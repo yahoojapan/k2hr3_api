@@ -49,6 +49,9 @@ COMMANDS="
 	role_delete
 	role_gethead
 	role_postput
+	tenant_delete
+	tenant_gethead
+	tenant_postput
 	service_postput
 	service_gethead
 	service_delete
@@ -72,7 +75,7 @@ PrintUsage()
 {
 	echo "Usage:   $1 [--apihost(-a) hostname]"
 	echo "            [--apiport(-p) port]"
-	echo "            [--sec(-s) | --https]"
+	echo "            [--https | --http]"
 	echo "            [--debuglevel(-d) DBG/MSG/WARN/ERR/(custom debug level)]"
 	echo "            <Command>"
 	echo ""
@@ -101,6 +104,10 @@ PrintUsage()
 	echo "         role_postput           : Post(Put) role(v1)"
 	echo "         role_gethead           : Get(Head) role(v1)"
 	echo "         role_delete            : Delete role(v1)"
+	echo ""
+	echo "         tenant_postput         : Post(Put) tenant(v1)"
+	echo "         tenant_gethead         : Get(Head) tenant(v1)"
+	echo "         tenant_delete          : Delete tenant(v1)"
 	echo ""
 	echo "         service_postput        : Post(Put) service(v1)"
 	echo "         service_gethead        : Get(head) service(v1)"
@@ -174,7 +181,7 @@ while [ $# -ne 0 ]; do
 		#
 		# API PORT
 		#
-		if [ -n "${APIPORT}" ]; then
+		if [ "${APIPORT}" -ne 0 ]; then
 			echo "[ERROR] already specified --apiport option"
 			exit 1
 		fi
@@ -192,12 +199,19 @@ while [ $# -ne 0 ]; do
 		fi
 		APIPORT="$1"
 
-	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--sec" ] || [ "$1" = "--SEC" ] || [ "$1" = "--https" ] || [ "$1" = "--HTTPS" ]; then
+	elif [ "$1" = "--https" ] || [ "$1" = "--HTTPS" ]; then
 		if [ -n "${HTTPS_ENV}" ]; then
-			echo "[ERROR] already specified --sec(-s) or --https option"
+			echo "[ERROR] already specified --https or --http option"
 			exit 1
 		fi
 		HTTPS_ENV="yes"
+
+	elif [ "$1" = "--http" ] || [ "$1" = "--HTTP" ]; then
+		if [ -n "${HTTPS_ENV}" ]; then
+			echo "[ERROR] already specified --https or --http option"
+			exit 1
+		fi
+		HTTPS_ENV="no"
 
 	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
 		#
@@ -291,7 +305,7 @@ fi
 #
 # Check HTTPS
 #
-if [ -n "${HTTPS_ENV}" ]; then
+if [ -z "${HTTPS_ENV}" ]; then
 	HTTPS_ENV="yes"
 fi
 
@@ -302,7 +316,7 @@ if [ -z "${APIHOST}" ]; then
 	APIHOST="$(hostname | tr -d '\n')"
 fi
 if [ "${APIPORT}" -eq 0 ]; then
-	if [ -n "${HTTPS_ENV}" ]; then
+	if [ "${HTTPS_ENV}" = "yes" ]; then
 		APIPORT=443
 	else
 		APIPORT=3000
@@ -320,7 +334,7 @@ if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 	echo "***************"
 fi
 
-if ! NODE_PATH="${NODE_PATH}" NODE_DEBUG="${DEBUG_ENV_PARAM}" APIHOST="${APIHOST}" APIPORT="${APIPORT}" HTTPS_ENV="${HTTPS_ENV}" node "${DEBUG_OPTION}" "tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"; then
+if ! /bin/sh -c "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} APIHOST=${APIHOST} APIPORT=${APIPORT} HTTPS_ENV=${HTTPS_ENV} node ${DEBUG_OPTION} tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"; then
 	EXIT_CODE="$?"
 	echo "[ERROR] Failed to run command with exit code : ${EXIT_CODE}"
 	exit "${EXIT_CODE}"

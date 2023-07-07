@@ -82,6 +82,7 @@ function getV1ChildrenList(method, token, type, service, path, is_expand)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{

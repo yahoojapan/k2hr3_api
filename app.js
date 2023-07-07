@@ -26,33 +26,59 @@ var logger		= require('morgan');
 var cookieParser= require('cookie-parser');
 var bodyParser	= require('body-parser');
 
-//
+//---------------------------------------------------------
+// Utilities
+//---------------------------------------------------------
+var	apiutil		= require('./lib/k2hr3apiutil');
+var	resutil		= require('./lib/k2hr3resutil');
+
+//---------------------------------------------------------
 // Load Configuration
-//
+//---------------------------------------------------------
 var	r3Conf		= require('./lib/k2hr3config').r3ApiConfig;
 var	apiConf		= new r3Conf();
 
 //
-// Debug logging objects
+// Load variables
 //
+// - Local Tenants
+// - Load CORS(Cross-Origin Resource Sharing) Setting
+//
+// [NOTE][TODO]
+// It specifies a web development machine for temporary debugging.
+// In future we plan to specify with K2HR3 role.
+//
+var	is_localtenants		= true;
+var	cors_ips			= [];
+
+(function()
+{
+	var	k2hr3config		= require('config');
+
+	is_localtenants		= apiConf.isLocalTenants();
+
+	if(apiutil.isSafeEntity(k2hr3config) && !apiutil.isEmptyArray(k2hr3config.corsips)){
+		apiutil.mergeArray(cors_ips, k2hr3config.corsips);
+	}
+}());
+
+//---------------------------------------------------------
+// Debug logging objects
+//---------------------------------------------------------
 var r3logger	= require('./lib/dbglogging');			// eslint-disable-line no-unused-vars
 
-//
-// utility
-//
-var	apiutil		= require('./lib/k2hr3apiutil');
-var	resutil		= require('./lib/k2hr3resutil');
-
-//
+//---------------------------------------------------------
+// Environments
+//---------------------------------------------------------
 // NODE_ENV(development or production)
 // NODE_LOGGER(if 'no', not logging by morgan)
 //
 var	is_product	= apiutil.compareCaseString(apiutil.getSafeString(process.env.NODE_ENV), 'production');
 var	is_logging	= !apiutil.compareCaseString(apiutil.getSafeString(process.env.NODE_LOGGER), 'no');
 
-//
+//---------------------------------------------------------
 // Routes
-//
+//---------------------------------------------------------
 var version		= require('./routes/version');
 var userTokens	= require('./routes/userTokens');
 var policy		= require('./routes/policy');
@@ -63,6 +89,10 @@ var acr			= require('./routes/acr');
 var list		= require('./routes/list');
 var userdata	= require('./routes/userdata');
 var extdata		= require('./routes/extdata');
+var tenant		= null;
+if(is_localtenants){
+	tenant		= require('./routes/tenant');
+}
 var verify		= null;
 if(!is_product){
 	verify		= require('./routes/debugVerify');
@@ -81,14 +111,18 @@ var acrExp		= express();
 var listExp		= express();
 var userdataExp	= express();
 var extdataExp	= express();
+var tenantExp	= null;
+if(is_localtenants){
+	tenantExp	= express();
+}
 var verifyExp	= null;
 if(!is_product){
 	verifyExp	= express();
 }
 
-//
+//---------------------------------------------------------
 // Trusted proxy
-//
+//---------------------------------------------------------
 // [NOTE][TODO]
 // We set trusted proxy as only loopback now.
 // Here, we need to add CDN/Proxy for our NW, but pending now.
@@ -103,25 +137,12 @@ acrExp.set('trust proxy',		'loopback');
 listExp.set('trust proxy',		'loopback');
 userdataExp.set('trust proxy',	'loopback');
 extdataExp.set('trust proxy',	'loopback');
+if(is_localtenants){
+	tenantExp.set('trust proxy','loopback');
+}
 if(!is_product){
 	verifyExp.set('trust proxy','loopback');
 }
-
-//
-// CORS(Cross-Origin Resource Sharing)
-//
-// [NOTE][TODO]
-// It specifies a web development machine for temporary debugging.
-// In future we plan to specify with K2HR3 role.
-//
-var	cors_ips			= [];
-(function()
-{
-	var	k2hr3config		= require('config');
-	if(apiutil.isSafeEntity(k2hr3config) && !apiutil.isEmptyArray(k2hr3config.corsips)){
-		apiutil.mergeArray(cors_ips, k2hr3config.corsips);
-	}
-}());
 
 //
 // CORS(Cross-Origin Resource Sharing) Controller
@@ -175,6 +196,9 @@ app.use(function(req, res, next)
 	next();
 });
 
+//---------------------------------------------------------
+// Express
+//---------------------------------------------------------
 //
 // Setting for express
 //
@@ -191,7 +215,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/status.html',	express.static(__dirname + '/public/status.html'));
 
 //
-// route mapping
+// Route mapping
 //
 app.use('/',					version);		// '/'
 app.use('/v1',					version);		// '/v1'
@@ -204,6 +228,9 @@ acrExp.use('/*', 				acr);			// '/v1/acr'
 listExp.use('/*', 				list);			// '/v1/list'
 userdataExp.use('/*', 			userdata);		// '/v1/userdata'
 extdataExp.use('/*', 			extdata);		// '/v1/extdata'
+if(is_localtenants){
+	tenantExp.use('/*', 		tenant);		// '/v1/tenant'
+}
 if(!is_product){
 	verifyExp.use('/*',			verify);		// '/v1/debug/verify*'
 }
@@ -217,10 +244,16 @@ app.use('/v1/acr',				acrExp);		// mountpath:	'/v1/acr*'
 app.use('/v1/list',				listExp);		// mountpath:	'/v1/list*'
 app.use('/v1/userdata',			userdataExp);	// mountpath:	'/v1/userdata*'
 app.use('/v1/extdata',			extdataExp);	// mountpath:	'/v1/extdata*'
+if(is_localtenants){
+	app.use('/v1/tenant',		tenantExp);		// mountpath:	'/v1/tenant*'
+}
 if(!is_product){
 	app.use('/v1/debug/verify',	verifyExp);		// mountpath:	'/v1/debug/verify*'
 }
 
+//---------------------------------------------------------
+// Error handler
+//---------------------------------------------------------
 //
 // catch 404 and forward to error handler
 //

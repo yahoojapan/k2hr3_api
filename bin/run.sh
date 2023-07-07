@@ -74,6 +74,9 @@ PrintUsage()
 	echo "         --watcher(-w)          : Run IP watcher process as daemon"
 	echo "         --oneshot(-os)         : Run watcher process only once"
 	echo ""
+	echo "Environment:"
+	echo "         DEBUG_LEVEL            : Specify DBG/MSG/WARN/ERR. Same as --debuglevel(-dl) option, and --debuglevel(-dl) takes precedence."
+	echo ""
 }
 
 #
@@ -388,6 +391,17 @@ elif [ "${DEBUG_ENV_LEVEL}" -ge 1 ]; then
 	DEBUG_ENV_PARAM="LOGLEVEL_ERR"
 else
 	DEBUG_ENV_PARAM="LOGLEVEL_SILENT"
+    if [ -n "${DEBUG_LEVEL}" ]; then
+		if [ "${DEBUG_LEVEL}" = "dbg" ] || [ "${DEBUG_LEVEL}" = "DBG" ] || [ "${DEBUG_LEVEL}" = "debug" ] || [ "${DEBUG_LEVEL}" = "DEBUG" ]; then
+			DEBUG_ENV_PARAM="LOGLEVEL_DBG"
+		elif [ "${DEBUG_LEVEL}" = "msg" ] || [ "${DEBUG_LEVEL}" = "MSG" ] || [ "${DEBUG_LEVEL}" = "message" ] || [ "${DEBUG_LEVEL}" = "MESSAGE" ] || [ "${DEBUG_LEVEL}" = "info" ] || [ "${DEBUG_LEVEL}" = "INFO" ]; then
+			DEBUG_ENV_PARAM="LOGLEVEL_MSG"
+		elif [ "${DEBUG_LEVEL}" = "warn" ] || [ "${DEBUG_LEVEL}" = "WARN" ] || [ "${DEBUG_LEVEL}" = "warning" ] || [ "${DEBUG_LEVEL}" = "WARNING" ]; then
+			DEBUG_ENV_PARAM="LOGLEVEL_WAN"
+		elif [ "${DEBUG_LEVEL}" = "err" ] || [ "${DEBUG_LEVEL}" = "ERR" ] || [ "${DEBUG_LEVEL}" = "error" ] || [ "${DEBUG_LEVEL}" = "ERROR" ]; then
+			DEBUG_ENV_PARAM="LOGLEVEL_ERR"
+		fi
+    fi
 fi
 if [ -n "${DEBUG_ENV_CUSTOM}" ]; then
 	if [ -n "${DEBUG_ENV_PARAM}" ]; then

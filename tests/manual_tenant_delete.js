@@ -1,7 +1,7 @@
 /*
  * K2HR3 REST API
  *
- * Copyright 2017 Yahoo Japan Corporation.
+ * Copyright 2023 Yahoo Japan Corporation.
  *
  * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
  * common management information for the cloud.
@@ -13,7 +13,7 @@
  * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
- * CREATE:   Tue Oct 9 2018
+ * CREATE:   Mon Jun 3 2023
  * REVISION:
  *
  */
@@ -26,7 +26,6 @@ var	https		= require('https');
 var	cacerts		= require('../lib/cacerts');
 var	apiutil		= require('../lib/k2hr3apiutil');
 var cliutil		= require('../lib/k2hr3cliutil');
-var	cryptutil	= require('../lib/k2hr3cryptutil');
 
 // Debug logging objects
 var r3logger	= require('../lib/dbglogging');
@@ -41,35 +40,23 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 // Request API for test
 //
-function getV1UserData(registerpath, is_gzip)
+function deleteV1Tenant(token, name, id)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers;
-	if(is_gzip){
-		headers		= {
-						'Content-Type':		'application/octet-stream',
-						'User-Agent':		'Cloud-Init',
-						'Accept-Encoding':	'gzip'
-					   };
-	}else{
-		headers		= {
-						'Content-Type':		'application/octet-stream',
-						'User-Agent':		'Cloud-Init'
-					   };
-	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'method':			'GET'
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
-	options.headers	= headers;
-	options.path	= '/v1/userdata/' + encodeURI(registerpath);
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/tenant/' + name + encodeURI('?id=' + id),
+		'method':			'DELETE',
+		'headers':			headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
-
-	var _is_gzip = is_gzip;
 
 	var	httpobj;
 	if(is_https){
@@ -86,81 +73,72 @@ function getV1UserData(registerpath, is_gzip)
 
 	var	req	= httpobj.request(options, function(res)
 	{
-		var	response;
-
+		var	response = '';
 		console.log('RESPONSE CODE = ' + res.statusCode);
 		r3logger.dlog('response status   = ' + res.statusCode);
 		r3logger.dlog('response header   = ' + JSON.stringify(res.headers));
+		res.setEncoding('utf8');
 
-		if(_is_gzip){
-			response = [];
-		}else{
-			res.setEncoding('utf8');
-			response = '';
-		}
-
-		res.on('data', function(chunk)
+		res.on('data', function (chunk)
 		{
-			if(_is_gzip){
-				response.push(chunk);
-			}else{
-				r3logger.dlog('response chunk    = ' + chunk);
-				response += chunk;
-			}
+			r3logger.dlog('response chunk    = ' + chunk);
+			response += chunk;
 		});
 
 		res.on('end', function(result)					// eslint-disable-line no-unused-vars
 		{
-			if(_is_gzip){
-				// Buffer
-				var	buffer = Buffer.concat(response);
-				r3logger.mlog(r3logger.dump(buffer));	// response is object(or not)
-
-				var	gunzipString= cryptutil.r3Gunzip(buffer);
-				console.log('RESPONSE BODY(GUNZIP) = <<<\n' + gunzipString + '\n<<<');
-			}else{
-				// Text
-				r3logger.mlog(r3logger.dump(response));	// response is object(or not)
-				console.log('RESPONSE BODY = ' + JSON.stringify(response));
-			}
+			r3logger.mlog(r3logger.dump(response));		// response is object(or not)
+			console.log('RESPONSE BODY = ' + JSON.stringify(response));
 			process.exit(0);
 		});
 	});
-	req.on('error', function(e) {
+
+	req.on('error', function(e)
+	{
 		r3logger.elog('problem with request: ' + e.message);
 	});
 	req.end();
 }
 
-cliutil.getConsoleInput('Response Type (gzip or text(default)) : ', true, false, function(isbreak, type)
+//
+// run
+//
+cliutil.getConsoleInput('Unscoped(or Scoped) user token       : ', true, false, function(isbreak, token)
 {
 	if(isbreak){
 		process.exit(0);
 	}
-	var	_type	= type;
-	var	_is_gzip= false;
+	var	_token = token;
 
-	if('' === apiutil.getSafeString(_type) || apiutil.compareCaseString('text', apiutil.getSafeString(_type))){
-		_is_gzip = false;
-	}else if(apiutil.compareCaseString('gzip', apiutil.getSafeString(_type))){
-		_is_gzip = true;
-	}else{
-		process.exit(0);
-	}
-
-	cliutil.getConsoleInput('Register URI path                     : ', true, false, function(isbreak, registerpath)
+	cliutil.getConsoleInput('Tenant name                          : ', true, false, function(isbreak, tenant)
 	{
 		if(isbreak){
 			process.exit(0);
 		}
-		var	_registerpath = registerpath;
 
-		if('' === apiutil.getSafeString(_registerpath)){
+		if(!apiutil.isSafeString(tenant)){
+			console.log('method DELETE must specify tenant name');
 			process.exit(0);
 		}
+		var	_tenant = apiutil.getSafeString(tenant);
 
-		// run
-		getV1UserData(_registerpath, _is_gzip);
+		cliutil.getConsoleInput('Tenant id                            : ', true, false, function(isbreak, id)
+		{
+			if(isbreak){
+				process.exit(0);
+			}
+
+			if(!apiutil.isSafeString(id)){
+				console.log('method DELETE must specify tenant id');
+				process.exit(0);
+			}
+			var	_id = apiutil.getSafeString(id);
+
+			//
+			// Run
+			//
+			deleteV1Tenant(_token, _tenant, _id);
+		});
 	});
 });
 

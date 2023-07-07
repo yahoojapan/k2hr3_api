@@ -45,6 +45,7 @@ COMMANDS="
 	resource
 	policy
 	role
+	tenant
 	service
 	acr
 	userdata
@@ -82,6 +83,7 @@ PrintUsage()
 	echo "  resource            : Resource API test"
 	echo "  policy              : Policy API test"
 	echo "  role                : Role API test"
+	echo "  tenant              : Tenant API test"
 	echo "  service             : Service API test"
 	echo "  acr                 : Accessing Cross Role(ACR) API test"
 	echo "  userdata            : Get userdata for openstack API test"

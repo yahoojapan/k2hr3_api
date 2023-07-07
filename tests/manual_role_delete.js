@@ -86,6 +86,7 @@ function deleteV1Role(token, name, target_host, port, cuk)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{
@@ -173,6 +174,7 @@ function deleteV1_IPByCuk(addrs, port, cuk)
 		if(null !== cacerts.ca){
 			options.ca = cacerts.ca;
 		}
+		options.rejectUnauthorized	= false;			// always insecure for this manual test
 		options.agent	= new https.Agent(options);
 		httpobj			= https;
 	}else{
