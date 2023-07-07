@@ -1,7 +1,7 @@
 /*
  * K2HR3 REST API
  *
- * Copyright 2017 Yahoo Japan Corporation.
+ * Copyright 2023 Yahoo Japan Corporation.
  *
  * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
  * common management information for the cloud.
@@ -13,7 +13,7 @@
  * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
- * CREATE:   Tue Dec 19 2017
+ * CREATE:   Thu Jul 6 2023
  * REVISION:
  *
  */
@@ -63,73 +63,10 @@ afterEach(function(){									// eslint-disable-line no-undef
 });
 
 //--------------------------------------------------------------
-// Main describe section
+// Sub describe section
 //--------------------------------------------------------------
-describe('ALL K2HR3 API TEST', function(){				// eslint-disable-line no-undef
-	//
-	// Before in describe section
-	//
-	before(function(){									// eslint-disable-line no-undef
-		// Nothing to do
-	});
-
-	//
-	// After in describe section
-	//
-	after(function(){									// eslint-disable-line no-undef
-		// Nothing to do
-	});
-
-	//
-	// Sub testing scripts
-	//
-	describe('SUB API TEST: VERSION', function(){		// eslint-disable-line no-undef
-		require('./auto_version');
-	});
-
-	describe('SUB API TEST: USER TOKEN', function(){	// eslint-disable-line no-undef
-		require('./auto_usertokens');
-	});
-
-	describe('SUB API TEST: LIST', function(){			// eslint-disable-line no-undef
-		require('./auto_list');
-	});
-
-	describe('SUB API TEST: RESOURCE', function(){		// eslint-disable-line no-undef
-		require('./auto_resource');
-	});
-
-	describe('SUB API TEST: POLICY', function(){		// eslint-disable-line no-undef
-		require('./auto_policy');
-	});
-
-	describe('SUB API TEST: ROLE', function(){			// eslint-disable-line no-undef
-		require('./auto_role');
-	});
-
-	describe('SUB API TEST: TENANT', function(){		// eslint-disable-line no-undef
-		require('./auto_tenant');
-	});
-
-	describe('SUB API TEST: ACR', function(){			// eslint-disable-line no-undef
-		require('./auto_acr');
-	});
-
-	describe('SUB API TEST: SERVICE', function(){		// eslint-disable-line no-undef
-		require('./auto_service');
-	});
-
-	describe('SUB API TEST: USERDATA', function(){		// eslint-disable-line no-undef
-		require('./auto_userdata');
-	});
-
-	describe('SUB API TEST: EXTDATA', function(){		// eslint-disable-line no-undef
-		require('./auto_extdata');
-	});
-
-	describe('SUB PROC TEST: WATCHER', function(){		// eslint-disable-line no-undef
-		require('./auto_watcher');
-	});
+describe('SUB API TEST: TENANT', function(){			// eslint-disable-line no-undef
+	require('./auto_tenant');
 });
 
 /*
