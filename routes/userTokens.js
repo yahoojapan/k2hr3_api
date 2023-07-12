@@ -50,13 +50,10 @@ function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, pa
 		// Get token from User Credentials
 		//
 		if(!apiutil.isSafeString(username)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			error = {
-						result: 	false,
-						message:	'Some parameter(user name or unscoped token) is wrong.'
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+				result: 	false,
+				message:	'Some parameter(user name or unscoped token) is wrong.'
+			};
 			r3logger.elog(error.message);
 			resutil.errResponse(req, res, 400, error);				// 400: Bad Request
 			return;
@@ -65,27 +62,21 @@ function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, pa
 		r3token.getUserToken(_username, _passwd, _tenant, function(err, token)
 		{
 			if(null !== err){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				var	error = {
-								result: 	false,
-								message:	'could not get scoped user token for user=' + _username + ', tenant=' + _tenant + ' by ' + err.message
-							};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'could not get scoped user token for user=' + _username + ', tenant=' + _tenant + ' by ' + err.message
+				};
 				r3logger.elog(error.message);
 				resutil.errResponse(_req, _res, 404, error);		// 404: Not Found
 				return;
 			}
 			r3logger.dlog('get user token jsonres = ' + JSON.stringify(token));
 
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			var	result = {	result:		true,
-							message:	'succeed',
-							scoped:		apiutil.isSafeString(_tenant),
-							token:		token
-						 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+				message:	'succeed',
+				scoped:		apiutil.isSafeString(_tenant),
+				token:		token
+			};
 			_res.status(201);										// 201: Created
 			_res.send(JSON.stringify(result));
 		});
@@ -95,13 +86,10 @@ function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, pa
 		// Get Scoped token from Unscoped token
 		//
 		if(!apiutil.isSafeString(username)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			error = {
-						result: 	false,
-						message:	'Some parameter(user name or unscoped token) is wrong.'
-					};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+				result: 	false,
+				message:	'Some parameter(user name or unscoped token) is wrong.'
+			};
 			r3logger.elog(error.message);
 			resutil.errResponse(req, res, 400, error);				// 400: Bad Request
 			return;
@@ -110,27 +98,22 @@ function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, pa
 		r3token.getScopedUserToken(_unscopedToken, _username, _tenant, function(err, token)
 		{
 			if(null !== err){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				var	error = {
-								result: 	false,
-								message:	'could not get scoped user token for user=' + _username + ', tenant=' + _tenant + ' by ' + err.message
-							};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'could not get scoped user token for user=' + _username + ', tenant=' + _tenant + ' by ' + err.message
+				};
 				r3logger.elog(error.message);
 				resutil.errResponse(_req, _res, 404, error);		// 404: Not Found
 				return;
 			}
 			r3logger.dlog('get user token jsonres = ' + JSON.stringify(token));
 
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			var	result = {
-							result:		true,
-							message:	'succeed',
-							scoped:		apiutil.isSafeString(_tenant),
-							token:		token
-						 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result:		true,
+				message:	'succeed',
+				scoped:		apiutil.isSafeString(_tenant),
+				token:		token
+			};
 
 			_res.status(201);										// 201: Created
 			_res.send(JSON.stringify(result));
@@ -143,28 +126,22 @@ function rawCommonGetUserToken(req, res, unscopedToken, otherToken, username, pa
 		r3token.getUserTokenByToken(_otherToken, _tenant, function(err, token)
 		{
 			if(null !== err){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				var	error = {
-								result: 	false,
-								message:	'could not get scoped user token for other token, tenant=' + _tenant + ' by ' + err.message
-							};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'could not get scoped user token for other token, tenant=' + _tenant + ' by ' + err.message
+				};
 				r3logger.elog(error.message);
 				resutil.errResponse(_req, _res, 404, error);		// 404: Not Found
 				return;
 			}
 			r3logger.dlog('get user token jsonres = ' + JSON.stringify(token));
 
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			var	result = {
-							result:		true,
-							message:	'succeed',
-							scoped:		apiutil.isSafeString(_tenant),
-							token:		token
-						 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+				result:		true,
+				message:	'succeed',
+				scoped:		apiutil.isSafeString(_tenant),
+				token:		token
+			};
 			_res.status(201);										// 201: Created
 			_res.send(JSON.stringify(result));
 		});
@@ -188,13 +165,11 @@ function rawGetUnscopedUserToken(req)
 		!apiutil.isSafeString(resobj.token_info.user)			||
 		false !== resobj.token_info.scoped						)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		return {
 			result: 	false,
 			status:		400,						// 400: Bad Request
 			message:	'could not get unscoped user token in request.'
 		};
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
 	}
 
 	return {
@@ -223,13 +198,10 @@ router.post('/', function(req, res, next)						// eslint-disable-line no-unused-
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.body) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		error = {
-					result: 	false,
-					message:	'POST body does not have auth key'
-				};
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+			result: 	false,
+			message:	'POST body does not have auth key'
+		};
 		r3logger.elog(error.message);
 		resutil.errResponse(req, res, 400, error);				// 400: Bad Request
 		return;
@@ -260,13 +232,10 @@ router.post('/', function(req, res, next)						// eslint-disable-line no-unused-
 			// (1) case of unscoped token registered in k2hr3
 			//
 			if(!apiutil.isSafeEntity(req.body.auth) || !apiutil.isSafeString(req.body.auth.tenantName)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				error = {
-							result: 	false,
-							message:	'POST body does not have tenant name(or user credentials)'
-						};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'POST body does not have tenant name(or user credentials)'
+				};
 				r3logger.elog(error.message);
 				resutil.errResponse(req, res, 400, error);				// 400: Bad Request
 				return;
@@ -280,13 +249,10 @@ router.post('/', function(req, res, next)						// eslint-disable-line no-unused-
 			//
 			otherToken = r3token.getAuthTokenHeader(req, false);
 			if(!apiutil.isSafeString(otherToken)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				error = {
-							result: 	false,
-							message:	resobj.message
-						};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	resobj.message
+				};
 				r3logger.elog(resobj.message);
 				resutil.errResponse(req, res, resobj.status, error);	// 40X
 				return;
@@ -320,13 +286,10 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		error = {
-					result: 	false,
-					message:	'PUT argument does not have any data'
-			 	};
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+			result: 	false,
+			message:	'PUT argument does not have any data'
+		};
 		r3logger.elog(error.message);
 		resutil.errResponse(req, res, 400, error);				// 400: Bad Request
 		return;
@@ -357,13 +320,10 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 			// (1) case of unscoped token registered in k2hr3
 			//
 			if(!apiutil.isSafeString(req.query.tenantname)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				error = {
-							result: 	false,
-							message:	'POST body does not have tenant name(or user credentials)'
-						};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'POST body does not have tenant name(or user credentials)'
+				};
 				r3logger.elog(error.message);
 				resutil.errResponse(req, res, 400, error);			// 400: Bad Request
 				return;
@@ -378,13 +338,10 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 			//
 			otherToken = r3token.getAuthTokenHeader(req, false);
 			if(!apiutil.isSafeString(otherToken)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				error = {
-							result: 	false,
-							message:	resobj.message
-						};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	resobj.message
+				};
 				r3logger.elog(resobj.message);
 				resutil.errResponse(req, res, resobj.status, error);	// 40X
 				return;
@@ -411,8 +368,10 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 //							  user		=> user name
 //							  tenants	=>	[
 //												{
-//													name:		"tenant name"
-//													display:	"display name"
+//													name:			"tenant name"
+//													display:		"display name"
+//													id:				"tenant id"
+//													description:	"tenant description"
 //												},
 //												...
 //											]
@@ -453,21 +412,20 @@ router.get('/', function(req, res, next)						// eslint-disable-line no-unused-v
 	// build response body
 	if(token_info.scoped){
 		// scoped token
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result:				true,
-					message:			'succeed',
-					scoped:				true,
-					user:				token_info.user,
-					tenants: [
-						{
-							name:		token_info.tenant,
-							display:	token_info.tenant			// [NOTE] this is not real display name.
-						}
-					]
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+			result:				true,
+			message:			'succeed',
+			scoped:				true,
+			user:				token_info.user,
+			tenants: [
+				{
+					name:			token_info.tenant,
+					display:		token_info.display,
+					id:				token_info.id,
+					description:	token_info.description
+				}
+			]
+		};
 		_res.status(200);										// 200: OK
 		_res.send(JSON.stringify(result));
 
@@ -476,13 +434,10 @@ router.get('/', function(req, res, next)						// eslint-disable-line no-unused-v
 		r3token.initializeTenantList(token_result.token, token_info.user, function(error, tenant_list)
 		{
 			if(null !== error){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				var	result = {
-								result: 	false,
-								message:	'failed to get tenant list for user (' + token_info.user + ') by unscoped token(' + token_result.token + ')'
-						  	};
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'failed to get tenant list for user (' + token_info.user + ') by unscoped token(' + token_result.token + ')'
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(_req, _res, 404, result);	// 404: Not Found
 				return;
@@ -491,26 +446,22 @@ router.get('/', function(req, res, next)						// eslint-disable-line no-unused-v
 			// reget tenant list
 			tenant_list = r3token.getTenantList(token_info.user);
 			if(null === tenant_list || apiutil.isEmptyArray(tenant_list)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
-						  };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+					result: 	false,
+					message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(_req, _res, 404, result);	// 404: Not Found
 				return;
 			}
 
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
-			result = {	result:		true,
-						message:	'succeed',
-						scoped:		false,
-						user:		token_info.user,
-						tenants:	tenant_list	};
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
-
+			result = {
+				result:		true,
+				message:	'succeed',
+				scoped:		false,
+				user:		token_info.user,
+				tenants:	tenant_list
+			};
 			_res.status(200);									// 200: OK
 			_res.send(JSON.stringify(result));
 		});
