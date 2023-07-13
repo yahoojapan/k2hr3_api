@@ -431,11 +431,11 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 				expect(res.body.scoped).to.be.a('boolean').to.be.false;
 				expect(res.body.user).to.be.a('string').to.equal('dummyuser');
 				expect(res.body.tenants).to.be.an.instanceof(Array).to.have.lengthOf(5);
-				expect(res.body.tenants[0]).to.deep.equal({name: 'tenant0', display: 'dummy_tenant_0'});
-				expect(res.body.tenants[1]).to.deep.equal({name: 'tenant1', display: 'dummy_tenant_1'});
-				expect(res.body.tenants[2]).to.deep.equal({name: 'tenant2', display: 'dummy_tenant_2'});
-				expect(res.body.tenants[3]).to.deep.equal({name: 'tenant3', display: 'dummy_tenant_3'});
-				expect(res.body.tenants[4]).to.deep.equal({name: 'tenant4', display: 'dummy_tenant_4'});
+				expect(res.body.tenants[0]).to.deep.equal({name: 'tenant0', id: '1000', description: 'dummy tenant no.0', display: 'dummy_tenant_0'});
+				expect(res.body.tenants[1]).to.deep.equal({name: 'tenant1', id: '1001', description: 'dummy tenant no.1', display: 'dummy_tenant_1'});
+				expect(res.body.tenants[2]).to.deep.equal({name: 'tenant2', id: '1002', description: 'dummy tenant no.2', display: 'dummy_tenant_2'});
+				expect(res.body.tenants[3]).to.deep.equal({name: 'tenant3', id: '1003', description: 'dummy tenant no.3', display: 'dummy_tenant_3'});
+				expect(res.body.tenants[4]).to.deep.equal({name: 'tenant4', id: '1004', description: 'dummy tenant no.4', display: 'dummy_tenant_4'});
 
 				done();
 			});
@@ -455,7 +455,7 @@ describe('API : USER TOKEN', function(){				// eslint-disable-line no-undef
 				expect(res.body.scoped).to.be.a('boolean').to.be.true;
 				expect(res.body.user).to.be.a('string').to.equal('dummyuser');
 				expect(res.body.tenants).to.be.an.instanceof(Array).to.have.lengthOf(1);
-				expect(res.body.tenants[0]).to.deep.equal({name: 'tenant0', display: 'tenant0'});
+				expect(res.body.tenants[0]).to.deep.equal({name: 'tenant0', id: '1000', description: 'dummy tenant no.0', display: 'dummy_tenant_0'});
 
 				done();
 			});
