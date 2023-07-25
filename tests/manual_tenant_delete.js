@@ -40,20 +40,32 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 // Request API for test
 //
-function deleteV1Tenant(token, name, id)
+function deleteV1Tenant(token, name, id, remove_all)
 {
 	var	headers = {
 		'Content-Type':		'application/json',
 		'Content-Length':	0,
 		'X-Auth-Token':		token
 	};
-	var	options = {
-		'host':				hostname,
-		'port':				hostport,
-		'path': 			'/v1/tenant/' + name + encodeURI('?id=' + id),
-		'method':			'DELETE',
-		'headers':			headers
-	};
+
+	var	options;
+	if(remove_all){
+		options = {
+			'host':				hostname,
+			'port':				hostport,
+			'path': 			'/v1/tenant' + encodeURI('?tenant=' + name) + '&' + encodeURI('id=' + id),
+			'method':			'DELETE',
+			'headers':			headers
+		};
+	}else{
+		options = {
+			'host':				hostname,
+			'port':				hostport,
+			'path': 			'/v1/tenant/' + name + encodeURI('?id=' + id),
+			'method':			'DELETE',
+			'headers':			headers
+		};
+	}
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -134,10 +146,32 @@ cliutil.getConsoleInput('Unscoped(or Scoped) user token       : ', true, false, 
 			}
 			var	_id = apiutil.getSafeString(id);
 
-			//
-			// Run
-			//
-			deleteV1Tenant(_token, _tenant, _id);
+			cliutil.getConsoleInput('Remove tenant(yes/no(default))       : ', true, false, function(isbreak, remove_all)
+			{
+				if(isbreak){
+					process.exit(0);
+				}
+
+				var	_remove_all;
+				if(!apiutil.isSafeString(remove_all) || 'no' == remove_all || 'n' == remove_all){
+					_remove_all = false;
+				}else if('yes' == remove_all || 'y' == remove_all){
+					_remove_all = true;
+
+					if(0 !== _tenant.indexOf('local@')){
+						console.log('Need tenant name started with local@ for remove it.');
+						process.exit(0);
+					}
+				}else{
+					console.log('input must be yes or no(null)');
+					process.exit(0);
+				}
+
+				//
+				// Run
+				//
+				deleteV1Tenant(_token, _tenant, _id, _remove_all);
+			});
 		});
 	});
 });

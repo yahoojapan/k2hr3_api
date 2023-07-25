@@ -393,7 +393,23 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 		// add own user
 		apiutil.tryAddStringToArray(tenant_users, comparam.user_name);
 	}else{
-		if(!apiutil.findStringInArray(tenant_users, comparam.user_name)){
+		if(apiutil.isEmptyArray(tenant_users)){
+			result.result	= false;
+			result.message	= 'POST request tenant(' + tenant_name + ') does not have any user list.';
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);		// 400: Bad Request
+			return;
+		}
+
+		var	findobj = k2hr3.findTenant(tenant_name, comparam.user_name, tenant_id);
+		if(	!apiutil.isSafeEntity(findobj)											||
+			!apiutil.isSafeEntity(findobj.result)									||
+			false === findobj.result												||
+			!apiutil.isSafeEntity(findobj.tenant)									||
+			!apiutil.isSafeEntity(findobj.tenant.name)								||
+			!apiutil.getSafeArray(findobj.tenant.users)								||
+			!apiutil.findStringInArray(findobj.tenant.users, comparam.user_name)	)
+		{
 			result.result	= false;
 			result.message	= 'POST request tenant(' + tenant_name + ') does not allow user(' + comparam.user_name + ').';
 			r3logger.elog(result.message);
@@ -604,21 +620,37 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 		tenant_users = apiutil.parseJSON(req.query.users);
 		if(!apiutil.isArray(tenant_users) && apiutil.isSafeString(tenant_users)){
 			tenant_users = [tenant_users];
-		}else if(!apiutil.isArray(tenant_users)){
-			tenant_users = [];
+		}else{
+			tenant_users = apiutil.getSafeArray(tenant_users);
 		}
-	}else if(apiutil.isArray(req.query.users)){
-		tenant_users = req.query.users;
-	}else if(apiutil.isSafeString(req.query.users)){
+	}else if(!apiutil.isArray(req.query.users) && apiutil.isSafeString(req.query.users)){
 		tenant_users = [req.query.users];
 	}else{
-		tenant_users = [];
+		tenant_users = apiutil.getSafeArray(req.query.users);
 	}
+
 	if(is_create){
 		// add own user
 		apiutil.tryAddStringToArray(tenant_users, comparam.user_name);
 	}else{
-		if(!apiutil.findStringInArray(tenant_users, comparam.user_name)){
+		// check user in current tenant users
+		if(apiutil.isEmptyArray(tenant_users)){
+			result.result	= false;
+			result.message	= 'PUT request tenant(' + tenant_name + ') does not have any user list.';
+			r3logger.elog(result.message);
+			resutil.errResponse(req, res, 400, result);		// 400: Bad Request
+			return;
+		}
+
+		var	findobj = k2hr3.findTenant(tenant_name, comparam.user_name, tenant_id);
+		if(	!apiutil.isSafeEntity(findobj)											||
+			!apiutil.isSafeEntity(findobj.result)									||
+			false === findobj.result												||
+			!apiutil.isSafeEntity(findobj.tenant)									||
+			!apiutil.isSafeEntity(findobj.tenant.name)								||
+			!apiutil.getSafeArray(findobj.tenant.users)								||
+			!apiutil.findStringInArray(findobj.tenant.users, comparam.user_name)	)
+		{
 			result.result	= false;
 			result.message	= 'PUT request tenant(' + tenant_name + ') does not allow user(' + comparam.user_name + ').';
 			r3logger.elog(result.message);
@@ -917,11 +949,26 @@ router.head('/', function(req, res, next)
 // Router DELETE
 //=========================================================
 //
-// Mountpath					: '/v1/tenant/<tenant>'
+// Mountpath				: '/v1/tenant'
 //
-// DELETE '/v1/tenant/<tenant>'	: delete tenant on version 1
+//---------------------------------------------------------
+// [DELETE] No tenant path
+//---------------------------------------------------------
+// DELETE '/v1/tenant'			: delete tenant version 1
 // HEADER						: X-Auth-Token	= <User token>
-// url argument					: "id":	 <id>			=>	key is "yrn:yahoo:::<tenant>:id"
+// url argument					: "tenant"		= <tenant name>
+// url argument					: "id"			= <id>			=>	key is "yrn:yahoo:::<tenant>:id"
+// response status code			: 204 or 4xx/5xx
+// response body				: nothing
+//
+// This mount point deletes the specified <K2HR3 cluster LOCAL> tenant.
+//
+//---------------------------------------------------------
+// [DELETE] With tenant path
+//---------------------------------------------------------
+// DELETE '/v1/tenant/tenant'	: delete tenant version 1
+// HEADER						: X-Auth-Token	= <User token>
+// url argument					: "id"			=  <id>			=>	key is "yrn:yahoo:::<tenant>:id"
 // response status code			: 204 or 4xx/5xx
 // response body				: nothing
 //
@@ -930,7 +977,7 @@ router.head('/', function(req, res, next)
 // [NOTE]
 // Only users registered in the tenant to be deleted can delete this tenant.
 //
-router.delete('/', function(req, res, next)								// eslint-disable-line no-unused-vars
+router.delete('/', function(req, res, next)					// eslint-disable-line no-unused-vars
 {
 	r3logger.dlog('CALL:', req.method, req.url);
 
@@ -940,7 +987,7 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
 		r3logger.elog('DELETE request or url or query is wrong');
-		resutil.errResponse(req, res, 400);								// 400: Bad Request
+		resutil.errResponse(req, res, 400);					// 400: Bad Request
 		return;
 	}
 
@@ -965,39 +1012,73 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	}
 
 	//------------------------------
-	// Check uri paths(tenant name)
+	// Check uri paths
 	//------------------------------
+	var	tenant_name;
+	var	tenant_id;
 	if(!apiutil.isSafeString(comparam.tenant_name)){
-		r3logger.elog('DELETE request tenant must specify <tenant> path');
-		resutil.errResponse(req, res, 400);				// 400: Bad Request
-		return;
-	}
-
-	//------------------------------
-	// Check argments(id)
-	//------------------------------
-	var	tenant_id = apiutil.getSafeString(req.query.id);
-	if(!apiutil.isSafeString(tenant_id)){
-		r3logger.elog('DELETE request id must specify in argument');
-		resutil.errResponse(req, res, 400);				// 400: Bad Request
-		return;
-	}
-
-	//------------------------------
-	// Processing
-	//------------------------------
-	resobj = k2hr3.removeUserFromLocalTenant(comparam.tenant_name, comparam.user_name, tenant_id);
-	if(!apiutil.isSafeEntity(resobj) || !apiutil.isSafeEntity(resobj.result) || false === resobj.result){
-		if(apiutil.isSafeEntity(resobj) && apiutil.isSafeString(resobj.message)){
-			r3logger.elog('DELETE request failed to remove user from tenant by ' + resobj.message);
-		}else{
-			r3logger.elog('DELETE request failed to remove user from tenant by unknown reason');
+		//------------------------------
+		// Check argments(tenant)
+		//------------------------------
+		tenant_name = apiutil.getSafeString(req.query.tenant);
+		if(!apiutil.isSafeString(tenant_name)){
+			r3logger.elog('DELETE request tenant must specify in argument');
+			resutil.errResponse(req, res, 400);			// 400: Bad Request
+			return;
 		}
-		resutil.errResponse(req, res, 400);				// 400: Bad Request
-		return;
+
+		//------------------------------
+		// Check argments(id)
+		//------------------------------
+		tenant_id = apiutil.getSafeString(req.query.id);
+		if(!apiutil.isSafeString(tenant_id)){
+			r3logger.elog('DELETE request id must specify in argument');
+			resutil.errResponse(req, res, 400);			// 400: Bad Request
+			return;
+		}
+
+		//------------------------------
+		// Processing
+		//------------------------------
+		resobj = k2hr3.removeLocalTenant(tenant_name, comparam.user_name, tenant_id);
+		if(!apiutil.isSafeEntity(resobj) || !apiutil.isSafeEntity(resobj.result) || false === resobj.result){
+			if(apiutil.isSafeEntity(resobj) && apiutil.isSafeString(resobj.message)){
+				r3logger.elog('DELETE request failed to remove user from tenant by ' + resobj.message);
+			}else{
+				r3logger.elog('DELETE request failed to remove user from tenant by unknown reason');
+			}
+			resutil.errResponse(req, res, 400);			// 400: Bad Request
+			return;
+		}
+		r3logger.dlog('DELETE request succeed - remove tenant');
+
+	}else{
+		//------------------------------
+		// Check argments(id)
+		//------------------------------
+		tenant_id = apiutil.getSafeString(req.query.id);
+		if(!apiutil.isSafeString(tenant_id)){
+			r3logger.elog('DELETE request id must specify in argument');
+			resutil.errResponse(req, res, 400);			// 400: Bad Request
+			return;
+		}
+
+		//------------------------------
+		// Processing
+		//------------------------------
+		resobj = k2hr3.removeUserFromLocalTenant(comparam.tenant_name, comparam.user_name, tenant_id);
+		if(!apiutil.isSafeEntity(resobj) || !apiutil.isSafeEntity(resobj.result) || false === resobj.result){
+			if(apiutil.isSafeEntity(resobj) && apiutil.isSafeString(resobj.message)){
+				r3logger.elog('DELETE request failed to remove user from tenant by ' + resobj.message);
+			}else{
+				r3logger.elog('DELETE request failed to remove user from tenant by unknown reason');
+			}
+			resutil.errResponse(req, res, 400);			// 400: Bad Request
+			return;
+		}
+		r3logger.dlog('DELETE request succeed - remove user from tenant');
 	}
 
-	r3logger.dlog('DELETE request succeed - remove user from tenant');
 	res.status(204);									// 204: No Content
 	res.send();
 });
