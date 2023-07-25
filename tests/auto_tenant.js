@@ -604,8 +604,7 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 				expect(res).to.be.json;
 				expect(res.body).to.be.an('object');
 				expect(res.body.result).to.be.a('boolean').to.be.false;
-				expect(res.body.message).to.be.a('string').to.have.string('PUT request failed to update tenant by failed to update tenant by could not find tenant(local@autotest_put_tenant_3) with user="dummyuser" and id=');
-
+				expect(res.body.message).to.be.a('string').to.have.string('PUT request tenant(local@autotest_put_tenant_3) does not allow user(dummyuser).');
 				done();
 			});
 	});
@@ -904,9 +903,9 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 	});
 
 	//
-	// Run Test(DELETE - TENANT - SUCCESS/FAILURE)
+	// Run Test(DELETE - TENANT USER - SUCCESS/FAILURE)
 	//
-	it('DELETE /v1/tenant/<tenant> : delete tenant(autotest_put_tenant_0) : success 200', function(done){					// eslint-disable-line no-undef
+	it('DELETE /v1/tenant/<tenant> : delete tenant user(autotest_put_tenant_0) : success 204', function(done){				// eslint-disable-line no-undef
 		var	uri	= '/v1/tenant/autotest_put_tenant_0';							// tenant name
 		uri		+= '?id=' + autotest_put_tenant_0_id;							// correct id
 
@@ -921,7 +920,7 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 			});
 	});
 
-	it('DELETE /v1/tenant/<tenant> : delete tenant(local@autotest_put_tenant_1) : success 200', function(done){				// eslint-disable-line no-undef
+	it('DELETE /v1/tenant/<tenant> : delete tenant user(local@autotest_put_tenant_1) : success 204', function(done){		// eslint-disable-line no-undef
 		var	uri	= '/v1/tenant/local@autotest_put_tenant_1';						// tenant name
 		uri		+= '?id=' + autotest_put_tenant_1_id;							// correct id
 
@@ -936,7 +935,7 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 			});
 	});
 
-	it('DELETE /v1/tenant/<tenant> : delete tenant(autotest_post_tenant_0) : failure(no token) 400', function(done){		// eslint-disable-line no-undef
+	it('DELETE /v1/tenant/<tenant> : delete tenant user(autotest_post_tenant_0) : failure(no token) 400', function(done){			// eslint-disable-line no-undef
 		var	uri	= '/v1/tenant/autotest_post_tenant_0';							// tenant name
 		uri		+= '?id=' + autotest_post_tenant_0_id;							// correct id
 
@@ -950,7 +949,7 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 			});
 	});
 
-	it('DELETE /v1/tenant/<tenant> : delete tenant(local@autotest_post_tenant_0) : failure(no token) 400', function(done){	// eslint-disable-line no-undef
+	it('DELETE /v1/tenant/<tenant> : delete tenant user(local@autotest_post_tenant_0) : failure(no token) 400', function(done){		// eslint-disable-line no-undef
 		var	uri	= '/v1/tenant/local@autotest_post_tenant_0';					// tenant name
 		uri		+= '?id=' + autotest_post_tenant_0_id;							// correct id
 
@@ -964,7 +963,7 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 			});
 	});
 
-	it('DELETE /v1/tenant/<tenant> : delete tenant(autotest_post_tenant_X) : failure(no exist tenant) 400', function(done){	// eslint-disable-line no-undef
+	it('DELETE /v1/tenant/<tenant> : delete tenant user(autotest_post_tenant_X) : failure(no exist tenant) 400', function(done){	// eslint-disable-line no-undef
 		var	uri	= '/v1/tenant/autotest_post_tenant_X';							// not exist tenant name
 		uri		+= '?id=' + autotest_post_tenant_0_id;							// wrong id
 
@@ -973,6 +972,118 @@ describe('API : TENANT', function(){					// eslint-disable-line no-undef
 			.set('content-type', 'application/json')
 			.end(function(err, res){
 				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	//
+	// Run Test(DELETE - TENANT - SUCCESS/FAILURE)
+	//
+	it('DELETE /v1/tenant : delete tenant(autotest_post_tenant_0) : failure(no token) 400', function(done){				// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=autotest_post_tenant_0';							// tenant name
+		uri		+= '&id=' + autotest_post_tenant_0_id;							// correct id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant : delete tenant(local@autotest_post_tenant_0) : failure(no tenant) 400', function(done){		// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?id=' + autotest_post_tenant_0_id;							// correct id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant : delete tenant(local@autotest_post_tenant_0) : failure(no id) 400', function(done){			// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=autotest_post_tenant_0';							// tenant name
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant : delete tenant(autotest_post_tenant_X) : failure(no exist tenant) 400', function(done){		// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=autotest_post_tenant_X';							// not exist tenant name
+		uri		+= '&id=' + autotest_post_tenant_0_id;							// id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant : delete tenant(autotest_post_tenant_X) : failure(wrong id) 400', function(done){		// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=autotest_post_tenant_0';							// tenant name
+		uri		+= '&id=' + autotest_post_tenant_1_id;							// wrong id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant : delete tenant(autotest_post_tenant_0) : failure(not local@) 400', function(done){	// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=autotest_post_tenant_0';							// tenant name
+		uri		+= '&id=' + autotest_post_tenant_0_id;							// correct id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(400);
+
+				done();
+			});
+	});
+
+	it('DELETE /v1/tenant/<tenant> : delete tenant(local@autotest_post_tenant_1) : success 204', function(done){		// eslint-disable-line no-undef
+		var	uri	= '/v1/tenant';
+		uri		+= '?tenant=local@autotest_post_tenant_1';						// tenant name
+		uri		+= '&id=' + autotest_post_tenant_1_id;							// correct id
+
+		chai.request(app)
+			.delete(uri)
+			.set('content-type', 'application/json')
+			.set('x-auth-token', alltokens.unscopedtoken)						// unscoped token
+			.end(function(err, res){
+				expect(res).to.have.status(204);
 
 				done();
 			});
