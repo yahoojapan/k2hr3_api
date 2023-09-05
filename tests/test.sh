@@ -304,20 +304,20 @@ if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
 fi
 
 if ! "${AUTO_INIT_SH}" --set; then
-	echo "[ERROR] Could not initialize local.json(symbolic link to dummy)"
+	echo "[ERROR] Could not initialize local.json5(symbolic link to dummy)"
 	exit 1
 fi
 
 if ! NODE_PATH="${NODE_PATH}" NODE_ENV="${NODE_ENV_VALUE}" NODE_DEBUG="${DEBUG_ENV_PARAM}" NODE_LOGGER="${NODE_LOGGER}" NODE_CONFIG_DIR='' node_modules/.bin/mocha --timeout "${TIMEOUT}" "tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"; then
 	echo "[ERROR] Failed test."
 	if ! "${AUTO_INIT_SH}" --restore; then
-		echo "[ERROR] Could not restore local.json"
+		echo "[ERROR] Could not restore local.json5"
 	fi
 	exit 1
 fi
 
 if ! "${AUTO_INIT_SH}" --restore; then
-	echo "[ERROR] Could not restore local.json"
+	echo "[ERROR] Could not restore local.json5"
 	exit 1
 fi
 
