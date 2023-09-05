@@ -52,7 +52,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [18, 20]
 
     steps:
       #
@@ -127,7 +127,7 @@ jobs:
         # <default tag flag>:   If you want to use the created Docker image as the default image, specify "default".
         #
         imageinfo:
-          - alpine:3.17,alpine:3.17,alpine,default
+          - alpine:3.18,alpine:3.18,alpine,default
           - ubuntu:22.04,ubuntu:22.04,ubuntu
 
     #

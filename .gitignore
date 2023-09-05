@@ -127,9 +127,9 @@ typings/
 .env
 
 #
-# local.json
+# local.json / local.json5
 #
-config/local.json
+config/local.json*
 
 #
 # coverage

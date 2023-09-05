@@ -100,6 +100,9 @@ fs.readFile(templfile, 'utf8', function(err, templString)
 	if('' === varfile){
 		r3logger.dlog('variable file(' + varfile + ') is not specified.');
 		is_varfile_json = false;
+	}else if(apiutil.compareCaseString('.json5', varfile.substr(-6))){
+		r3logger.dlog('variable file(' + varfile + ') is JSON5 type.');
+		is_varfile_json = true;
 	}else if(apiutil.compareCaseString('.json', varfile.substr(-5))){
 		r3logger.dlog('variable file(' + varfile + ') is JSON type.');
 		is_varfile_json = true;
