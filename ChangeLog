@@ -1,3 +1,9 @@
+k2hr3-api (1.0.29) unstable; urgency=low
+
+  * Fixed bugs about publishing packages and images - #108
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Wed, 06 Sep 2023 16:58:40 +0900
+
 k2hr3-api (1.0.28) unstable; urgency=low
 
   * Updated support NodeJS version - #106
