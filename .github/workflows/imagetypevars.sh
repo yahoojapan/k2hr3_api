@@ -81,7 +81,7 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "alpine" ]; then
 	PKGMGR_INSTALL_OPT="add -q --no-progress --no-cache"
 	PKGMGR_UNINSTALL_OPT="del -q --purge --no-progress --no-cache"
 	PKG_INSTALL_CURL="curl"
-	PKG_INSTALL_BASE="g++ make nodejs npm python3 k2hdkc-dev bind-tools"
+	PKG_INSTALL_BASE="g++ make nodejs npm python3 k2hdkc-dev bind-tools procps"
 	PKG_REPO_SETUP_NODEJS=""
 	NPM_INSTALL_BASE=""
 
@@ -91,7 +91,7 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	PKGMGR_INSTALL_OPT="install -qq -y"
 	PKGMGR_UNINSTALL_OPT="purge --auto-remove -q -y"
 	PKG_INSTALL_CURL="curl"
-	PKG_INSTALL_BASE="g++ make nodejs k2hdkc-dev dnsutils"
+	PKG_INSTALL_BASE="g++ make nodejs k2hdkc-dev dnsutils procps"
 
 	NODE_MAJOR=18
 	PKG_REPO_SETUP_NODEJS="
