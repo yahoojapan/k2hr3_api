@@ -2,17 +2,17 @@
   "name": "k2hr3-api",
   "version": "1.0.34",
   "dependencies": {
-    "@kubernetes/client-node": "^0.20.0",
-    "body-parser": "^1.20.2",
-    "config": "^3.3.11",
-    "cookie-parser": "~1.4.6",
+    "@kubernetes/client-node": "^0.22.3",
+    "body-parser": "^1.20.3",
+    "config": "^3.3.12",
+    "cookie-parser": "~1.4.7",
     "dateformat": "^4.6.3",
-    "debug": "~4.3.4",
-    "express": "^4.18.3",
-    "jose": "^5.2.3",
-    "k2hdkc": "^1.0.10",
+    "debug": "~4.3.7",
+    "express": "^4.21.2",
+    "jose": "^5.9.6",
+    "k2hdkc": "^1.0.11",
     "morgan": "~1.10.0",
-    "rotating-file-stream": "^3.2.1"
+    "rotating-file-stream": "^3.2.5"
   },
   "bin": {
     "k2hr3-api": "./bin/www",
@@ -28,11 +28,11 @@
     "test": "test"
   },
   "devDependencies": {
-    "chai": "^4.4.1",
+    "chai": "^4.5.0",
     "chai-http": "^4.4.0",
-    "eslint": "^8.57.0",
-    "mocha": "^10.3.0",
-    "nyc": "^15.1.0"
+    "eslint": "^8.57.1",
+    "mocha": "^11.0.1",
+    "nyc": "^17.1.0"
   },
   "scripts": {
     "help": "echo 'command list:\n    npm run start\n    npm run start:prod\n    npm run start:production\n    npm run start:prod:dbg\n    npm run start:prod:debug\n    npm run start:prod:debug:break\n    npm run start:prod:debug:nobreak\n    npm run start:dev\n    npm run start:develop\n    npm run start:dev:dbg\n    npm run start:dev:debug\n    npm run start:dev:debug:break\n    npm run start:dev:debug:nobreak\n    npm run start:watcher:prod\n    npm run start:watcher:production\n    npm run start:watcher:dev\n    npm run start:watcher:develop\n    npm run start:watcher:dbg\n    npm run start:watcher:debug\n    npm run start:watcher:debug:break\n    npm run start:watcher:debug:nobreak\n    npm run start:watcher:oneshot:prod\n    npm run start:watcher:oneshot:production\n    npm run start:watcher:oneshot:dev\n    npm run start:watcher:oneshot:develop\n    npm run start:watcher:oneshot:dbg\n    npm run start:watcher:oneshot:debug\n    npm run start:watcher:oneshot:debug:break\n    npm run start:watcher:oneshot:debug:nobreak\n    npm run stop\n    npm run stop:watcher\n    npm run test\n    npm run test:lint\n    npm run test:cover\n    npm run test:auto:all{:dbg}\n    npm run test:auto:version{:dbg}\n    npm run test:auto:usertokens{:dbg}\n    npm run test:auto:list{:dbg}\n    npm run test:auto:resource{:dbg}\n    npm run test:auto:policy{:dbg}\n    npm run test:auto:role{:dbg}\n    npm run test:auto:tenant{:dbg}\n    npm run test:auto:service{:dbg}\n    npm run test:auto:acr{:dbg}\n    npm run test:auto:userdata{:dbg}\n    npm run test:auto:extdata{:dbg}\n    npm run test:auto:watcher{:dbg}\n    npm run test:auto:templengine\n    npm run test:auto:templengine:async\n    npm run test:manual:apis:version_get\n    npm run test:manual:apis:usertoken_postput\n    npm run test:manual:apis:usertoken_gethead\n    npm run test:manual:apis:policy_postput\n    npm run test:manual:apis:policy_gethead\n    npm run test:manual:apis:policy_delete\n    npm run test:manual:apis:resource_postput\n    npm run test:manual:apis:resource_gethead\n    npm run test:manual:apis:resource_delete\n    npm run test:manual:apis:role_postput\n    npm run test:manual:apis:role_gethead\n    npm run test:manual:apis:role_delete\n    npm run test:manual:apis:tenant_postput\n    npm run test:manual:apis:tenant_gethead\n    npm run test:manual:apis:tenant_delete\n    npm run test:manual:apis:service_postput\n    npm run test:manual:apis:service_gethead\n    npm run test:manual:apis:service_delete\n    npm run test:manual:apis:acr_postput\n    npm run test:manual:apis:acr_get\n    npm run test:manual:apis:acr_delete\n    npm run test:manual:apis:list_gethead\n    npm run test:manual:apis:userdata_get\n    npm run test:manual:apis:extdata_get\n    npm run test:manual:apis:allusertenant_get\n    npm run test:manual:apis:k2hr3keys_get\n    npm run test:manual:load:k2hdkcdata:auto\n    npm run test:manual:load:k2hdkcdata:local\n    npm run test:manual:templengine\n    npm run test:manual:templengine:async\n'",
