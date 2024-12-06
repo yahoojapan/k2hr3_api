@@ -153,7 +153,8 @@ stop_old_process()
 		# If processes are running yet, try to kill it.
 		#
 		for _ONE_PID in ${ALL_CHILD_PIDS}; do
-			if ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+			# shellcheck disable=SC2009
+			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${_ONE_PID}"; then
 				kill -KILL "${_ONE_PID}" >/dev/null 2>&1
 			fi
 		done
@@ -163,7 +164,8 @@ stop_old_process()
 		# Result
 		#
 		for _ONE_PID in ${ALL_CHILD_PIDS}; do
-			if ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+			# shellcheck disable=SC2009
+			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${_ONE_PID}"; then
 				echo "[ERROR] Could not stop old processes."
 				return 1
 			fi
