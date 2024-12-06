@@ -173,7 +173,8 @@ if [ "${EXEC_MODE}" = "start" ]; then
 		sleep "${RUN_INTERVAL}"
 	fi
 
-	if ! ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+	# shellcheck disable=SC2009
+	if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
 		echo "[ERROR] Could not start child process : ${CHILD_PROCESS_CMD}"
 		exit 1
 	fi
@@ -189,7 +190,8 @@ else
 
 		CHILD_PROCESS_PID="$(tr -d '\n' < "${CHILD_PROCESS_PIDFILE}")"
 
-		if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+		# shellcheck disable=SC2009
+		if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
 			#
 			# Try stop
 			#
@@ -200,7 +202,8 @@ else
 				sleep "${RUN_INTERVAL}"
 			fi
 
-			if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+			# shellcheck disable=SC2009
+			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
 				#
 				# Retry stop
 				#
@@ -211,7 +214,8 @@ else
 					sleep "${RUN_INTERVAL}"
 				fi
 
-				if ps -p "${CHILD_PROCESS_PID}" >/dev/null 2>&1; then
+				# shellcheck disable=SC2009
+				if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
 					echo "[ERROR] Could not stop process : ${CHILD_PROCESS_NAME}"
 					exit 1
 				fi
