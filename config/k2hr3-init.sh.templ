@@ -108,8 +108,10 @@ check_os()
 	#
 	# Set global values
 	#	IS_OS_DEBIAN
+	#	IS_OS_ALPINE
 	#	PKGMGR_BIN
 	#	PKGMGR_UPDATE_OPT
+	#	PKGMGR_INSTALL_OPT
 	#	PKGMGR_LIST_CMD
 	#
 	. /etc/os-release
@@ -117,38 +119,58 @@ check_os()
 	if echo "${ID}" | grep -q -i "centos"; then
 		if [ -z "${VERSION_ID}" ] || [ "${VERSION_ID}" -eq 7 ]; then
 			IS_OS_DEBIAN=0
+			IS_OS_ALPINE=0
 			PKGMGR_BIN="yum"
 			PKGMGR_UPDATE_OPT="update -y"
+			PKGMGR_INSTALL_OPT="install -y"
 			PKGMGR_LIST_CMD="yum list installed"
 		else
 			IS_OS_DEBIAN=0
+			IS_OS_ALPINE=0
 			PKGMGR_BIN="dnf"
 			PKGMGR_UPDATE_OPT="update -y -qq"
+			PKGMGR_INSTALL_OPT="install -y"
 			PKGMGR_LIST_CMD="dnf list installed"
 		fi
 	elif echo "${ID}" | grep -q -i "rocky"; then
 		IS_OS_DEBIAN=0
+		IS_OS_ALPINE=0
 		PKGMGR_BIN="dnf"
 		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_INSTALL_OPT="install -y"
 		PKGMGR_LIST_CMD="dnf list installed"
 
 	elif echo "${ID}" | grep -q -i "fedora"; then
 		IS_OS_DEBIAN=0
+		IS_OS_ALPINE=0
 		PKGMGR_BIN="dnf"
 		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_INSTALL_OPT="install -y"
 		PKGMGR_LIST_CMD="dnf list installed"
 
 	elif echo "${ID}" | grep -q -i "ubuntu"; then
 		IS_OS_DEBIAN=1
+		IS_OS_ALPINE=0
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_INSTALL_OPT="install -y"
 		PKGMGR_LIST_CMD="apt list --installed"
 
 	elif echo "${ID}" | grep -q -i "debian"; then
 		IS_OS_DEBIAN=1
+		IS_OS_ALPINE=0
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
+		PKGMGR_INSTALL_OPT="install -y"
 		PKGMGR_LIST_CMD="apt list --installed"
+
+	elif echo "${ID}" | grep -q -i "alpine"; then
+		IS_OS_DEBIAN=0
+		IS_OS_ALPINE=1
+		PKGMGR_BIN="apk"
+		PKGMGR_UPDATE_OPT="update -q --no-progress"
+		PKGMGR_INSTALL_OPT="add --no-progress --no-cache"
+		PKGMGR_LIST_CMD="apk list --installed"
 
 	else
 		exit_err "Unknown OS distribution(${ID})."
@@ -187,7 +209,7 @@ check_curl()
 	update_package_local_db
 
 	# Install curl
-	if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} curl"; then
+	if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} ${PKGMGR_INSTALL_OPT} curl"; then
 		exit_err "Failed installing curl"
 	fi
 	output_info "Success installing curl"
@@ -270,10 +292,15 @@ setup_packagecloudio_repo()
 	fi
 	if [ "${IS_OS_DEBIAN}" -eq 1 ]; then
 		_SCRIPT_NAME="script.deb.sh"
+		_RUN_SHELL_CMD="bash"
+	elif [ "${IS_OS_ALPINE}" -eq 1 ]; then
+		_SCRIPT_NAME="script.alpine.sh"
+		_RUN_SHELL_CMD="sh"
 	else
 		_SCRIPT_NAME="script.rpm.sh"
+		_RUN_SHELL_CMD="bash"
 	fi
-	if ! curl -s https://packagecloud.io/install/repositories/antpickax/stable/"${_SCRIPT_NAME}" | "${SUDOCMD}" bash; then
+	if ! /bin/sh -c "curl -s https://packagecloud.io/install/repositories/antpickax/stable/${_SCRIPT_NAME} | ${SUDOCMD} ${_RUN_SHELL_CMD}"; then
 		exit_err "Could not setup packagecloud.io repository."
 	fi
 	SETUP_PC_REPO=1
@@ -324,7 +351,7 @@ install_package()
 		output_info "${_TMP_INSTALL_PKGNAME} pacakge is already installed."
 	else
 		# Install package
-		if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} install ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME}" >/dev/null 2>&1; then
+		if ! /bin/sh -c "${SUDOCMD} ${PKGMGR_BIN} ${PKGMGR_INSTALL_OPT} ${_TMP_INSTALL_PKGNAME}" >/dev/null 2>&1; then
 			exit_err "Failed installing ${_TMP_INSTALL_PKGNAME} package"
 		fi
 		output_info "Success installing ${_TMP_INSTALL_PKGNAME} pacakge"
@@ -357,19 +384,21 @@ get_install_packages()
 	# Check response(expect -> "result": true)
 	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*message["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
+	# get pacakge list
+	INSTALL_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*resource["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g' -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*$//g')
+
 	# setup packakecloud.io repository
-	if [ "${_INSTALL_PKGS_PC}" -eq 1 ]; then
+	if [ "${_INSTALL_PKGS_PC}" -eq 1 ] && [ -n "${INSTALL_PKGS}" ]; then
 		setup_packagecloudio_repo
 	fi
 
-	# pacakges
-	INSTALL_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
+	# install each package
 	for _package in ${INSTALL_PKGS}; do
 		install_package "${_package}"
 	done
@@ -398,14 +427,14 @@ start_systemd_service()
 	# Check response(expect -> "result": true)
 	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*message["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
+	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*resource["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
 
 	# check and start/enable systemd service
 	for _package in ${_TMP_LIST_PKGS}; do
@@ -452,14 +481,14 @@ stop_systemd_service()
 	# Check response(expect -> "result": true)
 	if ! echo "${_GET_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
+		_GET_RESULT_MSG=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*message["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		output_info "There is no keyname($3) with response(${_GET_RESULT_MSG}), then no package is installed."
 		return 0
 	fi
 	output_info "Success getting keyname($3) value."
 
 	# pacakges
-	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*[rR][eE][sS][oO][uU][rR][cC][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
+	_TMP_LIST_PKGS=$(echo "${_GET_RESULT}" | sed -e 's/^.*["]*resource["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g' -e 's/,/ /g')
 
 	# make reverse list
 	_TMP_REV_LIST_PKGS=""
@@ -506,7 +535,7 @@ register_host()
 	# Check response(expect -> "result": true)
 	if ! echo "${_REGISTER_RESULT}" | tr '[:lower:]' '[:upper:]' | grep -q '["]*RESULT["]*:[[:space:]]*TRUE[[:space:]]*,'; then
 		# Get error message(expect -> "message": "...")
-		_REGISTER_RESULT_MSG=$(echo "${_REGISTER_RESULT}" | sed -e 's/^.*["]*[mM][eE][sS][sS][aA][gG][eE]["]*:[[:space:]]*//g' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
+		_REGISTER_RESULT_MSG=$(echo "${_REGISTER_RESULT}" | sed -e 's/^.*["]*message["]*:[[:space:]]*//gi' -e 's/["],.*$//g' -e 's/}.*//g' -e 's/"//g')
 		exit_err "Failed to put access for registering by ${_REGISTER_RESULT_MSG}"
 	fi
 	output_info "Success setting this host to k2hr3 role($3)"
@@ -593,9 +622,10 @@ output_info "Start common processing."
 SETUP_PC_REPO=0
 IS_UPDATE_PKG_LOCAL_DB=0
 IS_OS_DEBIAN=0
+IS_OS_ALPINE=0
 PKGMGR_BIN=
 PKGMGR_UPDATE_OPT=
-PKGMGR_INSTALL_OPT="-y"
+PKGMGR_INSTALL_OPT=
 PKGMGR_LIST_CMD=
 
 #
@@ -633,7 +663,7 @@ INSTANCE_ID_FILE="${CLOUDINIT_DATA_DIR}/instance-id"
 #
 K2HR3_ROLE_TOKEN="{{= %K2HR3_ROLE_TOKEN% }}"
 K2HR3_ROLE_NAME="{{= %K2HR3_ROLE_NAME% }}"
-K2HR3_RESOURCE_NAME=$(echo "${K2HR3_ROLE_NAME}" | sed -e 's/:[rR][oO][lL][eE]:/:resource:/g')
+K2HR3_RESOURCE_NAME=$(echo "${K2HR3_ROLE_NAME}" | sed -e 's/:role:/:resource:/gi')
 K2HR3_ROLE_TENANT="{{= %K2HR3_ROLE_TENANT% }}"
 K2HR3_API_HOST_URI="{{= %K2HR3_API_HOST_URI% }}"
 K2HR3_ERROR_MSG="{{= %K2HR3_ERROR_MSG% }}"
@@ -693,13 +723,40 @@ if [ "${SCRIPTMODE}" = "r" ]; then
 	if [ -z "${INSTANCE_ID}" ]; then
 		exit_err "Unknown Instance Id in ${INSTANCE_ID_FILE}"
 	fi
+
+	#
+	# Get full local hostname(with domain)
+	#
+	# [NOTE]
+	# The order of precedence is:
+	#	1) search keyword in resolv.conf as domain name
+	#	2) domain keyword in resolv.conf as domain name
+	#	3) hostname command(-d) as domain name
+	#	4) hostname command(-f)
+	#
+	LOCAL_HOSTNAME=$(hostname)
+	LOCAL_DOMAIN=$(hostname -d)
+	RESOLVE_DOMAIN=$(grep -i '^search' /etc/resolv.conf | awk '{print $NF}')
+	if [ -z "${RESOLVE_DOMAIN}" ]; then
+		RESOLVE_DOMAIN=$(grep -i '^domain' /etc/resolv.conf | awk '{print $NF}')
+	fi
+
+	if [ -n "${RESOLVE_DOMAIN}" ]; then
+		LOCAL_FULL_HOSTNAME="${LOCAL_HOSTNAME}.${RESOLVE_DOMAIN}"
+	elif [ -n "${LOCAL_DOMAIN}" ]; then
+		LOCAL_FULL_HOSTNAME="${LOCAL_HOSTNAME}.${LOCAL_DOMAIN}"
+	else
+		LOCAL_FULL_HOSTNAME=$(hostname -f)
+	fi
+	LOCAL_FULL_HOSTNAME=$(echo "${LOCAL_FULL_HOSTNAME}" | sed -e 's#\.$##g' -e 's#\.\.#\.#g')
+
+	#
+	# Set variables
+	#
 	CUK_VALUE="${INSTANCE_ID}"
 	CUK_PARAMETER="cuk=${INSTANCE_ID}"
 	EXTRA_PARAMETER="extra=openstack-auto-v1"
-	TAG_PARAMETER="tag=${LOCAL_HOSTNAME}"
-	if ! LOCAL_HOSTNAME=$(hostname); then
-		output_warn "Local hostname is empty"
-	fi
+	TAG_PARAMETER="tag=${LOCAL_FULL_HOSTNAME}"
 
 	#
 	# Register this host to K2HR3
