@@ -1,3 +1,9 @@
+k2hr3-api (1.0.38) unstable; urgency=low
+
+  * Updated nodejs_helper for forked repositories - #127
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 20 Jan 2025 11:11:35 +0900
+
 k2hr3-api (1.0.37) unstable; urgency=low
 
   * Changed timeout value for checking openstack keystone - #125
