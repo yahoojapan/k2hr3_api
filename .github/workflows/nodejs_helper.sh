@@ -18,7 +18,7 @@
 #
 # AUTHOR:   Takeshi Nakatani
 # CREATE:   Tue, Nov 24 2020
-# REVISION: 1.3
+# REVISION: 1.4
 #
 
 #==============================================================
@@ -71,6 +71,7 @@ CI_PACKAGECLOUD_OWNER="antpickax"
 CI_PACKAGECLOUD_DOWNLOAD_REPO="stable"
 CI_NPM_TOKEN=""
 CI_FORCE_PUBLISHER=""
+CI_FORCE_NOT_PUBLISHER=0
 
 CI_IN_SCHEDULE_PROCESS=0
 CI_PUBLISH_TAG_NAME=""
@@ -169,6 +170,7 @@ func_usage()
 	echo "    --nodejstype-vars-file(-f)                <file path>  specify the file that describes the package list to be installed before build(default is nodejstypevars.sh)"
 	echo "    --npm-token(-token)                       <token>      npm token for uploading(specify when uploading)"
 	echo "    --force-publisher(-fp)                    <version>    specify publisher node major version(ex. 10/11/12)."
+	echo "    --force-not-publisher(-np)                             do not allow to publish any packages."
 	echo ""
 	echo "  Option for packagecloud.io:"
 	echo "    --use-packagecloudio-repo(-usepc)                      use packagecloud.io repository(default), exclusive -notpc option"
@@ -180,6 +182,7 @@ func_usage()
 	echo "    ENV_NODEJS_TYPE_VARS_FILE                 the file for custom variables                             ( same as option '--nodejstype-vars-file(-f)' )"
 	echo "    ENV_NPM_TOKEN                             the token for publishing to npm                           ( same as option '--npm-token(-token)' )"
 	echo "    ENV_FORCE_PUBLISHER                       nodejs major version to publish packages                  ( same as option '--force-publisher(-fp)' )"
+	echo "    ENV_FORCE_NOT_PUBLISHER                   do not allow to publish any packages                      ( same as option '--force-not-publisher(-np)' )"
 	echo "    ENV_USE_PACKAGECLOUD_REPO                 use packagecloud.io repository: true/false                ( same as option '--use-packagecloudio-repo(-usepc)' and '--not-use-packagecloudio-repo(-notpc)' )"
 	echo "    ENV_PACKAGECLOUD_OWNER                    owner name for uploading to packagecloud.io               ( same as option '--packagecloudio-owner(-pcowner)' )"
 	echo "    ENV_PACKAGECLOUD_DOWNLOAD_REPO            repository name of installing packages in packagecloud.io ( same as option '--packagecloudio-download-repo(-pcdlrepo)' )"
@@ -531,6 +534,7 @@ PRNTITLE "Start to check options and environments"
 OPT_NODEJS_TYPE=""
 OPT_NODEJS_TYPE_VARS_FILE=""
 OPT_FORCE_PUBLISHER=""
+OPT_FORCE_NOT_PUBLISHER=0
 OPT_USE_PACKAGECLOUD_REPO=
 OPT_PACKAGECLOUD_OWNER=""
 OPT_PACKAGECLOUD_DOWNLOAD_REPO=""
@@ -574,7 +578,7 @@ while [ $# -ne 0 ]; do
 
 	elif [ "$1" = "-fp" ] || [ "$1" = "-FP" ] || [ "$1" = "--force-publisher" ] || [ "$1" = "--FORCE-PUBLISHER" ]; then
 		if [ -n "${OPT_FORCE_PUBLISHER}" ]; then
-			PRNERR "already set \"--force-publisher(-fp)\" or \"--not-publish(-np)\" option."
+			PRNERR "already set \"--force-publisher(-fp)\" option."
 			exit 1
 		fi
 		shift
@@ -587,6 +591,13 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 		OPT_FORCE_PUBLISHER="$1"
+
+	elif [ "$1" = "-np" ] || [ "$1" = "-NP" ] || [ "$1" = "--force-not-publisher" ] || [ "$1" = "--FORCE-NOT-PUBLISHER" ]; then
+		if [ "${OPT_FORCE_NOT_PUBLISHER}" -ne 0 ]; then
+			PRNERR "already set \"--force-not-publisher(-np)\" option."
+			exit 1
+		fi
+		OPT_FORCE_NOT_PUBLISHER="$1"
 
 	elif [ "$1" = "-usepc" ] || [ "$1" = "-USEPC" ] || [ "$1" = "--use-packagecloudio-repo" ] || [ "$1" = "--USE-PACKAGECLOUDIO-REPO" ]; then
 		if [ -n "${OPT_USE_PACKAGECLOUD_REPO}" ]; then
@@ -678,6 +689,19 @@ elif [ -n "${ENV_FORCE_PUBLISHER}" ]; then
 		exit 1
 	fi
 	CI_FORCE_PUBLISHER="${ENV_FORCE_PUBLISHER}"
+fi
+
+if [ "${OPT_FORCE_NOT_PUBLISHER}" -ne 0 ]; then
+	CI_FORCE_NOT_PUBLISHER=1
+elif [ -n "${ENV_FORCE_NOT_PUBLISHER}" ]; then
+	if [ "${ENV_FORCE_NOT_PUBLISHER}" = "true" ] || [ "${ENV_FORCE_NOT_PUBLISHER}" -eq 1 ]; then
+		CI_FORCE_NOT_PUBLISHER=1
+	fi
+fi
+
+if [ -n "${CI_FORCE_PUBLISHER}" ] && [ "${CI_FORCE_NOT_PUBLISHER}" -ne 0 ]; then
+	PRNERR "\"FORCE_PUBLISHER\"(ENV or --force-publisher(-fp) option) and \"FORCE_NOT_PUBLISHER\"(ENV or --force-not-publisher(-np) option) cannot be specified together."
+	exit 1
 fi
 
 if [ -n "${OPT_USE_PACKAGECLOUD_REPO}" ]; then
@@ -793,13 +817,15 @@ PRNTITLE "Check whether to execute processes"
 #
 # Check whether to publish
 #
-if [ "${IS_PUBLISHER}" -eq 1 ] || { [ -n "${CI_FORCE_PUBLISHER}" ] && [ "${CI_FORCE_PUBLISHER}" = "${CI_NODEJS_MAJOR_VERSION}" ]; }; then
-	if [ -n "${CI_PUBLISH_TAG_NAME}" ]; then
-		if [ -z "${CI_NPM_TOKEN}" ]; then
-			PRNERR "Specified release tag for publish, but NPM token is not specified."
-			exit 1
+if [ "${CI_FORCE_NOT_PUBLISHER}" -eq 0 ]; then
+	if [ "${IS_PUBLISHER}" -eq 1 ] || { [ -n "${CI_FORCE_PUBLISHER}" ] && [ "${CI_FORCE_PUBLISHER}" = "${CI_NODEJS_MAJOR_VERSION}" ]; }; then
+		if [ -n "${CI_PUBLISH_TAG_NAME}" ]; then
+			if [ -z "${CI_NPM_TOKEN}" ]; then
+				PRNERR "Specified release tag for publish, but NPM token is not specified."
+				exit 1
+			fi
+			CI_DO_PUBLISH=1
 		fi
-		CI_DO_PUBLISH=1
 	fi
 fi
 
@@ -826,6 +852,7 @@ echo "  CI_PACKAGECLOUD_OWNER         = ${CI_PACKAGECLOUD_OWNER}"
 echo "  CI_PACKAGECLOUD_DOWNLOAD_REPO = ${CI_PACKAGECLOUD_DOWNLOAD_REPO}"
 echo "  CI_NPM_TOKEN                  = **********"
 echo "  CI_FORCE_PUBLISHER            = ${CI_FORCE_PUBLISHER}"
+echo "  CI_FORCE_NOT_PUBLISHER        = ${CI_FORCE_NOT_PUBLISHER}"
 echo "  CI_PUBLISH_TAG_NAME           = ${CI_PUBLISH_TAG_NAME}"
 echo "  CI_DO_PUBLISH                 = ${CI_DO_PUBLISH}"
 echo ""
