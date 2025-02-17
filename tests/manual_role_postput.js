@@ -42,27 +42,25 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function postV1Role(method, token, name, policies, alias)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	strbody		= '';
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'method':			method
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	strbody = '';
+	var	headers = {
+		'Content-Type':		'application/json',
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'method':			method
+	};
 
 	if(apiutil.compareCaseString('post', method)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
-		var	body	= {	'role':
-						{	'name':			name,
-							'policies':		policies,
-							'alias':		alias
-						}
-					  };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		var	body = {
+			'role': {
+				'name':		name,
+				'policies':	policies,
+				'alias':	alias
+			}
+		};
 
 		strbody						= JSON.stringify(body);
 		headers['Content-Length']	= strbody.length;
@@ -149,18 +147,17 @@ function postV1Role(method, token, name, policies, alias)
 
 function postV1RoleHost(method, is_user_token, token, name, target_host, port, cuk, extra, tag, inboundip, outboundip)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	strbody		= '';
-	var	_token		= (is_user_token ? ('U=' + token) : ('R=' + token));
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		_token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'method':			method
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	strbody = '';
+	var	_token = (is_user_token ? ('U=' + token) : ('R=' + token));
+	var	headers = {
+		'Content-Type':	'application/json',
+		'X-Auth-Token':	_token
+	};
+	var	options = {
+		'host':			hostname,
+		'port':			hostport,
+		'method':		method
+	};
 
 	if(apiutil.compareCaseString('post', method)){
 		var	host_info				= {};

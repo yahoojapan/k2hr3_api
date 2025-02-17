@@ -43,25 +43,24 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function getV1UserData(registerpath, is_gzip)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers;
 	if(is_gzip){
-		headers		= {
-						'Content-Type':		'application/octet-stream',
-						'User-Agent':		'Cloud-Init',
-						'Accept-Encoding':	'gzip'
-					   };
+		headers = {
+			'Content-Type':		'application/octet-stream',
+			'User-Agent':		'Cloud-Init',
+			'Accept-Encoding':	'gzip'
+		};
 	}else{
-		headers		= {
-						'Content-Type':		'application/octet-stream',
-						'User-Agent':		'Cloud-Init'
-					   };
+		headers = {
+			'Content-Type':		'application/octet-stream',
+			'User-Agent':		'Cloud-Init'
+		};
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'method':			'GET'
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'method':	'GET'
+	};
 
 	options.headers	= headers;
 	options.path	= '/v1/userdata/' + encodeURI(registerpath);

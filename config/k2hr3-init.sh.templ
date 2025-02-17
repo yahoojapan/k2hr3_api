@@ -154,7 +154,7 @@ check_os()
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_INSTALL_OPT="install -y"
-		PKGMGR_LIST_CMD="apt list --installed"
+		PKGMGR_LIST_CMD="apt-get list --installed"
 
 	elif echo "${ID}" | grep -q -i "debian"; then
 		IS_OS_DEBIAN=1
@@ -162,7 +162,7 @@ check_os()
 		PKGMGR_BIN="apt-get"
 		PKGMGR_UPDATE_OPT="update -y -qq"
 		PKGMGR_INSTALL_OPT="install -y"
-		PKGMGR_LIST_CMD="apt list --installed"
+		PKGMGR_LIST_CMD="apt-get list --installed"
 
 	elif echo "${ID}" | grep -q -i "alpine"; then
 		IS_OS_DEBIAN=0
@@ -585,17 +585,17 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break;
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--HELP" ] || [ "$1" = "--help" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		func_usage "${SCRIPTNAME}"
 		exit 0
 
-	elif [ "$1" = "-r" ] || [ "$1" = "-R" ] || [ "$1" = "--register" ] || [ "$1" = "--REGISTER" ]; then
+	elif echo "$1" | grep -q -i -e "^-r$" -e "^--register$"; then
 		if [ -n "${SCRIPTMODE}" ]; then
 			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
 		fi
 		SCRIPTMODE="r"
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--delete" ] || [ "$1" = "--DELETE" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--delete$"; then
 		if [ -n "${SCRIPTMODE}" ]; then
 			exit_err "Already set script mode(${SCRIPTMODE}), thus option($1) is not wrong."
 		fi

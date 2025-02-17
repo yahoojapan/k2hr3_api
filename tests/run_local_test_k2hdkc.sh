@@ -56,11 +56,11 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-k" ] || [ "$1" = "-K" ] || [ "$1" = "--key" ] || [ "$1" = "--KEY" ]; then
+	elif echo "$1" | grep -q -i -e "^-k$" -e "^--key$"; then
 		if [ -n "${KEY_SUFFIX}" ]; then
 			echo "[ERROR] already set --key(-k) option"
 			exit 1
@@ -72,14 +72,14 @@ while [ $# -ne 0 ]; do
 		fi
 		KEY_SUFFIX="_$1"
 
-	elif [ "$1" = "start" ] || [ "$1" = "START" ]; then
+	elif echo "$1" | grep -q -i "^start$"; then
 		if [ -n "${SCRIPT_MODE}" ]; then
 			echo "[ERROR] already specified start or stop"
 			exit 1
 		fi
 		SCRIPT_MODE="start"
 
-	elif [ "$1" = "stop" ] || [ "$1" = "STOP" ]; then
+	elif echo "$1" | grep -q -i "^stop$"; then
 		if [ -n "${SCRIPT_MODE}" ]; then
 			echo "[ERROR] already specified start or stop"
 			exit 1

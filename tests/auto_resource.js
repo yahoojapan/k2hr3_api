@@ -1111,20 +1111,18 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// Run Test(PUT - NEW SET - SUCCESS)
 	//
 	it('PUT /v1/resource : set all new resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_post_dummy_resource3';								// path:	yrn:yahoo:::tenant0:resource:autotest_post_dummy_resource3
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						foo:	'bar',
-						hoge:	'fuga'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_post_dummy_resource3';								// path:	yrn:yahoo:::tenant0:resource:autotest_post_dummy_resource3
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			foo:	'bar',
+			hoge:	'fuga'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1165,23 +1163,21 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set all new resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_post_dummy_resource4';								// path:	yrn:yahoo:::tenant0:resource:autotest_post_dummy_resource4
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_post_dummy_resource4';								// path:	yrn:yahoo:::tenant0:resource:autotest_post_dummy_resource4
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1225,20 +1221,18 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// Run Test(PUT - ALL SET - SUCCESS)
 	//
 	it('PUT /v1/resource : set all resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						foo:	'bar',
-						hoge:	'fuga'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			foo:	'bar',
+			hoge:	'fuga'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1279,18 +1273,16 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set all resource by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource/k2hr3_entest_obj_res_03';								// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -1331,16 +1323,14 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set all resource by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';	// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'orange',
-						fish:	'barracuda'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'orange',
+			fish:	'barracuda'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -1383,17 +1373,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// Run Test(PUT - A PART SET - SUCCESS)
 	//
 	it('PUT /v1/resource : set obj value resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '&type=object';														// type:	string
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-																						// keys:	not set
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '&type=object';														// type:	string
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		//																			// keys:	not set
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1480,17 +1468,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set keys resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-																						// type:	not set
-																						// data:	not set
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						foo:	'bar',
-						hoge:	'fuga'
-					});
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		//																			// type:	not set
+		//																			// data:	not set
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			foo:	'bar',
+			hoge:	'fuga'
+		});
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1531,17 +1517,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set aliases resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-																						// type:	not set
-																						// data:	not set
-																						// keys:	not set
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		//																			// type:	not set
+		//																			// data:	not set
+		//																			// keys:	not set
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1582,17 +1566,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set obj value resource by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-																						// keys:	not set
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		//																			// keys:	not set
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1690,17 +1672,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set keys resource by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-																						// type:	not set
-																						// data:	not set
-		uri		+= '?keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		//																			// type:	not set
+		//																			// data:	not set
+		uri	+= '?keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1741,18 +1721,16 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set obj value resource by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-																						// keys:	not set
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		//																			// keys:	not set
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1838,18 +1816,16 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : set keys resource by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
-																						// type:	not set
-																						// data:	not set
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'orange',
-						fish:	'barracuda'
-					});
-																						// alias:	not set
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
+		//																			// type:	not set
+		//																			// data:	not set
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'orange',
+			fish:	'barracuda'
+		});
+		//																			// alias:	not set
 
 		chai.request(app)
 			.put(uri)
@@ -1892,20 +1868,18 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// Run Test(PUT - FAILURE)
 	//
 	it('PUT /v1/resource : failure set all resource by invalid scoped token with status 401', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						foo:	'bar',
-						hoge:	'fuga'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=k2hr3_entest_obj_res_03';										// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			foo:	'bar',
+			hoge:	'fuga'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1923,20 +1897,18 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set invalid resource by scoped token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?wrong_name=k2hr3_entest_obj_res_03';								// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						foo:	'bar',
-						hoge:	'fuga'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?wrong_name=k2hr3_entest_obj_res_03';								// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			foo:	'bar',
+			hoge:	'fuga'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1954,19 +1926,17 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set all resource by invalid role token with status 401', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -1984,19 +1954,17 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set all resource by not allowed role token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -2014,23 +1982,21 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set alias resource by role token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify({											// data:	dummy object value
-						autotest_post_obj_key1:	'autotest_post_obj_val1',
-						autotest_post_obj_key2:	'autotest_post_obj_val2'
-					});
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'apple',
-						fish:	'tuna'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify({											// data:	dummy object value
+			autotest_post_obj_key1:	'autotest_post_obj_val1',
+			autotest_post_obj_key2:	'autotest_post_obj_val2'
+		});
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'apple',
+			fish:	'tuna'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -2048,17 +2014,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set all resource by no token(not allowed 127.0.0.1) with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03 (127.0.0.1 is not this role member)
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'orange',
-						fish:	'barracuda'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_03 (127.0.0.1 is not this role member)
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'orange',
+			fish:	'barracuda'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -2075,17 +2039,15 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set invalid resource yrn path by no token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/k2hr3_entest_obj_res_03';											// path:	not yrn full path
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'orange',
-						fish:	'barracuda'
-					});
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/k2hr3_entest_obj_res_03';											// path:	not yrn full path
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'orange',
+			fish:	'barracuda'
+		});
 
 		chai.request(app)
 			.put(uri)
@@ -2102,21 +2064,19 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/resource : failure set alias resource by no token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
-		uri		+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
-						fruits:	'orange',
-						fish:	'barracuda'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03';				// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
+		uri	+= '?role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03';			// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_03 (this role can access to k2hr3_entest_obj_res_03)
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_post:string:value');				// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	2 dummy objects
+			fruits:	'orange',
+			fish:	'barracuda'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	2 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_post_dummy_alias4'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -2134,7 +2094,6 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 
 	it('POST(DATA RESTORE) /v1/resource : set all resource by scoped token with status 201', function(done){	// eslint-disable-line no-undef
 		chai.request(app)
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			.post('/v1/resource')
 			.set('content-type', 'application/json')
 			.set('x-auth-token', alltokens.scopedtoken.tenant0)							// tenant0
@@ -2143,22 +2102,21 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 					name:	'k2hr3_entest_obj_res_03',									// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_03
 					type:	'object',													// type:	object
 					data: {																// data:	object
-						k2hr3_entest_obj_res_03_value_key:	'k2hr3_entest_obj_res_03_value_val'
+						k2hr3_entest_obj_res_03_value_key: 'k2hr3_entest_obj_res_03_value_val'
 					},
 					keys: {																// keys:	3 keys
-						k2hr3_entest_obj_res_03_keys_key:	'k2hr3_entest_obj_res_03_keys_val',
-						k2hr3_entest_obj_res_03_keys_arr:	[
-																'k2hr3_entest_obj_res_03_keys_arr_val00',
-																'k2hr3_entest_obj_res_03_keys_arr_val01'
-															],
-						k2hr3_entest_obj_res_03_keys_obj:	{
-																k2hr3_entest_obj_res_03_keys_obj_key00:	'k2hr3_entest_obj_res_03_keys_obj_val00',
-																k2hr3_entest_obj_res_03_keys_obj_key01:	'k2hr3_entest_obj_res_03_keys_obj_val01'
-															}
+						k2hr3_entest_obj_res_03_keys_key: 'k2hr3_entest_obj_res_03_keys_val',
+						k2hr3_entest_obj_res_03_keys_arr: [
+							'k2hr3_entest_obj_res_03_keys_arr_val00',
+							'k2hr3_entest_obj_res_03_keys_arr_val01'
+						],
+						k2hr3_entest_obj_res_03_keys_obj: {
+							k2hr3_entest_obj_res_03_keys_obj_key00:	'k2hr3_entest_obj_res_03_keys_obj_val00',
+							k2hr3_entest_obj_res_03_keys_obj_key01:	'k2hr3_entest_obj_res_03_keys_obj_val01'
+						}
 					},
 					alias:	[]															// alias:	n/a
 				}
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
 			})
 			.end(function(err, res){
 				expect(res).to.have.status(201);
@@ -3900,7 +3858,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
 		uri		+= '?type=string';																		// type:	string
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -3923,7 +3881,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_key';											// keyname:	k2hr3_entest_str_res_03_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -3946,7 +3904,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_arr';											// keyname:	k2hr3_entest_str_res_03_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -3971,7 +3929,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_obj';											// keyname:	k2hr3_entest_str_res_03_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -3994,7 +3952,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_key';											// keyname:	k2hr3_entest_str_res_01_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4017,7 +3975,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_arr';											// keyname:	k2hr3_entest_str_res_01_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4042,7 +4000,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_obj';											// keyname:	k2hr3_entest_str_res_01_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4065,7 +4023,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4088,7 +4046,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4113,7 +4071,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4414,7 +4372,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
 		uri		+= '?type=string';																		// type:	string
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4436,7 +4394,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
 		uri		+= '?type=object';																		// type:	object
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4459,7 +4417,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_key';											// keyname:	k2hr3_entest_obj_res_01_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4482,7 +4440,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_arr';											// keyname:	k2hr3_entest_obj_res_01_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4507,7 +4465,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_obj';											// keyname:	k2hr3_entest_obj_res_01_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4530,7 +4488,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4553,7 +4511,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4578,7 +4536,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4601,7 +4559,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_key';											// keyname:	k2hr3_entest_str_res_03_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4624,7 +4582,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_arr';											// keyname:	k2hr3_entest_str_res_03_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -4649,7 +4607,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_obj';											// keyname:	k2hr3_entest_str_res_03_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -5016,7 +4974,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
 		uri		+= '?type=object';																		// type:	object
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -5038,7 +4996,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		//																								// keyname:	not set
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -5060,7 +5018,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=not_exist_keyname';														// keyname:	not exist key name
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -5212,7 +5170,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		//																								// keyname:	not set
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -5234,7 +5192,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=not_exist_keyname';														// keyname:	not exist key name
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.get(uri)
@@ -7047,7 +7005,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
 		uri		+= '?type=string';																		// type:	string
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7065,7 +7023,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_key';											// keyname:	k2hr3_entest_str_res_03_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7083,7 +7041,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_arr';											// keyname:	k2hr3_entest_str_res_03_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7101,7 +7059,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_obj';											// keyname:	k2hr3_entest_str_res_03_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7119,7 +7077,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_key';											// keyname:	k2hr3_entest_str_res_01_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7137,7 +7095,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_arr';											// keyname:	k2hr3_entest_str_res_01_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7155,7 +7113,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01_keys_obj';											// keyname:	k2hr3_entest_str_res_01_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7173,7 +7131,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7191,7 +7149,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7209,7 +7167,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj';					// keyname:	k2hr3_entest_str_res_01/k2hr3_entest_str_res_02_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7439,7 +7397,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
 		uri		+= '?type=string';																		// type:	string
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7456,7 +7414,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02
 		uri		+= '?type=object';																		// type:	object
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7474,7 +7432,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_key';											// keyname:	k2hr3_entest_obj_res_01_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7492,7 +7450,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_arr';											// keyname:	k2hr3_entest_obj_res_01_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7510,7 +7468,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01_keys_obj';											// keyname:	k2hr3_entest_obj_res_01_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7528,7 +7486,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7546,7 +7504,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7564,7 +7522,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj';					// keyname:	k2hr3_entest_obj_res_01/k2hr3_entest_obj_res_02_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7582,7 +7540,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_key';											// keyname:	k2hr3_entest_str_res_03_keys_key
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7600,7 +7558,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_arr';											// keyname:	k2hr3_entest_str_res_03_keys_arr
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7618,7 +7576,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=k2hr3_entest_str_res_03_keys_obj';											// keyname:	k2hr3_entest_str_res_03_keys_obj
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7906,7 +7864,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02';		// path:	yrn:yahoo:::tenant0:resource:k2hr3_entest_str_res_01/k2hr3_entest_str_res_02
 		uri		+= '?type=object';																		// type:	object
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7924,7 +7882,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		//																								// keyname:	not set
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -7942,7 +7900,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=not_exist_keyname';														// keyname:	not exist key name
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_str_role_01/k2hr3_entest_str_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -8066,7 +8024,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		//																								// keyname:	not set
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -8084,7 +8042,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '?type=keys';																		// type:	keys
 		uri		+= '&keyname=not_exist_keyname';														// keyname:	not exist key name
 		uri		+= '&role=yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02';	// role:	yrn:yahoo:::tenant0:role:k2hr3_entest_obj_role_01/k2hr3_entest_obj_role_02
-		//				//																				// service:	not set
+		//																								// service:	not set
 
 		chai.request(app)
 			.head(uri)
@@ -8746,26 +8704,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// Run Test(DELETE - SUCCESS - scoped token)
 	//
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_scopedtoken_1) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_scopedtoken_1';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_1
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_scopedtoken_1';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_1
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -8783,26 +8739,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_scopedtoken_2) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_scopedtoken_2';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_2
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_scopedtoken_2';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_2
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -8820,26 +8774,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_scopedtoken_3) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_scopedtoken_3';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_3
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_scopedtoken_3';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_3
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -8861,6 +8813,7 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 		uri		+= '/autotest_del_scopedtoken_1';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_1
 		uri		+= '?type=object';														// type:	object
 		//																				// keynames:not set
+		//																				// aliases:	not set
 		//																				// aliases:	not set
 
 		chai.request(app)
@@ -9341,16 +9294,14 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('DELETE /v1/resource : delete aliases(autotest_delete_alias2, autotest_delete_alias3) resource(autotest_del_scopedtoken_1) by scoped token with status 204', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '/autotest_del_scopedtoken_1';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_1
-		uri		+= '?type=aliases';														// type:	aliases
-																						// keynames:not set
-		uri		+= '&aliases=' + JSON.stringify([										// aliases:	[yrn:yahoo:::tenant0:resource:autotest_delete_alias2, yrn:yahoo:::tenant0:resource:autotest_delete_alias3]
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '/autotest_del_scopedtoken_1';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_scopedtoken_1
+		uri	+= '?type=aliases';														// type:	aliases
+		//																			// keynames:not set
+		uri	+= '&aliases=' + JSON.stringify([										// aliases:	[yrn:yahoo:::tenant0:resource:autotest_delete_alias2, yrn:yahoo:::tenant0:resource:autotest_delete_alias3]
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3'
+		]);
 
 		chai.request(app)
 			.delete(uri)
@@ -9604,26 +9555,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// And add yrn:yahoo:::tenant0:policy:autotest_del_roletoken test policy.
 	//
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_roletoken_1) by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_roletoken_1';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_1
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_roletoken_1';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_1
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -9641,26 +9590,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_roletoken_2) by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_roletoken_2';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_2
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_roletoken_2';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_2
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -9678,26 +9625,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_roletoken_3) by role token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_roletoken_3';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_3
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_roletoken_3';									// path:	yrn:yahoo:::tenant0:resource:autotest_del_roletoken_3
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -10298,26 +10243,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	// And add yrn:yahoo:::tenant0:policy:autotest_del_roletoken test policy.
 	//
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_notoken_1) by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_notoken_1';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_1
-		uri		+= '&type=string';														// type:	string
-		uri		+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_notoken_1';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_1
+		uri	+= '&type=string';														// type:	string
+		uri	+= '&data=' + JSON.stringify('autotest_delete:string:value1');			// data:	dummy string
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -10335,26 +10278,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_notoken_2) by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_notoken_2';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_2
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_notoken_2';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_2
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value2']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -10372,26 +10313,24 @@ describe('API : RESOURCE', function(){					// eslint-disable-line no-undef
 	});
 
 	it('PUT(ADD RESOURCE FOR DELETE TEST) /v1/resource : set all new resource(autotest_del_notoken_3) by no token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/resource';
-		uri		+= '?name=autotest_del_notoken_3';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_3
-		uri		+= '&type=object';														// type:	object
-		uri		+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
-		uri		+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
-						key1:	'val1',
-						key2:	'val2',
-						key3:	'val3',
-						key4:	'val4',
-						key5:	'val5'
-					});
-		uri		+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
-						'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_notoken_3';										// path:	yrn:yahoo:::tenant0:resource:autotest_del_notoken_3
+		uri	+= '&type=object';														// type:	object
+		uri	+= '&data=' + JSON.stringify(['autotest_delete:string:value3']);		// data:	dummy array
+		uri	+= '&keys=' + JSON.stringify({											// keys:	5 dummy objects
+			key1:	'val1',
+			key2:	'val2',
+			key3:	'val3',
+			key4:	'val4',
+			key5:	'val5'
+		});
+		uri	+= '&alias=' + JSON.stringify([											// alias:	5 dummy resource paths
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias1',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias2',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias3',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias4',
+			'yrn:yahoo:::tenant0:resource:autotest_delete_alias5'
+		]);
 
 		chai.request(app)
 			.put(uri)

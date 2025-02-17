@@ -62,16 +62,15 @@ function rawGetV1Acr(token, service, inputdata)
 		urlarg = encodeURI(urlarg);
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json'
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/acr/' + service + urlarg,
-						'method':			'GET'
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json'
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/acr/' + service + urlarg,
+		'method':			'GET'
+	};
 
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token']	= token;

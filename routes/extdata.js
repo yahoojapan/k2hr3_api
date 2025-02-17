@@ -60,12 +60,10 @@ router.get('/', function(req, res, next)
 		!apiutil.isSafeEntity(req.baseUrl)	||
 		!apiutil.isSafeEntity(req.headers)	)							// Must User-Agent in header
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -80,12 +78,10 @@ router.get('/', function(req, res, next)
 		// 'User-Agent' Must be existed
 		r3logger.elog('GET request does not have User-Agent header');
 
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request does not have User-Agent header'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request does not have User-Agent header'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -122,12 +118,10 @@ router.get('/', function(req, res, next)
 	var	requestptn	= new RegExp('^/v1/extdata/(.*)/(.*)');				// regex = /^\/v1\/extdata\/(.*)\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 3 || '' === apiutil.getSafeString(reqmatchs[1]) || '' === apiutil.getSafeString(reqmatchs[2])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have extdata path parameter'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have extdata path parameter'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -140,12 +134,10 @@ router.get('/', function(req, res, next)
 	var	suburi		= apiutil.getSafeString(reqmatchs[1]);
 	var	roleinfo	= extdataproc.decryptRoleInfo(reqmatchs[2]);
 	if(!extdataproc.checkSuburi(suburi)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request URL path(' + suburi + ') does not exist'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request URL path(' + suburi + ') does not exist'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -153,12 +145,10 @@ router.get('/', function(req, res, next)
 		return;
 	}
 	if(!extdataproc.checkUserAgent(userAgent, suburi)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request is not allowed from your client'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request is not allowed from your client'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -166,12 +156,10 @@ router.get('/', function(req, res, next)
 		return;
 	}
 	if(!apiutil.isSafeEntity(roleinfo)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET /extdata/' + suburi + '/<path> is invalid'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET /extdata/' + suburi + '/<path> is invalid'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -188,12 +176,10 @@ router.get('/', function(req, res, next)
 		// Gzip
 		responsebody = extdataproc.getGzipExtdata(roleinfo, suburi);
 		if(null == responsebody){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not make gzip response'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not make gzip response'
+			};
 
 			r3logger.elog(result.message);
 			res.type('application/json; charset=utf-8');
@@ -214,12 +200,10 @@ router.get('/', function(req, res, next)
 		// Text
 		responsebody = extdataproc.getExtdata(roleinfo, suburi);
 		if(null == responsebody){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not make response'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not make response'
+			};
 
 			r3logger.elog(result.message);
 			res.type('application/json; charset=utf-8');

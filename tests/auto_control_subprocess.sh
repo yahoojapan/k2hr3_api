@@ -64,25 +64,25 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-str" ] || [ "$1" = "-STR" ] || [ "$1" = "--start" ] || [ "$1" = "--START" ]; then
+	elif echo "$1" | grep -q -i -e "^-str$" -e "^--start$"; then
 		if [ -n "${EXEC_MODE}" ]; then
 			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
 		EXEC_MODE="start"
 
-	elif [ "$1" = "-stp" ] || [ "$1" = "-STP" ] || [ "$1" = "--stop" ] || [ "$1" = "--STOP" ]; then
+	elif echo "$1" | grep -q -i -e "^-stp$" -e "^--stop$"; then
 		if [ -n "${EXEC_MODE}" ]; then
 			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
 		EXEC_MODE="stop"
 
-	elif [ "$1" = "-k" ] || [ "$1" = "-K" ] || [ "$1" = "--key" ] || [ "$1" = "--KEY" ]; then
+	elif echo "$1" | grep -q -i -e "^-k$" -e "^--key$"; then
 		if [ -n "${PID_FILENAME_EXT_PART}" ]; then
 			echo "[ERROR] Already --key(-k) option is specified."
 			exit 1
@@ -94,7 +94,7 @@ while [ $# -ne 0 ]; do
 		fi
 		PID_FILENAME_EXT_PART="_$1"
 
-	elif [ "$1" = "-i" ] || [ "$1" = "-I" ] || [ "$1" = "-int" ] || [ "$1" = "-INT" ] || [ "$1" = "--interval" ] || [ "$1" = "--INTERVAL" ]; then
+	elif echo "$1" | grep -q -i -e "^-i$" -e "^-int$" -e "^--interval$"; then
 		if [ "${RUN_INTERVAL}" -ne 0 ]; then
 			echo "[ERROR] Already --interval(-i) option is specified."
 			exit 1
@@ -174,7 +174,7 @@ if [ "${EXEC_MODE}" = "start" ]; then
 	fi
 
 	# shellcheck disable=SC2009
-	if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
+	if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
 		echo "[ERROR] Could not start child process : ${CHILD_PROCESS_CMD}"
 		exit 1
 	fi
@@ -191,7 +191,7 @@ else
 		CHILD_PROCESS_PID="$(tr -d '\n' < "${CHILD_PROCESS_PIDFILE}")"
 
 		# shellcheck disable=SC2009
-		if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
+		if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
 			#
 			# Try stop
 			#
@@ -203,7 +203,7 @@ else
 			fi
 
 			# shellcheck disable=SC2009
-			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
+			if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
 				#
 				# Retry stop
 				#
@@ -215,7 +215,7 @@ else
 				fi
 
 				# shellcheck disable=SC2009
-				if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${CHILD_PROCESS_PID}"; then
+				if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
 					echo "[ERROR] Could not stop process : ${CHILD_PROCESS_NAME}"
 					exit 1
 				fi

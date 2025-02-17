@@ -59,11 +59,11 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--debuglevel$"; then
 		if [ -n "${DEBUG_OPTION}" ]; then
 			echo "[ERROR] already specified --debuglevel(-d) option"
 			exit 1
@@ -74,12 +74,12 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 
-		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			DEBUG_ENV_DBG=1
 		fi
 		DEBUG_OPTION="-d $1"
 
-	elif [ "$1" = "-a" ] || [ "$1" = "-A" ] || [ "$1" = "--async" ] || [ "$1" = "--ASYNC" ]; then
+	elif echo "$1" | grep -q -i -e "^-a$" -e "^--async$"; then
 		if [ -n "${ASYNC_OPTION}" ]; then
 			echo "[ERROR] already specified --async(-a) option"
 			exit 1

@@ -47,19 +47,17 @@ function rawDeleteV1Service(token, service, tenant)
 		basepath	+= '?tenant=' + encodeURI(tenant);
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		'U=' + token
-					  };
-	var	options		= {
-						'host':				hostname,
-						'port':				hostport,
-						'path': 			basepath,
-						'method':			'DELETE',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':	'application/json',
+		'X-Auth-Token':	'U=' + token
+	};
+	var	options = {
+		'host':			hostname,
+		'port':			hostport,
+		'path': 		basepath,
+		'method':		'DELETE',
+		'headers':		headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

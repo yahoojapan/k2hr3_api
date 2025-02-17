@@ -110,12 +110,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST request is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST request is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -143,12 +141,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 		if(	!apiutil.isSafeEntity(req.body)			||
 			!apiutil.isSafeString(req.body.tenant)	)
 		{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Specified unscoped user token, but there is not tenant in body data.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Specified unscoped user token, but there is not tenant in body data.'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -157,12 +153,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 		// get user's tenant list
 		var	tenant_list = r3token.getTenantList(token_info.user);
 		if(null === tenant_list || apiutil.isEmptyArray(tenant_list)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
-					  };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -170,12 +164,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 
 		// check tenant
 		if(!r3token.checkTenantInTenantList(tenant_list, req.body.tenant.toLowerCase())){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'user (' + token_info.user + ') is not member of tenant(' + req.body.tenant + ').'
-					  };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'user (' + token_info.user + ') is not member of tenant(' + req.body.tenant + ').'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -190,12 +182,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 			apiutil.isSafeString(req.body.tenant)	)
 		{
 			if(!apiutil.compareCaseString(token_info.tenant, req.body.tenant)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'Specified scoped user token and tenant in body data, but these are not same tenant name.'
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'Specified scoped user token and tenant in body data, but these are not same tenant name.'
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 				return;
@@ -210,12 +200,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 	var	requestptn	= new RegExp('^/v1/acr/(.*)');						// regex = /^\/v1\/acr\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -262,12 +250,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -295,12 +281,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 		if(	!apiutil.isSafeEntity(req.query)			||
 			!apiutil.isSafeString(req.query.tenant)	)
 		{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Specified unscoped user token, but there is not tenant in argument.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Specified unscoped user token, but there is not tenant in argument.'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -309,12 +293,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 		// get user's tenant list
 		var	tenant_list = r3token.getTenantList(token_info.user);
 		if(null === tenant_list || apiutil.isEmptyArray(tenant_list)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
-					  };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'token(' + token_result.token + ') for user (' + token_info.user + ') does not have any tenant.'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -322,12 +304,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 
 		// check tenant
 		if(!r3token.checkTenantInTenantList(tenant_list, req.query.tenant.toLowerCase())){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'user (' + token_info.user + ') is not member of tenant(' + req.query.tenant + ').'
-					  };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'user (' + token_info.user + ') is not member of tenant(' + req.query.tenant + ').'
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
 			return;
@@ -342,12 +322,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 			apiutil.isSafeString(req.body.tenant)	)
 		{
 			if(!apiutil.compareCaseString(token_info.tenant, req.body.tenant)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'Specified scoped user token and tenant in body data, but these are not same tenant name.'
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'Specified scoped user token and tenant in body data, but these are not same tenant name.'
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 				return;
@@ -362,12 +340,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 	var	requestptn	= new RegExp('^/v1/acr/(.*)');						// regex = /^\/v1\/acr\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -404,12 +380,10 @@ function rawGetServiceTenantNames(req, res)
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -440,12 +414,10 @@ function rawGetServiceTenantNames(req, res)
 	var	requestptn	= new RegExp('^/v1/acr/(.*)');						// regex = /^\/v1\/acr\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -459,12 +431,10 @@ function rawGetServiceTenantNames(req, res)
 	result = k2hr3.checkTenantInService(servicename, token_info.tenant);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get service data from checkTenantInService'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get service data from checkTenantInService'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -516,12 +486,10 @@ function rawGetServiceTenantResources(req, res)
 		!apiutil.isSafeString(req.query.crole)	||
 		!apiutil.isSafeString(req.query.srole)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or parameters are wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or parameters are wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -546,12 +514,10 @@ function rawGetServiceTenantResources(req, res)
 	var	requestptn	= new RegExp('^/v1/acr/(.*)');						// regex = /^\/v1\/acr\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -565,12 +531,10 @@ function rawGetServiceTenantResources(req, res)
 	result = k2hr3.getServiceTenantResources(servicename, sip, sport, scuk, req.query.srole, req.query.cip, cport, ccuk, req.query.crole);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get ACR resources from getServiceTenantResources'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get ACR resources from getServiceTenantResources'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -681,12 +645,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'DELETE request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'DELETE request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400);								// 400: Bad Request
@@ -708,12 +670,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	if(	!apiutil.isSafeString(token_result.token_info.tenant)	||
 		!apiutil.isSafeString(token_result.token_info.user)		)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'specified wrong token or it is not scoped user token'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'specified wrong token or it is not scoped user token'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -728,12 +688,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	var	requestptn	= new RegExp('^/v1/acr/(.*)');						// regex = /^\/v1\/acr\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'DELETE request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'DELETE request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -747,12 +705,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	result = k2hr3.removeServiceTenant(user, tenantname, servicename);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from removeServiceTenant'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from removeServiceTenant'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;

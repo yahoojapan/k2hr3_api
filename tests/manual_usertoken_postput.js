@@ -42,16 +42,15 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function postV1UserTokens(method, token, othertoken, user, passwd, tenant)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json'
-					   };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'method':			method
-					  };
-	var	strbody		= '';
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json'
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'method':			method
+	};
+	var	strbody = '';
 
 	// set token if exists
 	var	is_user_cred_type = true;
@@ -66,26 +65,24 @@ function postV1UserTokens(method, token, othertoken, user, passwd, tenant)
 	if(apiutil.compareCaseString('post', method)){
 		// case for POST
 
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	body;
 		if(is_user_cred_type){
-			body	= {
-						'auth': {
-							'tenantName':	apiutil.isSafeString(tenant) ? tenant : '',
-							'passwordCredentials':	{
-								'username':	user,
-								'password':	passwd
-							}
-						}
-					  };
+			body = {
+				'auth': {
+					'tenantName':	apiutil.isSafeString(tenant) ? tenant : '',
+					'passwordCredentials':	{
+						'username':	user,
+						'password':	passwd
+					}
+				}
+			};
 		}else{
-			body	= {
-						'auth': {
-							'tenantName':	apiutil.isSafeString(tenant) ? tenant : ''
-						}
-					  };
+			body = {
+				'auth': {
+					'tenantName':	apiutil.isSafeString(tenant) ? tenant : ''
+				}
+			};
 		}
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
 		strbody						= JSON.stringify(body);
 		headers['Content-Length']	= strbody.length;

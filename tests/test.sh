@@ -122,32 +122,32 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-prod" ] || [ "$1" = "-PROD" ] || [ "$1" = "--production" ] || [ "$1" = "--PRODUCTION" ]; then
+	elif echo "$1" | grep -q -i -e "^-prod$" -e "^--production$"; then
 		if [ -n "${NODE_ENV_VALUE}" ]; then
 			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
 			exit 1
 		fi
 		NODE_ENV_VALUE="production"
 
-	elif [ "$1" = "-dev" ] || [ "$1" = "-DEV" ] || [ "$1" = "--development" ] || [ "$1" = "--DEVELOPMENT" ]; then
+	elif echo "$1" | grep -q -i -e "^-dev$" -e "^--development$"; then
 		if [ "${NODE_ENV_VALUE}" != "" ]; then
 			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
 			exit 1
 		fi
 		NODE_ENV_VALUE="development"
 
-	elif [ "$1" = "-l" ] || [ "$1" = "-L" ] || [ "$1" = "--logger" ] || [ "$1" = "--LOGGER" ]; then
+	elif echo "$1" | grep -q -i -e "^-l$" -e "^--logger$"; then
 		if [ "${IS_LOGGING}" -eq 1 ]; then
 			echo "[ERROR] Already --logger(-l) option is set"
 			exit 1
 		fi
 		IS_LOGGING=1
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--debuglevel$"; then
 		#
 		# DEBUG option
 		#
@@ -156,25 +156,25 @@ while [ $# -ne 0 ]; do
 			echo "[ERROR] --debuglevel(-d) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
-		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
-		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
-		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
-		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
@@ -190,7 +190,7 @@ while [ $# -ne 0 ]; do
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
 
-	elif [ "$1" = "-t" ] || [ "$1" = "-T" ] || [ "$1" = "--timeout" ] || [ "$1" = "--TIMEOUT" ]; then
+	elif echo "$1" | grep -q -i -e "^-t$" -e "^--timeout$"; then
 		#
 		# timeout option
 		#
@@ -281,9 +281,9 @@ else
 		# Nothing to do for default
 		#
 		:
-	elif [ "${NODE_LOGGER}" = "yes" ] || [ "${NODE_LOGGER}" = "YES" ]; then
+	elif echo "${NODE_LOGGER}" | grep -q -i -e "^y$" -e "^yes$"; then
 		NODE_LOGGER=""
-	elif [ "${NODE_LOGGER}" = "no" ] || [ "${NODE_LOGGER}" = "NO" ]; then
+	elif echo "${NODE_LOGGER}" | grep -q -i -e "^n$" -e "^no$"; then
 		NODE_LOGGER="no"
 	else
 		echo "[WARNING] NODE_LOGGER environment has wrong value(${NODE_LOGGER}), then do logging(default)"

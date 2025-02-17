@@ -41,13 +41,11 @@ function rawGetChildrenList(req, expand)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.baseUrl) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET/HEAD request or url is wrong',
-					status:		400										// 400: Bad Request
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET/HEAD request or url is wrong',
+			status:		400										// 400: Bad Request
+		};
 		return result;
 	}
 
@@ -67,13 +65,11 @@ function rawGetChildrenList(req, expand)
 	var	requestptn	= new RegExp('^/v1/list/(.*)');						// regex = /^\/v1\/list\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET/HEAD request url does not have list type{role, resource, policy}',
-					status:		400										// 400: Bad Request
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET/HEAD request url does not have list type{role, resource, policy}',
+			status:		400										// 400: Bad Request
+		};
 		return result;
 	}
 
@@ -124,24 +120,20 @@ function rawGetChildrenList(req, expand)
 			_type	= keys.TYPE_POLICY;
 			_path	= _thirdpath;										// should be empty
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET/HEAD request url has wrong list type, it must be "service/role" or "service/resource" or "service/policy"',
-						status:		400									// 400: Bad Request
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET/HEAD request url has wrong list type, it must be "service/role" or "service/resource" or "service/policy"',
+				status:		400									// 400: Bad Request
+			};
 			return result;
 		}
 
 	}else{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET/HEAD request url has wrong list type, it must be "role" or "resource" or "policy" or "service"',
-					status:		400										// 400: Bad Request
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET/HEAD request url has wrong list type, it must be "role" or "resource" or "policy" or "service"',
+			status:		400										// 400: Bad Request
+		};
 		return result;
 	}
 
@@ -159,13 +151,11 @@ function rawGetChildrenList(req, expand)
 		}else if(apiutil.compareCaseString(keys.VALUE_FALSE, req.query.expand)){
 			is_expand = false;
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET/HEAD expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.',
-						status:		400									// 400: Bad Request
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET/HEAD expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.',
+				status:		400									// 400: Bad Request
+			};
 			return result;
 		}
 	}
@@ -176,13 +166,11 @@ function rawGetChildrenList(req, expand)
 	result = k2hr3.getChildrenList(token_info.tenant, _service, _type, _path, is_expand);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from getChildrenList',
-						status:		400									// 400: Bad Request
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from getChildrenList',
+				status:		400									// 400: Bad Request
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;

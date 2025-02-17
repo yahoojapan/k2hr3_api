@@ -1082,16 +1082,14 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	// Run Test(PUT - NEW SET - SUCCESS/FAILURE)
 	//
 	it('PUT /v1/role : set all new role(autotest_put_dummy_role1) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_put_dummy_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role1
-		uri		+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_put_dummy_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role1
+		uri	+= '&policies=' + JSON.stringify([
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'				// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+		]);
+		uri	+= '&alias=' + JSON.stringify([
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'					// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1130,16 +1128,14 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : failure(no token) set all new role(autotest_post_error_role1) by scoped token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
-		uri		+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
+		uri	+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
+		]);
+		uri	+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1156,16 +1152,14 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : failure(invalid user token) set all new role(autotest_post_error_role1) by scoped token with status 401', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
-		uri		+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
+		uri	+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
+		]);
+		uri	+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1183,16 +1177,14 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : failure(invalid role token) set all new role(autotest_post_error_role1) by scoped token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
-		uri		+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_post_error_role1';									// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
+		uri	+= '&policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
+		]);
+		uri	+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1210,15 +1202,13 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : failure set all new role(no role name) by scoped token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?policies=' + JSON.stringify([										// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
+		]);
+		uri	+= '&alias=' + JSON.stringify([											// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -1236,16 +1226,14 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : failure(no data) set all new role(autotest_post_error_role1) by scoped token with status 400', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?wrong_name=autotest_post_error_role1';								// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
-		uri		+= '&wrong_policies=' + JSON.stringify([								// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
-						'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
-					]);
-		uri		+= '&wrong_alias=' + JSON.stringify([									// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
-						'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
-					]);
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?wrong_name=autotest_post_error_role1';								// path:		yrn:yahoo:::tenant0:role:autotest_post_error_role1
+		uri	+= '&wrong_policies=' + JSON.stringify([								// policies:	yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03
+			'yrn:yahoo:::tenant0:policy:k2hr3_entest_obj_pol_03'
+		]);
+		uri	+= '&wrong_alias=' + JSON.stringify([									// alias:		yrn:yahoo:::tenant0:role:autotest_put_dummy_role2(not exist)
+			'yrn:yahoo:::tenant0:role:autotest_put_dummy_role2'
+		]);
 
 		chai.request(app)
 			.put(uri)
@@ -3078,7 +3066,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_post_dummy_role1 = res.body.token;		// eslint-disable-line no-unused-vars
+				ip_roletoken_tenant0_autotest_post_dummy_role1 = res.body.token;
 
 				done();
 			});
@@ -3100,7 +3088,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_post_dummy_role3 = res.body.token;		// eslint-disable-line no-unused-vars
+				ip_roletoken_tenant0_autotest_post_dummy_role3 = res.body.token;
 
 				done();
 			});
@@ -3122,7 +3110,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_put_dummy_role1 = res.body.token;			// eslint-disable-line no-unused-vars
+				ip_roletoken_tenant0_autotest_put_dummy_role1 = res.body.token;
 
 				done();
 			});
@@ -3144,7 +3132,7 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 				expect(res.body.token).to.be.an('string').to.not.empty;
 				expect(res.body.registerpath).to.be.an('string').to.not.empty;
 
-				ip_roletoken_tenant0_autotest_put_dummy_role4 = res.body.token;			// eslint-disable-line no-unused-vars
+				ip_roletoken_tenant0_autotest_put_dummy_role4 = res.body.token;
 
 				done();
 			});
@@ -4717,28 +4705,28 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_post_dummy_role1 = result.token;							// eslint-disable-line no-unused-vars
+		user_roletoken_tenant0_autotest_post_dummy_role1 = result.token;
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_post_dummy_role3
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_post_dummy_role3', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_post_dummy_role3 = result.token;							// eslint-disable-line no-unused-vars
+		user_roletoken_tenant0_autotest_post_dummy_role3 = result.token;
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_put_dummy_role1
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_put_dummy_role1', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_put_dummy_role1 = result.token;								// eslint-disable-line no-unused-vars
+		user_roletoken_tenant0_autotest_put_dummy_role1 = result.token;
 
 		// Get user role token for yrn:yahoo:::tenant0:role:autotest_put_dummy_role4
 		result = r3token.getRoleTokenByUser('dummyuser', 'tenant0', 'yrn:yahoo:::tenant0:role:autotest_put_dummy_role4', expire);
 		expect(result).to.be.an('object');
 		expect(result.result).to.be.a('boolean').to.be.true;
 		expect(result.token).to.be.an('string').to.not.empty;
-		user_roletoken_tenant0_autotest_put_dummy_role4 = result.token;								// eslint-disable-line no-unused-vars
+		user_roletoken_tenant0_autotest_put_dummy_role4 = result.token;
 
 		done();
 	});
@@ -5546,12 +5534,10 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	// Run Test(PREPARE - CUK IP DELETE)
 	//
 	it('PUT /v1/role : prepare - set amin role(autotest_delhost_role) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_delhost_role';										// path:		yrn:yahoo:::tenant0:role:autotest_delhost_role
-		uri		+= '&policies=';														// policies:	empty
-		uri		+= '&alias=';															// alias:		empty
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_delhost_role';										// path:		yrn:yahoo:::tenant0:role:autotest_delhost_role
+		uri	+= '&policies=';														// policies:	empty
+		uri	+= '&alias=';															// alias:		empty
 
 		chai.request(app)
 			.put(uri)
@@ -5630,12 +5616,10 @@ describe('API : ROLE', function(){						// eslint-disable-line no-undef
 	});
 
 	it('PUT /v1/role : prepare - set target role(autotest_del_target_role) by scoped token with status 201', function(done){	// eslint-disable-line no-undef
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		var	uri	= '/v1/role';
-		uri		+= '?name=autotest_del_target_role';									// path:		yrn:yahoo:::tenant0:role:autotest_del_target_role
-		uri		+= '&policies=';														// policies:	empty
-		uri		+= '&alias=';															// alias:		empty
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		uri	+= '?name=autotest_del_target_role';									// path:		yrn:yahoo:::tenant0:role:autotest_del_target_role
+		uri	+= '&policies=';														// policies:	empty
+		uri	+= '&alias=';															// alias:		empty
 
 		chai.request(app)
 			.put(uri)

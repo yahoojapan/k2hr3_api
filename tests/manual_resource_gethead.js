@@ -43,12 +43,10 @@ var	is_https	= apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function getV1Resource(is_get_req, token_type, token, name, service, is_expand, data_type, keyname, port, cuk, roleyrn)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
@@ -112,14 +110,13 @@ function getV1Resource(is_get_req, token_type, token, name, service, is_expand, 
 		}
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/resource/' + name + encodeURI(urlarg),
-						'method':			(is_get_req ? 'GET' : 'HEAD'),
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/resource/' + name + encodeURI(urlarg),
+		'method':	(is_get_req ? 'GET' : 'HEAD'),
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

@@ -261,12 +261,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 		!apiutil.isSafeEntity(req.baseUrl)	||
 		!apiutil.isSafeEntity(req.body)		)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST body does not exist'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST body does not exist'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -309,12 +307,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 	var	cnt;
 	if(is_create){
 		if(!apiutil.isSafeString(req.body.name)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'service:name field is wrong : ' + JSON.stringify(req.body.name)
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'service:name field is wrong : ' + JSON.stringify(req.body.name)
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -356,12 +352,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 			verify = req.body.verify;
 		}
 		if(null === tenant && null === verify){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'both tenant and verify are not specified.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'both tenant and verify are not specified.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -374,12 +368,10 @@ router.post('/', function(req, res, next)								// eslint-disable-line no-unuse
 	//------------------------------
 	var	error = rawUpdateService(token_info.tenant, name, verify, tenant, is_clear, is_create);
 	if(null !== error){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	error.message
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	error.message
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 403, result);						// 403: Forbidden(is this status OK?)
@@ -430,12 +422,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 		!apiutil.isSafeEntity(req.baseUrl)	||
 		!apiutil.isSafeEntity(req.query)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT argument does not have any data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT argument does not have any data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -477,12 +467,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 	var	is_clear	= false;
 	if(is_create){
 		if(!apiutil.isSafeString(req.query.name)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'name argument is wrong : ' + JSON.stringify(req.query.name)
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'name argument is wrong : ' + JSON.stringify(req.query.name)
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -534,12 +522,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 			}
 		}
 		if(null === tenant && null === verify){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'both tenant and verify are not specified.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'both tenant and verify are not specified.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -552,12 +538,10 @@ router.put('/', function(req, res, next)								// eslint-disable-line no-unused
 	//------------------------------
 	var	error = rawUpdateService(token_info.tenant, name, verify, tenant, is_clear, is_create);
 	if(null !== error){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	error.message
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	error.message
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 403, result);						// 403: Forbidden(is this status OK?)
@@ -599,12 +583,10 @@ router.get('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -630,12 +612,10 @@ router.get('/', function(req, res, next)
 	var	requestptn	= new RegExp('^/v1/service/(.*)');					// regex = /^\/v1\/service\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -649,12 +629,10 @@ router.get('/', function(req, res, next)
 	result = k2hr3.getService(token_info.tenant, servicename);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get service data from getService'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get service data from getService'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -709,12 +687,10 @@ router.head('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'HEAD request or url or query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'HEAD request or url or query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -740,12 +716,10 @@ router.head('/', function(req, res, next)
 	var	requestptn	= new RegExp('^/v1/service/(.*)');					// regex = /^\/v1\/service\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -768,12 +742,10 @@ router.head('/', function(req, res, next)
 	result = k2hr3.getService(token_info.tenant, servicename);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get service data from getService'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get service data from getService'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -789,12 +761,10 @@ router.head('/', function(req, res, next)
 	if(null !== tenantyrn){
 		// tenant check
 		if(!apiutil.isSafeEntity(result.service) || !apiutil.isArray(result.service.tenant) || !apiutil.findStringInArray(result.service.tenant, tenantyrn)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Deny tenant(' + req.query.tenant.toLowerCase() + ') for service(' + servicename + ')'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Deny tenant(' + req.query.tenant.toLowerCase() + ') for service(' + servicename + ')'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 403);							// 403: Forbidden(is this status OK?)
@@ -830,12 +800,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	if(	!apiutil.isSafeEntity(req)			||
 		!apiutil.isSafeEntity(req.baseUrl)	)
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'DELETE request or url or query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'DELETE request or url or query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400);								// 400: Bad Request
@@ -861,12 +829,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	var	requestptn	= new RegExp('^/v1/service/(.*)');					// regex = /^\/v1\/service\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'DELETE request url does not have service name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'DELETE request url does not have service name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -894,12 +860,10 @@ router.delete('/', function(req, res, next)								// eslint-disable-line no-unu
 	}
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not remove service data from ' + (null === tenantname ? 'removeService' : 'denyTenantFromService')
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not remove service data from ' + (null === tenantname ? 'removeService' : 'denyTenantFromService')
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;

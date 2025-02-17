@@ -170,12 +170,10 @@ app.use(function(req, res, next)
 				//
 				// case of specified user credentials(except specified unscoped token)
 				//
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				var result = {
-								result:		false,
-								message:	'not allow CORS(cross-origin resource sharing) to /v1/user/tokens'
-							 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result:		false,
+					message:	'not allow CORS(cross-origin resource sharing) to /v1/user/tokens'
+				 };
 
 				resutil.errResponse(req, res, 405, result, 'application/json; charset=utf-8');
 				return;
@@ -274,12 +272,10 @@ app.use(function(err, req, res, next)		// eslint-disable-line no-unused-vars
 	res.locals.message = err.message;
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var result = {
-					result:		false,
-					message:	'Internal server error'
-				 };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		result:		false,
+		message:	'Internal server error'
+	};
 
 	resutil.errResponse(req, res, (err.status || 500), result, 'application/json; charset=utf-8');
 });

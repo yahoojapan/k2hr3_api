@@ -137,20 +137,18 @@ router.get('/', function(req, res, next)
 	//
 	// Make request data
 	//
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-						'X-Auth-Token':		apiutil.getSafeString(_req.headers['x-auth-token'])	// Transfer
-					  };
-	var	options		= {
-						'host':				urlobj.host,
-						'port':				urlobj.port,
-						'path': 			'/v1/acr/' + _service_name,
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		apiutil.getSafeString(_req.headers['x-auth-token'])	// Transfer
+	};
+	var	options = {
+		'host':				urlobj.host,
+		'port':				urlobj.port,
+		'path': 			'/v1/acr/' + _service_name,
+		'method':			'GET',
+		'headers':			headers
+	};
 	var	agent;
 	if(urlobj.https){
 		if(null !== cacerts.ca){

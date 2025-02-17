@@ -18,7 +18,7 @@
 #
 # AUTHOR:   Takeshi Nakatani
 # CREATE:   Tue, Nov 24 2020
-# REVISION: 1.4
+# REVISION: 1.5
 #
 
 #==============================================================
@@ -544,11 +544,11 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		func_usage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-node" ] || [ "$1" = "-NODE" ] || [ "$1" = "--nodejstype" ] || [ "$1" = "--NODEJSTYPE" ]; then
+	elif echo "$1" | grep -q -i -e "^-node$" -e "^--nodejstype$"; then
 		if [ -n "${OPT_NODEJS_TYPE}" ]; then
 			PRNERR "already set \"--nodejstype(-node)\" option."
 			exit 1
@@ -560,7 +560,7 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_NODEJS_TYPE="$1"
 
-	elif [ "$1" = "-f" ] || [ "$1" = "-F" ] || [ "$1" = "--nodejstype-vars-file" ] || [ "$1" = "--NODEJSTYPE-VARS-FILE" ]; then
+	elif echo "$1" | grep -q -i -e "^-f$" -e "^--nodejstype-vars-file$"; then
 		if [ -n "${OPT_NODEJS_TYPE_VARS_FILE}" ]; then
 			PRNERR "already set \"--nodejstype-vars-file(-f)\" option."
 			exit 1
@@ -576,7 +576,7 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_NODEJS_TYPE_VARS_FILE="$1"
 
-	elif [ "$1" = "-fp" ] || [ "$1" = "-FP" ] || [ "$1" = "--force-publisher" ] || [ "$1" = "--FORCE-PUBLISHER" ]; then
+	elif echo "$1" | grep -q -i -e "^-fp$" -e "^--force-publisher$"; then
 		if [ -n "${OPT_FORCE_PUBLISHER}" ]; then
 			PRNERR "already set \"--force-publisher(-fp)\" option."
 			exit 1
@@ -592,28 +592,28 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_FORCE_PUBLISHER="$1"
 
-	elif [ "$1" = "-np" ] || [ "$1" = "-NP" ] || [ "$1" = "--force-not-publisher" ] || [ "$1" = "--FORCE-NOT-PUBLISHER" ]; then
+	elif echo "$1" | grep -q -i -e "^-np$" -e "^--force-not-publisher$"; then
 		if [ "${OPT_FORCE_NOT_PUBLISHER}" -ne 0 ]; then
 			PRNERR "already set \"--force-not-publisher(-np)\" option."
 			exit 1
 		fi
 		OPT_FORCE_NOT_PUBLISHER="$1"
 
-	elif [ "$1" = "-usepc" ] || [ "$1" = "-USEPC" ] || [ "$1" = "--use-packagecloudio-repo" ] || [ "$1" = "--USE-PACKAGECLOUDIO-REPO" ]; then
+	elif echo "$1" | grep -q -i -e "^-usepc$" -e "^--use-packagecloudio-repo$"; then
 		if [ -n "${OPT_USE_PACKAGECLOUD_REPO}" ]; then
 			PRNERR "already set \"--use-packagecloudio-repo(-usepc)\" or \"--not-use-packagecloudio-repo(-notpc)\" option."
 			exit 1
 		fi
 		OPT_USE_PACKAGECLOUD_REPO=1
 
-	elif [ "$1" = "-notpc" ] || [ "$1" = "-NOTPC" ] || [ "$1" = "--not-use-packagecloudio-repo" ] || [ "$1" = "--NOT-USE-PACKAGECLOUDIO-REPO" ]; then
+	elif echo "$1" | grep -q -i -e "^-notpc$" -e "^--not-use-packagecloudio-repo$"; then
 		if [ -n "${OPT_USE_PACKAGECLOUD_REPO}" ]; then
 			PRNERR "already set \"--use-packagecloudio-repo(-usepc)\" or \"--not-use-packagecloudio-repo(-notpc)\" option."
 			exit 1
 		fi
 		OPT_USE_PACKAGECLOUD_REPO=0
 
-	elif [ "$1" = "-token" ] || [ "$1" = "-TOKEN" ] || [ "$1" = "--npm-token" ] || [ "$1" = "--NPM-TOKEN" ]; then
+	elif echo "$1" | grep -q -i -e "^-token$" -e "^--npm-token$"; then
 		if [ -n "${OPT_NPM_TOKEN}" ]; then
 			PRNERR "already set \"--npm-token(-token)\" option."
 			exit 1
@@ -625,7 +625,7 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_NPM_TOKEN="$1"
 
-	elif [ "$1" = "-pcowner" ] || [ "$1" = "-PCOWNER" ] || [ "$1" = "--packagecloudio-owner" ] || [ "$1" = "--PACKAGECLOUDIO-OWNER" ]; then
+	elif echo "$1" | grep -q -i -e "^-pcowner$" -e "^--packagecloudio-owner$"; then
 		if [ -n "${OPT_PACKAGECLOUD_OWNER}" ]; then
 			PRNERR "already set \"--packagecloudio-owner(-pcowner)\" option."
 			exit 1
@@ -637,7 +637,7 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_PACKAGECLOUD_OWNER="$1"
 
-	elif [ "$1" = "-pcdlrepo" ] || [ "$1" = "-PCDLREPO" ] || [ "$1" = "--packagecloudio-download-repo" ] || [ "$1" = "--PACKAGECLOUDIO-DOWNLOAD-REPO" ]; then
+	elif echo "$1" | grep -q -i -e "^-pcdlrepo$" -e "^--packagecloudio-download-repo$"; then
 		if [ -n "${OPT_PACKAGECLOUD_DOWNLOAD_REPO}" ]; then
 			PRNERR "already set \"--packagecloudio-download-repo(-pcdlrepo)\" option."
 			exit 1

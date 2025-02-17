@@ -70,31 +70,47 @@ describe('API : VERSION', function(){					// eslint-disable-line no-undef
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;
 
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				expect(res.body).to.be.an('object').to.deep.include({
-					'version':		{	'/':										['GET'],
-										'/v1':										['GET']},
-					'user token':	{	'/v1/user/tokens':							['HEAD', 'GET', 'POST']},
-					'host':			{	'/v1/host':									['GET', 'PUT', 'POST', 'DELETE'],
-										'/v1/host/{port}':							['PUT', 'POST', 'DELETE'],
-										'/v1/host/FQDN':							['DELETE'],
-										'/v1/host/FQDN:{port}':						['DELETE'],
-										'/v1/host/IP':								['DELETE'],
-										'/v1/host/IP:{port}':						['DELETE']},
-					'service':		{	'/v1/service':								['PUT', 'POST'],
-										'/v1/service/{service}':					['GET', 'HEAD', 'PUT', 'POST', 'DELETE']},
-					'role':			{	'/v1/role':									['PUT', 'POST'],
-										'/v1/role/{role}':							['HEAD', 'GET', 'PUT', 'POST', 'DELETE'],
-										'/v1/role/token/{role}':					['GET']},
-					'resource':		{	'/v1/resource':								['PUT', 'POST'],
-										'/v1/resource/{resource}':					['HEAD', 'GET', 'DELETE']},
-					'policy':		{	'/v1/policy':								['PUT', 'POST'],
-										'/v1/policy/{policy}':						['HEAD', 'GET', 'DELETE']},
-					'list':			{	'/v1/list':									['HEAD', 'GET'],
-										'/v1/list/{role, resource, policy}/{path}':	['HEAD', 'GET']},
-					'acr':			{	'/v1/acr/{service}':						['GET', 'PUT', 'POST', 'DELETE']}
+					'version': {
+						'/':										['GET'],
+						'/v1':										['GET']
+					},
+					'user token': {
+						'/v1/user/tokens':							['HEAD', 'GET', 'POST']
+					},
+					'host': {
+						'/v1/host':									['GET', 'PUT', 'POST', 'DELETE'],
+						'/v1/host/{port}':							['PUT', 'POST', 'DELETE'],
+						'/v1/host/FQDN':							['DELETE'],
+						'/v1/host/FQDN:{port}':						['DELETE'],
+						'/v1/host/IP':								['DELETE'],
+						'/v1/host/IP:{port}':						['DELETE']
+					},
+					'service': {
+						'/v1/service':								['PUT', 'POST'],
+						'/v1/service/{service}':					['GET', 'HEAD', 'PUT', 'POST', 'DELETE']
+					},
+					'role': {
+						'/v1/role':									['PUT', 'POST'],
+						'/v1/role/{role}':							['HEAD', 'GET', 'PUT', 'POST', 'DELETE'],
+						'/v1/role/token/{role}':					['GET']
+					},
+					'resource': {
+						'/v1/resource':								['PUT', 'POST'],
+						'/v1/resource/{resource}':					['HEAD', 'GET', 'DELETE']
+					},
+					'policy': {
+						'/v1/policy':								['PUT', 'POST'],
+						'/v1/policy/{policy}':						['HEAD', 'GET', 'DELETE']
+					},
+					'list': {
+						'/v1/list':									['HEAD', 'GET'],
+						'/v1/list/{role, resource, policy}/{path}':	['HEAD', 'GET']
+					},
+					'acr': {
+						'/v1/acr/{service}':						['GET', 'PUT', 'POST', 'DELETE']
+					}
 				});
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
 
 				done();
 			});

@@ -62,12 +62,10 @@ router.get('/', function(req, res, next)
 		!apiutil.isSafeEntity(req.baseUrl)	||
 		!apiutil.isSafeEntity(req.headers)	)							// Must User-Agent in header
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -83,12 +81,10 @@ router.get('/', function(req, res, next)
 		// 'User-Agent' Must have 'Cloud-Init'
 		r3logger.elog('GET request does not have User-Agent header');
 
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request does not have User-Agent header'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request does not have User-Agent header'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
@@ -100,12 +96,10 @@ router.get('/', function(req, res, next)
 			// 'User-Agent' Must have 'Cloud-Init'
 			r3logger.elog('GET request User-Agent does not have Cloud-Init');
 
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request is not allowed from your client'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request is not allowed from your client'
+			};
 
 			r3logger.elog(result.message);
 			res.type('application/json; charset=utf-8');
@@ -157,12 +151,10 @@ router.get('/', function(req, res, next)
 	var	requestptn	= new RegExp('^/v1/userdata/(.*)');				// regex = /^\/v1\/userdata\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have userdata path parameter'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have userdata path parameter'
+		};
 
 		r3logger.elog(result.message);
 		res.type('application/json; charset=utf-8');
