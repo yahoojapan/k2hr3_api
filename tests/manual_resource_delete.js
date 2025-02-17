@@ -43,12 +43,10 @@ var	is_https	= apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function deleteV1Resource(token_type, token, name, data_type, keynames, aliases, port, cuk, roleyrn)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
@@ -121,15 +119,13 @@ function deleteV1Resource(token_type, token, name, data_type, keynames, aliases,
 		}
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	options		= {
-						'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/resource/' + name + encodeURI(urlarg),
-						'method':			'DELETE',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/resource/' + name + encodeURI(urlarg),
+		'method':	'DELETE',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

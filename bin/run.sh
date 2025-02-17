@@ -154,7 +154,7 @@ stop_old_process()
 		#
 		for _ONE_PID in ${ALL_CHILD_PIDS}; do
 			# shellcheck disable=SC2009
-			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${_ONE_PID}"; then
+			if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				kill -KILL "${_ONE_PID}" >/dev/null 2>&1
 			fi
 		done
@@ -165,7 +165,7 @@ stop_old_process()
 		#
 		for _ONE_PID in ${ALL_CHILD_PIDS}; do
 			# shellcheck disable=SC2009
-			if ! ps -ax | grep -v grep | grep -v defunct | grep -q "${_ONE_PID}"; then
+			if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				echo "[ERROR] Could not stop old processes."
 				return 1
 			fi
@@ -195,82 +195,82 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "prod" ] || [ "$1" = "-PROD" ] || [ "$1" = "--production" ] || [ "$1" = "--PRODUCTION" ]; then
+	elif echo "$1" | grep -q -i -e "^-prod$" -e "^--production$"; then
 		if [ -n "${NODE_ENV_VALUE}" ]; then
 			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
 			exit 1
 		fi
 		NODE_ENV_VALUE="production"
 
-	elif [ "$1" = "-dev" ] || [ "$1" = "-DEV" ] || [ "$1" = "--development" ] || [ "$1" = "--DEVELOPMENT" ]; then
+	elif echo "$1" | grep -q -i -e "^-dev$" -e "^--development$"; then
 		if [ -n "${NODE_ENV_VALUE}" ]; then
 			echo "[ERROR] already specified --production(-prod) or --development(-dev) option"
 			exit 1
 		fi
 		NODE_ENV_VALUE="development"
 
-	elif [ "$1" = "-bg" ] || [ "$1" = "-BG" ] || [ "$1" = "--background" ] || [ "$1" = "--BACKGROUND" ]; then
+	elif echo "$1" | grep -q -i -e "^-bg$" -e "^--background$"; then
 		#
 		# Not check multi same option...
 		#
 		BACKGROUND=1
 
-	elif [ "$1" = "--foreground" ] || [ "$1" = "--FOREGROUND" ] || [ "$1" = "-fg" ] || [ "$1" = "-FG" ]; then
+	elif echo "$1" | grep -q -i -e "^-fg$" -e "^--foreground$"; then
 		#
 		# Not check multi same option...
 		#
 		FOREGROUND=1
 
-	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--stop" ] || [ "$1" = "--STOP" ]; then
+	elif echo "$1" | grep -q -i -e "^-s$" -e "^--stop$"; then
 		if [ "${STOP_OLD_PROCESS}" -ne 0 ]; then
 			echo "[ERROR] already specified --stop(-s) option"
 			exit 1
 		fi
 		STOP_OLD_PROCESS=1
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debug" ] || [ "$1" = "--DEBUG" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--debug$"; then
 		if [ -n "${INSPECTOR_OPT}" ]; then
 			echo "[ERROR] already specified --debug(-d) or --debug-nobrk(-dnobrk) option"
 			exit 1
 		fi
 		INSPECTOR_OPT="--inspect-brk=${LOCAL_HOSTNAME}:9229"
 
-	elif [ "$1" = "-dnobrk" ] || [ "$1" = "-DNOBRK" ] || [ "$1" = "--debug-nobrk" ] || [ "$1" = "--DEBUG-NOBRK" ]; then
+	elif echo "$1" | grep -q -i -e "^-dnobrk$" -e "^--debug-nobrk$"; then
 		if [ -n "${INSPECTOR_OPT}" ]; then
 			echo "[ERROR] already specified --debug(-d) or --debug-nobrk(-dnobrk) option"
 			exit 1
 		fi
 		INSPECTOR_OPT="--inspect=${LOCAL_HOSTNAME}:9229"
 
-	elif [ "$1" = "-dl" ] || [ "$1" = "-DL" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
+	elif echo "$1" | grep -q -i -e "^-dl$" -e "^--debuglevel$"; then
 		shift
 		if [ $# -eq 0 ]; then
 			echo "[ERROR] --debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
-		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
-		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
-		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
-		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
@@ -286,14 +286,14 @@ while [ $# -ne 0 ]; do
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
 
-	elif [ "$1" = "-w" ] || [ "$1" = "-W" ] || [ "$1" = "--watcher" ] || [ "$1" = "--WATCHER" ] || [ "$1" = "--watch" ] || [ "$1" = "--WATCH" ]; then
+	elif echo "$1" | grep -q -i -e "^-w$" -e "^--watcher$" -e "^--watch$"; then
 		if [ "${WATCHER_PROC}" -ne 0 ]; then
 			echo "[ERROR] already specified --watcher(-w) option"
 			exit 1
 		fi
 		WATCHER_PROC=1
 
-	elif [ "$1" = "-os" ] || [ "$1" = "-OS" ] || [ "$1" = "--oneshot" ] || [ "$1" = "--ONESHOT" ]; then
+	elif echo "$1" | grep -q -i -e "^-os$" -e "^--oneshot$"; then
 		if [ "${WATCH_ONESHOT}" -ne 0 ]; then
 			echo "[ERROR] already specified --oneshot(-os) option"
 			exit 1
@@ -394,13 +394,13 @@ elif [ "${DEBUG_ENV_LEVEL}" -ge 1 ]; then
 else
 	DEBUG_ENV_PARAM="LOGLEVEL_SILENT"
     if [ -n "${DEBUG_LEVEL}" ]; then
-		if [ "${DEBUG_LEVEL}" = "dbg" ] || [ "${DEBUG_LEVEL}" = "DBG" ] || [ "${DEBUG_LEVEL}" = "debug" ] || [ "${DEBUG_LEVEL}" = "DEBUG" ]; then
+		if echo "${DEBUG_LEVEL}" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			DEBUG_ENV_PARAM="LOGLEVEL_DBG"
-		elif [ "${DEBUG_LEVEL}" = "msg" ] || [ "${DEBUG_LEVEL}" = "MSG" ] || [ "${DEBUG_LEVEL}" = "message" ] || [ "${DEBUG_LEVEL}" = "MESSAGE" ] || [ "${DEBUG_LEVEL}" = "info" ] || [ "${DEBUG_LEVEL}" = "INFO" ]; then
+		elif echo "${DEBUG_LEVEL}" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			DEBUG_ENV_PARAM="LOGLEVEL_MSG"
-		elif [ "${DEBUG_LEVEL}" = "warn" ] || [ "${DEBUG_LEVEL}" = "WARN" ] || [ "${DEBUG_LEVEL}" = "warning" ] || [ "${DEBUG_LEVEL}" = "WARNING" ]; then
+		elif echo "${DEBUG_LEVEL}" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			DEBUG_ENV_PARAM="LOGLEVEL_WAN"
-		elif [ "${DEBUG_LEVEL}" = "err" ] || [ "${DEBUG_LEVEL}" = "ERR" ] || [ "${DEBUG_LEVEL}" = "error" ] || [ "${DEBUG_LEVEL}" = "ERROR" ]; then
+		elif echo "${DEBUG_LEVEL}" | grep -q -i -e "^err$" -e "^error$"; then
 			DEBUG_ENV_PARAM="LOGLEVEL_ERR"
 		fi
     fi

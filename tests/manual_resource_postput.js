@@ -42,20 +42,19 @@ var	is_https	= apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function postV1Resource(method, token, querypath, name, datatype, data, reskeys, alias, port, cuk, roleyrn)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	strbody		= '';
-	var	headers		= {
-						'Content-Type':		'application/json',
-					  };
+	var	strbody = '';
+	var	headers = {
+		'Content-Type':		'application/json',
+	};
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token']	= token;
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/resource' + apiutil.getSafeString(querypath),
-						'method':			method
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/resource' + apiutil.getSafeString(querypath),
+		'method':	method
+	};
 
 	if(!apiutil.compareCaseString('string', datatype) && !apiutil.compareCaseString('object', datatype)){
 		datatype = 'string';								// default data type is string
@@ -68,15 +67,13 @@ function postV1Resource(method, token, querypath, name, datatype, data, reskeys,
 			data = apiutil.parseJSON(data);
 		}
 
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
-		var	body	= {	'resource':
-						{
-							'type':			datatype,
-							'data':			data,			// if datatype is string, this includes control codes
-							'keys':			reskeys
-						}
-					  };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		var	body = {
+			'resource': {
+				'type':	datatype,
+				'data':	data,			// if datatype is string, this includes control codes
+				'keys':	reskeys
+			}
+		};
 
 		if(apiutil.isSafeString(name)){
 			body.resource.name	= name;
@@ -274,7 +271,7 @@ function rawGetInputKeys(str)
 		try{
 			// parse JSON
 			result = JSON.parse(str);
-		}catch(err){
+		}catch(err){										// eslint-disable-line no-unused-vars
 			// key=val,key=val...
 			result = {};
 			// parse ','

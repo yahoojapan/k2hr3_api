@@ -158,11 +158,11 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-a" ] || [ "$1" = "-A" ] || [ "$1" = "--apihost" ] || [ "$1" = "--APIHOST" ]; then
+	elif echo "$1" | grep -q -i -e "^-a$" -e "^--apihost$"; then
 		#
 		# API HOST
 		#
@@ -177,7 +177,7 @@ while [ $# -ne 0 ]; do
 		fi
 		APIHOST="$1"
 
-	elif [ "$1" = "-p" ] || [ "$1" = "-P" ] || [ "$1" = "--apiport" ] || [ "$1" = "--APIPORT" ]; then
+	elif echo "$1" | grep -q -i -e "^-p$" -e "^--apiport$"; then
 		#
 		# API PORT
 		#
@@ -199,21 +199,21 @@ while [ $# -ne 0 ]; do
 		fi
 		APIPORT="$1"
 
-	elif [ "$1" = "--https" ] || [ "$1" = "--HTTPS" ]; then
+	elif echo "$1" | grep -q -i "^--https$"; then
 		if [ -n "${HTTPS_ENV}" ]; then
 			echo "[ERROR] already specified --https or --http option"
 			exit 1
 		fi
 		HTTPS_ENV="yes"
 
-	elif [ "$1" = "--http" ] || [ "$1" = "--HTTP" ]; then
+	elif echo "$1" | grep -q -i "^--http$"; then
 		if [ -n "${HTTPS_ENV}" ]; then
 			echo "[ERROR] already specified --https or --http option"
 			exit 1
 		fi
 		HTTPS_ENV="no"
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--debuglevel$"; then
 		#
 		# DEBUG option
 		#
@@ -222,25 +222,25 @@ while [ $# -ne 0 ]; do
 			echo "[ERROR] --debuglevel(-d) option needs parameter(dbg/msg/warn/err)"
 			exit 1
 		fi
-		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
-		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
-		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
-		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-d) option already is set"
 				exit 1

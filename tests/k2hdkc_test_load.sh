@@ -29,8 +29,8 @@ SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 #
 # Variables
 #
-K2HR3_DKC_DIR=$(cd "${SRCTOP}/../k2hr3_dkc" || exit 1; pwd)
-K2HR3_DKC_CONF_PATH="${K2HR3_DKC_DIR}/conf"
+ANTPICKAX_ETC_DIR="/etc/antpickax"
+ANTPICKAX_ETC_CONF_PATH="${ANTPICKAX_ETC_DIR}"
 
 TEST_DATA_FILENAME="k2hdkc_test.data"
 TEST_DATA_TEMPLATE_FILE="${SCRIPTDIR}/${TEST_DATA_FILENAME}"
@@ -39,7 +39,7 @@ TEST_DATA_CUSTOMIZED_FILE="/tmp/${TEST_DATA_FILENAME}"
 AUTO_K2HDKC_CONF_PATH="${SRCTOP}/tests/auto_k2hdkc_slave.ini"
 AUTO_K2HDKC_CTRL_PORT=18031
 
-DEFAULT_REMOTE_K2HDKC_CONF_PATH="${K2HR3_DKC_CONF_PATH}/slave.ini"
+DEFAULT_REMOTE_K2HDKC_CONF_PATH="${ANTPICKAX_ETC_CONF_PATH}/slave.ini"
 DEFAULT_REMOTE_K2HDKC_CTRL_PORT=8031
 DEFAULT_TENANT_MAIN="tenant0"
 DEFAULT_TENANT_SUB="tenant1"
@@ -77,18 +77,18 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-f" ] || [ "$1" = "-F" ] || [ "$1" = "--for_auto_test" ] || [ "$1" = "--FOR_AUTO_TEST" ]; then
+	elif echo "$1" | grep -q -i -e "^-f$" -e "^--for_auto_test$"; then
 		if [ -n "${EXEC_MODE}" ]; then
 			echo "[ERROR] Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
 			exit 1
 		fi
 		EXEC_MODE="auto"
 
-	elif [ "$1" = "--main" ] || [ "$1" = "--MAIN" ] || [ "$1" = "-m" ] || [ "$1" = "-M" ]; then
+	elif echo "$1" | grep -q -i -e "^-m$" -e "^--main$"; then
 		#
 		# input main tenant name
 		#
@@ -108,7 +108,7 @@ while [ $# -ne 0 ]; do
 		TENANT_MAIN="$1"
 		EXEC_MODE="notauto"
 
-	elif [ "$1" = "--sub" ] || [ "$1" = "--SUB" ] || [ "$1" = "-s" ] || [ "$1" = "-S" ]; then
+	elif echo "$1" | grep -q -i -e "^-s$" -e "^--sub$"; then
 		#
 		# input sub tenant name
 		#
@@ -128,7 +128,7 @@ while [ $# -ne 0 ]; do
 		TENANT_SUB="$1"
 		EXEC_MODE="notauto"
 
-	elif [ "$1" = "--conf" ] || [ "$1" = "--CONF" ] || [ "$1" = "-c" ] || [ "$1" = "-C" ]; then
+	elif echo "$1" | grep -q -i -e "^-c$" -e "^--conf$"; then
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
 			echo "[ERROR] --conf(-c) option is specified, but already set --for_auto_test(-f) option."
 			exit 1
@@ -149,7 +149,7 @@ while [ $# -ne 0 ]; do
 		REMOTE_K2HDKC_CONF_PATH="$1"
 		EXEC_MODE="notauto"
 
-	elif [ "$1" = "--port" ] || [ "$1" = "--PORT" ] || [ "$1" = "-p" ] || [ "$1" = "-P" ]; then
+	elif echo "$1" | grep -q -i -e "^-p$" -e "^--port$"; then
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
 			echo "[ERROR] --port(-p) option is specified, but already set --for_auto_test(-f) option."
 			exit 1

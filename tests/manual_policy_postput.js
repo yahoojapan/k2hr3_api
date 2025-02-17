@@ -43,31 +43,29 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function postV1Policy(method, token, name, effect, action, resource, alias)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	strbody		= '';
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/policy',
-						'method':			method
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	strbody = '';
+	var	headers = {
+		'Content-Type':		'application/json',
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/policy',
+		'method':			method
+	};
 
 	if(apiutil.compareCaseString('post', method)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
-		var	body	= {	'policy':
-						{	'name':			name,
-							'effect':		effect,
-							'action':		action,
-							'resource':		resource,
-							'condition':	null,
-							'alias':		alias
-						}
-					  };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		var	body = {
+			'policy': {
+				'name':			name,
+				'effect':		effect,
+				'action':		action,
+				'resource':		resource,
+				'condition':	null,
+				'alias':		alias
+			}
+		};
 
 		strbody						= JSON.stringify(body);
 		headers['Content-Length']	= strbody.length;

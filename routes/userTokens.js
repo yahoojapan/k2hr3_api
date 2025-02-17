@@ -381,7 +381,7 @@ router.put('/', function(req, res, next)						// eslint-disable-line no-unused-v
 // Which element has name and display member, but display is as same as name.
 // It is not real display name, because we take a cost getting it from APIs.
 //
-router.get('/', function(req, res, next)						// eslint-disable-line no-unused-vars
+router.get('/', function(req, res, next)
 {
 	r3logger.dlog('CALL:', req.method, req.url);
 	if('HEAD' === req.method){

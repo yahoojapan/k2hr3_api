@@ -70,12 +70,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 		!apiutil.isSafeEntity(req.body) ||
 		!apiutil.isSafeEntity(req.body.policy) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST body does not have policy data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST body does not have policy data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -99,12 +97,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	// check arguments
 	//------------------------------
 	if(!apiutil.isSafeString(req.body.policy.name)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:name field is wrong : ' + JSON.stringify(req.body.policy.name)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:name field is wrong : ' + JSON.stringify(req.body.policy.name)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -122,12 +118,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	// check token's tenant(if same tenant, name is not full yrn)
 	nameptn	= new RegExp('^' + keys.NO_TENANT_KEY);			// regex = /^yrn:yahoo:/
 	if(name.match(nameptn)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST request url has wrong yrn full path to policy'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST request url has wrong yrn full path to policy'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -144,12 +138,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	}else if(apiutil.compareCaseString(req.body.policy.effect, keys.VALUE_DENY)){
 		effect = false;										// = deny
 	}else{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:effect field is wrong : ' + JSON.stringify(req.body.policy.effect)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:effect field is wrong : ' + JSON.stringify(req.body.policy.effect)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -159,12 +151,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	var	actptns = [keys.ACTION_READ_KEY, keys.ACTION_WRITE_KEY];			// allow string as read/write yrn full path
 	var	actpram = apiutil.getNormalizeParameter(req.body.policy.action, null, actptns);
 	if(false === actpram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:action field is wrong : ' + JSON.stringify(req.body.policy.action)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:action field is wrong : ' + JSON.stringify(req.body.policy.action)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -175,12 +165,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	var	resptn	= new RegExp('^' + keys.RESOURCE_TOP_KEY + ':(.*)');		// regex = /^yrn:yahoo:<service>::<tenant>:resource:(.*)/
 	var	respram = apiutil.getNormalizeParameter(req.body.policy.resource, resptn, null);
 	if(false === respram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:resource field is wrong : ' + JSON.stringify(req.body.policy.resource)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:resource field is wrong : ' + JSON.stringify(req.body.policy.resource)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -192,12 +180,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	if(!apiutil.isSafeEntity(req.body.policy.condition) || '' === req.body.policy.condition){
 		condition = null;									// now reserved this field
 	}else{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:condition field is wrong : ' + JSON.stringify(req.body.policy.condition)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:condition field is wrong : ' + JSON.stringify(req.body.policy.condition)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -207,12 +193,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	var	aliasptn	= new RegExp('^' + keys.POLICY_TOP_KEY + ':(.*)');		// regex = /^yrn:yahoo:<service>::<tenant>:policy:(.*)/
 	var	aliaspram	= apiutil.getNormalizeParameter(req.body.policy.alias, aliasptn, null);
 	if(false === aliaspram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:alias field is wrong : ' + JSON.stringify(req.body.policy.alias)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:alias field is wrong : ' + JSON.stringify(req.body.policy.alias)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -226,12 +210,10 @@ router.post('/', function(req, res, next)					// eslint-disable-line no-unused-v
 	result = k2hr3.setPolicyAll(token_info.user, token_info.tenant, name, effect, actions, resources, condition, aliases);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from setPolicyAll'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from setPolicyAll'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -282,12 +264,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT argument does not have any data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT argument does not have any data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -312,12 +292,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	// check arguments
 	//------------------------------
 	if(!apiutil.isSafeString(req.query.name)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:name field is wrong : ' + JSON.stringify(req.query.name)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:name field is wrong : ' + JSON.stringify(req.query.name)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -336,12 +314,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	// check token's tenant(if same tenant, name is not full yrn)
 	nameptn	= new RegExp('^' + keys.NO_TENANT_KEY);			// regex = /^yrn:yahoo:/
 	if(name.match(nameptn)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request url has wrong yrn full path to policy'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request url has wrong yrn full path to policy'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -358,12 +334,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	}else if(apiutil.compareCaseString(req.query.effect, keys.VALUE_DENY)){
 		effect = false;										// = deny
 	}else{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:effect field is wrong : ' + JSON.stringify(req.query.effect)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:effect field is wrong : ' + JSON.stringify(req.query.effect)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -373,12 +347,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	var	actptns = [keys.ACTION_READ_KEY, keys.ACTION_WRITE_KEY];			// allow string as read/write yrn full path
 	var	actpram = apiutil.getNormalizeParameter(req.query.action, null, actptns);
 	if(false === actpram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:action field is wrong : ' + JSON.stringify(req.query.action)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:action field is wrong : ' + JSON.stringify(req.query.action)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -389,12 +361,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	var	resptn	= new RegExp('^' + keys.RESOURCE_TOP_KEY + ':(.*)');		// regex = /^yrn:yahoo:<service>::<tenant>:resource:(.*)/
 	var	respram = apiutil.getNormalizeParameter(req.query.resource, resptn, null);
 	if(false === respram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:resource field is wrong : ' + JSON.stringify(req.query.resource)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:resource field is wrong : ' + JSON.stringify(req.query.resource)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -406,12 +376,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	if(!apiutil.isSafeEntity(req.query.condition) || '' === req.query.condition){
 		condition = null;									// now reserved this field
 	}else{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:condition field is wrong : ' + JSON.stringify(req.query.condition)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:condition field is wrong : ' + JSON.stringify(req.query.condition)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -421,12 +389,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	var	aliasptn	= new RegExp('^' + keys.POLICY_TOP_KEY + ':(.*)');		// regex = /^yrn:yahoo:<service>::<tenant>:policy:(.*)/
 	var	aliaspram	= apiutil.getNormalizeParameter(req.query.alias, aliasptn, null);
 	if(false === aliaspram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'policy:alias field is wrong : ' + JSON.stringify(req.query.alias)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'policy:alias field is wrong : ' + JSON.stringify(req.query.alias)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -440,12 +406,10 @@ router.put('/', function(req, res, next)					// eslint-disable-line no-unused-va
 	result = k2hr3.setPolicyAll(token_info.user, token_info.tenant, name, effect, actions, resources, condition, aliases);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from setPolicyAll'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from setPolicyAll'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -494,12 +458,10 @@ router.get('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.baseUrl) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -534,12 +496,10 @@ router.get('/', function(req, res, next)
 	var	requestptn	= new RegExp('^/v1/policy/(.*)');					// regex = /^\/v1\/policy\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have policy name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have policy name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -606,12 +566,10 @@ router.get('/', function(req, res, next)
 	result = k2hr3.getPolicyAll(token_info.user, token_info.tenant, service, name);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from getPolicyAll'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from getPolicyAll'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -841,12 +799,10 @@ router.delete('/', function(req, res, next)					// eslint-disable-line no-unused
 	var	requestptn	= new RegExp('^/v1/policy/(.*)');		// regex = /^\/v1\/policy\/(.*)/
 	var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 	if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request url does not have policy name'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request url does not have policy name'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -864,12 +820,10 @@ router.delete('/', function(req, res, next)					// eslint-disable-line no-unused
 	// check yrn full path(it is NG)
 	nameptn			= new RegExp('^' + keys.NO_TENANT_KEY);	// regex = /^yrn:yahoo:/
 	if(name.match(nameptn)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'DELETE request url has wrong yrn full path to policy'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'DELETE request url has wrong yrn full path to policy'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);			// 400: Bad Request
@@ -882,12 +836,10 @@ router.delete('/', function(req, res, next)					// eslint-disable-line no-unused
 	result = k2hr3.removePolicy(token_info.user, token_info.tenant, name);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from removePolicy'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from removePolicy'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;

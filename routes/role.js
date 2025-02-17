@@ -81,12 +81,10 @@ router.post('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.baseUrl) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST request or url or query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST request or url or query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -106,12 +104,10 @@ router.post('/', function(req, res, next)
 		var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
 		var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 		if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'POST request url does not have role name'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'POST request url does not have role name'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -149,12 +145,10 @@ router.put('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.baseUrl) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request or url or query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request or url or query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -174,12 +168,10 @@ router.put('/', function(req, res, next)
 		var	requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
 		var	reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 		if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'POST request url does not have role name'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'POST request url does not have role name'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -231,12 +223,10 @@ function postRole(req, res, next)										// eslint-disable-line no-unused-vars
 		!apiutil.isSafeEntity(req.body) ||
 		!apiutil.isSafeEntity(req.body.role) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST body does not have role data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST body does not have role data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -261,12 +251,10 @@ function postRole(req, res, next)										// eslint-disable-line no-unused-vars
 	//------------------------------
 	// name
 	if(!apiutil.isSafeString(req.body.role.name)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'role:name field is wrong : ' + JSON.stringify(req.body.role.name)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'role:name field is wrong : ' + JSON.stringify(req.body.role.name)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -294,12 +282,10 @@ function postRole(req, res, next)										// eslint-disable-line no-unused-vars
 	var	policiesptn	= new RegExp('^' + keys.POLICY_TOP_KEY + ':(.*)');	// regex = /^yrn:yahoo:<service>::<tenant>:policy:(.*)/
 	var	policiespram= apiutil.getNormalizeParameter(req.body.role.policies, policiesptn, null);
 	if(false === policiespram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'role:policies field is wrong : ' + JSON.stringify(req.body.role.policies)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'role:policies field is wrong : ' + JSON.stringify(req.body.role.policies)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -311,12 +297,10 @@ function postRole(req, res, next)										// eslint-disable-line no-unused-vars
 	var	aliasptn	= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);		// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
 	var	aliaspram	= apiutil.getNormalizeParameter(req.body.role.alias, aliasptn, null);
 	if(false === aliaspram.result){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'role:alias field is wrong : ' + JSON.stringify(req.body.role.alias)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'role:alias field is wrong : ' + JSON.stringify(req.body.role.alias)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -330,12 +314,10 @@ function postRole(req, res, next)										// eslint-disable-line no-unused-vars
 	result = k2hr3.setRoleAll(token_info.user, token_info.tenant, name, policies, aliases, null, false, null, false);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from setRoleAll'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from setRoleAll'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -387,12 +369,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT argument does not have any data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT argument does not have any data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -417,12 +397,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 	//------------------------------
 	// name
 	if(!apiutil.isSafeString(req.query.name)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'role:name field is wrong : ' + JSON.stringify(req.query.name)
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'role:name field is wrong : ' + JSON.stringify(req.query.name)
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -441,12 +419,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 	// check name which is not full yrn
 	nameptn		= new RegExp('^' + keys.NO_TENANT_KEY);					// regex = /^yrn:yahoo:/
 	if(name.match(nameptn)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT request query has wrong yrn full path to role'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT request query has wrong yrn full path to role'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -467,12 +443,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 		var	policiesptn	= new RegExp('^' + keys.POLICY_TOP_KEY + ':(.*)');		// regex = /^yrn:yahoo:<service>::<tenant>:policy:(.*)/
 		var	policiespram= apiutil.getNormalizeParameter(tmppolicies, policiesptn, null);
 		if(false === policiespram.result){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'role:policies field is wrong : ' + req.query.policies
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'role:policies field is wrong : ' + req.query.policies
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -495,12 +469,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 		var	aliasptn	= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);	// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
 		var	aliaspram	= apiutil.getNormalizeParameter(tmpaliases, aliasptn, null);
 		if(false === aliaspram.result){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'role:alias field is wrong : ' + req.query.alias
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'role:alias field is wrong : ' + req.query.alias
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -515,12 +487,10 @@ function putRole(req, res, next)										// eslint-disable-line no-unused-vars
 	result = k2hr3.setRoleAll(token_info.user, token_info.tenant, name, policies, aliases, null, false, null, false);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from setRoleAll'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from setRoleAll'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -619,12 +589,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		!apiutil.isSafeEntity(req.body) ||
 		!apiutil.isSafeEntity(req.body.host) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'POST body does not have host data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'POST body does not have host data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -661,12 +629,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		// role name is not full yrn, then check other yrn path
 		nameptn	= new RegExp('^' + keys.NO_TENANT_KEY);					// regex = /^yrn:yahoo:/
 		if(name.match(nameptn)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'POST request url has wrong yrn full path to role'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'POST request url has wrong yrn full path to role'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -698,12 +664,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		var	ipArray			= [];
 		for(var cnt = 0; cnt < hostArray.length; ++cnt){
 			if(!apiutil.isSafeString(hostArray[cnt].host)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'host is not specified.'
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'host is not specified.'
+				};
 
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -724,12 +688,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 			port = 0;														// default any
 			if(apiutil.isSafeEntity(hostArray[cnt].port)){
 				if(isNaN(hostArray[cnt].port)){
-					/* eslint-disable indent, no-mixed-spaces-and-tabs */
 					result = {
-								result: 	false,
-								message:	'POST request has port which is not number: ' + JSON.stringify(hostArray[cnt].port)
-							 };
-					/* eslint-enable indent, no-mixed-spaces-and-tabs */
+						result: 	false,
+						message:	'POST request has port which is not number: ' + JSON.stringify(hostArray[cnt].port)
+					};
 
 					r3logger.elog(result.message);
 					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
@@ -780,12 +742,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 			// set optional keys
 			if(apiutil.isSafeString(hostArray[cnt].inboundip)){
 				if(!apiutil.isIpAddressString(hostArray[cnt].inboundip)){
-					/* eslint-disable indent, no-mixed-spaces-and-tabs */
 					result = {
-								result: 	false,
-								message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].inboundip)
-							 };
-					/* eslint-enable indent, no-mixed-spaces-and-tabs */
+						result: 	false,
+						message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].inboundip)
+					};
 					r3logger.elog(result.message);
 					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 					return;
@@ -795,12 +755,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 
 			if(apiutil.isSafeString(hostArray[cnt].outboundip)){
 				if(!apiutil.isIpAddressString(hostArray[cnt].outboundip)){
-					/* eslint-disable indent, no-mixed-spaces-and-tabs */
 					result = {
-								result: 	false,
-								message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].outboundip)
-							 };
-					/* eslint-enable indent, no-mixed-spaces-and-tabs */
+						result: 	false,
+						message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(hostArray[cnt].outboundip)
+					};
 					r3logger.elog(result.message);
 					resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 					return;
@@ -844,12 +802,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		// get ip address
 		var	ip = apiutil.getClientIpAddress(req);
 		if(!apiutil.isSafeString(ip)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get ip address from request.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get ip address from request.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -860,12 +816,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		port = 0;															// default any
 		if(apiutil.isSafeEntity(req.body.host.port)){
 			if(isNaN(req.body.host.port)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'POST request has port which is not number: ' + JSON.stringify(req.body.host.port)
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'POST request has port which is not number: ' + JSON.stringify(req.body.host.port)
+				};
 
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -902,12 +856,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		var	inboundip = null;
 		if(apiutil.isSafeString(req.body.host.inboundip)){
 			if(!apiutil.isIpAddressString(req.body.host.inboundip)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.inboundip)
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'POST request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.inboundip)
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 				return;
@@ -919,12 +871,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 		var	outboundip = null;
 		if(apiutil.isSafeString(req.body.host.outboundip)){
 			if(!apiutil.isIpAddressString(req.body.host.outboundip)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.outboundip)
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'POST request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.body.host.outboundip)
+				};
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 				return;
@@ -943,12 +893,10 @@ function postRoleHost(role, req, res, next)								// eslint-disable-line no-unu
 	//------------------------------
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from addHost'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from addHost'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -1026,12 +974,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'PUT argument does not have any data'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'PUT argument does not have any data'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1068,12 +1014,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		// role name is not full yrn, then check other yrn path
 		nameptn	= new RegExp('^' + keys.NO_TENANT_KEY);					// regex = /^yrn:yahoo:/
 		if(name.match(nameptn)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'POST request url has wrong yrn full path to role'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'POST request url has wrong yrn full path to role'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1086,12 +1030,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	var	ip		= null;
 	if(!is_host_req){
 		if(!apiutil.isSafeString(req.query.host)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'host is not specified.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'host is not specified.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1107,12 +1049,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 		// get ip address
 		ip = apiutil.getClientIpAddress(req);
 		if(!apiutil.isSafeString(ip)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get ip address from request.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get ip address from request.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1124,12 +1064,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	var	port;
 	if(apiutil.isSafeString(req.query.port)){
 		if(isNaN(req.query.port)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'PUT request has port which is not number: ' + JSON.stringify(req.query.port)
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'PUT request has port which is not number: ' + JSON.stringify(req.query.port)
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1177,12 +1115,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	var inboundip = null;
 	if(apiutil.isSafeString(req.query.inboundip)){
 		if(!apiutil.isIpAddressString(req.query.inboundip)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'PUT request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.inboundip)
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'PUT request has inbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.inboundip)
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 			return;
@@ -1195,12 +1131,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	var outboundip = null;
 	if(apiutil.isSafeString(req.query.outboundip)){
 		if(!apiutil.isIpAddressString(req.query.outboundip)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'PUT request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.outboundip)
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'PUT request has outbound ip address which is not ignore ip address string: ' + JSON.stringify(req.query.outboundip)
+			};
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);				// 400: Bad Request
 			return;
@@ -1225,12 +1159,10 @@ function putRoleHost(role, req, res, next)								// eslint-disable-line no-unus
 	}
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from addHost'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from addHost'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -1335,12 +1267,10 @@ router.get('/', function(req, res, next)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.baseUrl) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request or url is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request or url is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1392,12 +1322,10 @@ router.get('/', function(req, res, next)
 			requestptn	= new RegExp(keys.MATCH_URI_GET_ROLE_DATA);		// regex = /^\/v1\/role\/(.*)/
 			reqmatchs	= decodeURI(req.baseUrl).match(requestptn);
 			if(apiutil.isEmptyArray(reqmatchs) || reqmatchs.length < 2 || '' === apiutil.getSafeString(reqmatchs[1])){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'GET request url does not have role name'
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'GET request url does not have role name'
+				};
 
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);				// 400: Bad Request
@@ -1417,12 +1345,10 @@ router.get('/', function(req, res, next)
 		//
 		nameptn		= new RegExp('^' + keys.NO_TENANT_KEY);				// regex = /^yrn:yahoo:/
 		if(name.match(nameptn)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request query has wrong yrn full path to role'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request query has wrong yrn full path to role'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1430,12 +1356,10 @@ router.get('/', function(req, res, next)
 		}
 		// role name is not full yrn, we need tenant name
 		if(!apiutil.isSafeEntity(keys.ROLE_TOP_KEY)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request role name which is not full yrn, and not token. role name must be full yrn, if token is not specified.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request role name which is not full yrn, and not token. role name must be full yrn, if token is not specified.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1450,12 +1374,10 @@ router.get('/', function(req, res, next)
 		// need to check tenant name when token is specified.
 		//
 		if(null !== token_type && (!apiutil.isSafeEntity(token_info) || !apiutil.isSafeString(token_info.tenant) || !apiutil.compareCaseString(namematchs[2], token_info.tenant))){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request query has wrong tenant yrn full path(tenant=' + namematchs[2] + ') or not specify tenant.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request query has wrong tenant yrn full path(tenant=' + namematchs[2] + ') or not specify tenant.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1481,12 +1403,10 @@ router.get('/', function(req, res, next)
 		if('user' === apiutil.getSafeString(token_type)){
 			getListRoleTokens(name, token_info, req, res);
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request without UserToken for getting list of role(' + name + ') tokens, need User Token.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request without UserToken for getting list of role(' + name + ') tokens, need User Token.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1500,12 +1420,10 @@ router.get('/', function(req, res, next)
 		if('user' === apiutil.getSafeString(token_type)){
 			getRole(name, token_info, req, res);
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request without UserToken for getting role(' + name + '), need User Token.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request without UserToken for getting role(' + name + '), need User Token.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1553,12 +1471,10 @@ function getRole(role, token_info, req, res)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1569,12 +1485,10 @@ function getRole(role, token_info, req, res)
 		!apiutil.isSafeString(token_info.user)	||
 		!apiutil.isSafeString(token_info.tenant))
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request is failure by internal error.'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request is failure by internal error.'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 500, result);						// 500: Internal Error
@@ -1594,12 +1508,10 @@ function getRole(role, token_info, req, res)
 		}else if(apiutil.compareCaseString(keys.VALUE_FALSE, req.query.expand)){
 			is_expand = false;
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1613,12 +1525,10 @@ function getRole(role, token_info, req, res)
 	result = k2hr3.getRole(role, is_expand);
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get response from getRole'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get response from getRole'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -1662,12 +1572,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 
 	var	result;
 	if(!apiutil.isSafeString(role)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request is failure by internal error.'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request is failure by internal error.'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 500, result);						// 500: Internal Error
@@ -1685,12 +1593,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 		var	namematchs	= role.match(nameptn);
 		if(apiutil.isEmptyArray(namematchs) || namematchs.length < 4){
 			// role is not full yrn
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request is failure by internal error(role yrn path is broken).'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request is failure by internal error(role yrn path is broken).'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 500, result);					// 500: Internal Error
@@ -1704,12 +1610,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 	// client ip
 	var	clientip = apiutil.getClientIpAddress(req);
 	if(!apiutil.isSafeString(clientip)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request does not have ip address for client.'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request does not have ip address for client.'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1727,12 +1631,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 		var	port;
 		if(apiutil.isSafeString(req.query.port)){
 			if(isNaN(req.query.port)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'GET request has port which is not number: ' + JSON.stringify(req.query.port)
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'GET request has port which is not number: ' + JSON.stringify(req.query.port)
+				};
 
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1757,12 +1659,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 		// role token
 		if(!apiutil.compareRequestIpAddress(req, token_info.ip)){
 			// wrong ip address in token
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET request ip address and role token are not same.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET request ip address and role token are not same.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1792,12 +1692,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 		// expire
 		if(apiutil.isSafeString(req.query.expire)){
 			if(isNaN(req.query.expire)){
-				/* eslint-disable indent, no-mixed-spaces-and-tabs */
 				result = {
-							result: 	false,
-							message:	'GET request has expire which is not number: ' + JSON.stringify(req.query.expire)
-						 };
-				/* eslint-enable indent, no-mixed-spaces-and-tabs */
+					result: 	false,
+					message:	'GET request has expire which is not number: ' + JSON.stringify(req.query.expire)
+				};
 
 				r3logger.elog(result.message);
 				resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1815,12 +1713,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 
 	}else{
 		// broken token
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request is failure by internal error(token data broken).'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request is failure by internal error(token data broken).'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 500, result);						// 500: Internal Error
@@ -1830,12 +1726,10 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 	// check result
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get role token.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get role token.'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;
@@ -1851,21 +1745,17 @@ function getRoleToken(role, token_info, token_type, token_str, req, res)
 
 	// create url parameter(path) for registering role member
 	//
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	regparamobj = {
-							role:	role,
-							token:	result.token
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+		role:	role,
+		token:	result.token
+	};
 	var	udproc		= new r3userdata.userdataProcess;
 	var	regparamstr	= udproc.encryptRoleInfo(regparamobj);
 	if(!apiutil.isSafeString(regparamstr)){
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'Could not create register url parameter with role token.'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'Could not create register url parameter with role token.'
+		};
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 404, result);						// 404: Not Found
 		return;
@@ -1926,12 +1816,10 @@ function getListRoleTokens(role, token_info, req, res)
 	if(	!apiutil.isSafeEntity(req) ||
 		!apiutil.isSafeEntity(req.query) )
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request query is wrong'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request query is wrong'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 400, result);						// 400: Bad Request
@@ -1949,12 +1837,10 @@ function getListRoleTokens(role, token_info, req, res)
 		}else if(apiutil.compareCaseString(keys.VALUE_FALSE, req.query.expand)){
 			expand = false;
 		}else{
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'GET expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'GET expand url argument parameter(' + JSON.stringify(req.query.expand) + ') is wrong, it must be ' + keys.VALUE_TRUE + ' or ' + keys.VALUE_FALSE + '.'
+			};
 
 			r3logger.elog(result.message);
 			resutil.errResponse(req, res, 400, result);					// 400: Bad Request
@@ -1968,12 +1854,10 @@ function getListRoleTokens(role, token_info, req, res)
 		!apiutil.isSafeString(token_info.user)	||
 		!apiutil.isSafeString(token_info.tenant))
 	{
-		/* eslint-disable indent, no-mixed-spaces-and-tabs */
 		result = {
-					result: 	false,
-					message:	'GET request is failure by internal error.'
-				 };
-		/* eslint-enable indent, no-mixed-spaces-and-tabs */
+			result: 	false,
+			message:	'GET request is failure by internal error.'
+		};
 
 		r3logger.elog(result.message);
 		resutil.errResponse(req, res, 500, result);						// 500: Internal Error
@@ -1988,12 +1872,10 @@ function getListRoleTokens(role, token_info, req, res)
 	// check result
 	if(!apiutil.isSafeEntity(result) || !apiutil.isSafeEntity(result.result) || false === result.result){
 		if(!apiutil.isSafeEntity(result)){
-			/* eslint-disable indent, no-mixed-spaces-and-tabs */
 			result = {
-						result: 	false,
-						message:	'Could not get role token list.'
-					 };
-			/* eslint-enable indent, no-mixed-spaces-and-tabs */
+				result: 	false,
+				message:	'Could not get role token list.'
+			};
 		}else{
 			if(!apiutil.isSafeEntity(result.result)){
 				result.result	= false;

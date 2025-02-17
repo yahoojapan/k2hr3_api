@@ -42,12 +42,10 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function deleteV1Role(token, name, target_host, port, cuk)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
@@ -69,14 +67,13 @@ function deleteV1Role(token, name, target_host, port, cuk)
 		already_set	= true;
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role/' + name + encodeURI(urlarg),
-						'method':			'DELETE',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/role/' + name + encodeURI(urlarg),
+		'method':	'DELETE',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -128,12 +125,10 @@ function deleteV1Role(token, name, target_host, port, cuk)
 //
 function deleteV1_IPByCuk(addrs, port, cuk)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 
 	var urlarg		= '';
 	var	already_set	= false;
@@ -157,14 +152,13 @@ function deleteV1_IPByCuk(addrs, port, cuk)
 		already_set	= true;
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role' + encodeURI(urlarg),
-						'method':			'DELETE',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/role' + encodeURI(urlarg),
+		'method':	'DELETE',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

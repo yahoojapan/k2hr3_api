@@ -27,32 +27,31 @@
 // for testing. You can specify these files for k2hr3template_test.sh
 //
 
-/* eslint-disable indent */
 module.exports = {
 	'statement_print_test_00':		'value_00',
 	'formula_variable_00':			'value_name_00',
-	'formula_variable_01':			[
-										'value_01[0]'
-									],
-	'formula_variable_02':			{
-										'value_name_00':	'value_02{value_name_00}'
-									},
-	'formula_variable_array_01':	[
-										'array_value_00',
-										'array_value_01'
-									],
-	'formula_variable_object_01':	{
-										'object_key_00':	'object_value_00',
-										'object_key_01':	'object_value_01',
-										'object_key_02':	[
-											'object_value_02_01',
-											'object_value_02_02'
-										],
-										'object_key_03':	{
-											'object_valkey_03_00':	true,
-											'object_valkey_03_01':	'object_valval_03_01'
-										}
-									},
+	'formula_variable_01': [
+		'value_01[0]'
+	],
+	'formula_variable_02': {
+		'value_name_00':			'value_02{value_name_00}'
+	},
+	'formula_variable_array_01': [
+		'array_value_00',
+		'array_value_01'
+	],
+	'formula_variable_object_01': {
+		'object_key_00':			'object_value_00',
+		'object_key_01':			'object_value_01',
+		'object_key_02': [
+			'object_value_02_01',
+			'object_value_02_02'
+		],
+		'object_key_03': {
+			'object_valkey_03_00':	true,
+			'object_valkey_03_01':	'object_valval_03_01'
+		}
+	},
 	'formula_calculate_not_00':		true,
 	'formula_calculate_not_01':		false,
 	'formula_calculate_inc_00':		0,
@@ -143,48 +142,47 @@ module.exports = {
 	'formula_syntax_for_03':		0,
 	'formula_syntax_for_04':		1,
 	'formula_syntax_for_05':		'string',
-	'formula_syntax_for_06':		[
-										'string00',
-										'string01'
-									],
-	'formula_syntax_for_07':		{
-										'key_1':	true,
-										'key_2':	false
-									},
+	'formula_syntax_for_06': [
+		'string00',
+		'string01'
+	],
+	'formula_syntax_for_07': {
+		'key_1':					true,
+		'key_2':					false
+	},
 	'formula_syntax_foreach_00':	[],
-	'formula_syntax_foreach_01':	[
-										null
-									],
-	'formula_syntax_foreach_02':	[
-										true,
-										false
-									],
-	'formula_syntax_foreach_03':	[
-										0,
-										1
-									],
-	'formula_syntax_foreach_04':	[
-										'string00',
-										'string01'
-									],
+	'formula_syntax_foreach_01': [
+		null
+	],
+	'formula_syntax_foreach_02': [
+		true,
+		false
+	],
+	'formula_syntax_foreach_03': [
+		0,
+		1
+	],
+	'formula_syntax_foreach_04': [
+		'string00',
+		'string01'
+	],
 	'formula_syntax_foreach_10':	{},
-	'formula_syntax_foreach_11':	{
-										'key':	null
-									},
-	'formula_syntax_foreach_12':	{
-										'key_1':	true,
-										'key_2':	false
-									},
-	'formula_syntax_foreach_13':	{
-										'key_1':	0,
-										'key_2':	1
-									},
-	'formula_syntax_foreach_14':	{
-										'key_1':	'string00',
-										'key_2':	'string01'
-									}
+	'formula_syntax_foreach_11': {
+		'key':						null
+	},
+	'formula_syntax_foreach_12': {
+		'key_1':					true,
+		'key_2':					false
+	},
+	'formula_syntax_foreach_13': {
+		'key_1':					0,
+		'key_2':					1
+	},
+	'formula_syntax_foreach_14': {
+		'key_1':					'string00',
+		'key_2':					'string01'
+	}
 };
-/* eslint-enable indent */
 
 /*
  * Local variables:

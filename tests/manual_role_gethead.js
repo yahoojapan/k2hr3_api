@@ -42,19 +42,18 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function getV1Role(token, name, is_expand)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-						'X-Auth-Token':		token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role/' + name + (is_expand ? '' : '?expand=false'),		// default expand is true
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/role/' + name + (is_expand ? '' : '?expand=false'),		// default expand is true
+		'method':			'GET',
+		'headers':			headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -103,25 +102,26 @@ function getV1Role(token, name, is_expand)
 
 function getV1RoleToken(token, name, expire)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
 	}
-	var	urlarg		= '';
+
+	var	urlarg = '';
 	if(null !== expire && !isNaN(expire)){
-		urlarg		= '?expire=' + String(expire);
+		urlarg = '?expire=' + String(expire);
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role/token/' + name + urlarg,
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/role/token/' + name + urlarg,
+		'method':	'GET',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -169,21 +169,20 @@ function getV1RoleToken(token, name, expire)
 
 function getV1RoleTokenList(token, name, expand)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-					  };
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+	};
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role/token/list/' + name + (expand ? '?expand=true' : '?expand=false'),
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/role/token/list/' + name + (expand ? '?expand=true' : '?expand=false'),
+		'method':	'GET',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -231,17 +230,17 @@ function getV1RoleTokenList(token, name, expand)
 
 function headV1Role(token, roleyrn, port, cuk)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0
-					  };
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0
+	};
 	if(apiutil.isSafeString(token)){
 		headers['X-Auth-Token'] = token;
 	}
-	var	urlargs		= '';
+
+	var	urlargs = '';
 	if(null !== port){
-		urlargs		= '?port=' + String(port);
+		urlargs = '?port=' + String(port);
 	}
 	if(apiutil.isSafeString(cuk)){
 		if(apiutil.isSafeString(urlargs)){
@@ -251,13 +250,14 @@ function headV1Role(token, roleyrn, port, cuk)
 		}
 		urlargs		+= cuk;
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/role/' + roleyrn + urlargs,
-						'method':			'HEAD',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/role/' + roleyrn + urlargs,
+		'method':	'HEAD',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

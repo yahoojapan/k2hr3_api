@@ -48,19 +48,18 @@ function getV1Policy(token, name, service)
 		urlarg		= encodeURI('?service=' + service);
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0,
-						'X-Auth-Token':		token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/policy/' + name + urlarg,
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0,
+		'X-Auth-Token':		token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/policy/' + name + urlarg,
+		'method':			'GET',
+		'headers':			headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
@@ -109,22 +108,23 @@ function getV1Policy(token, name, service)
 
 function headV1Policy(tenant, name, action, resource)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0
-					  };
-	var	urlarg		= '?resource=' + resource + '&action=' + action;
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0
+	};
+
+	var	urlarg = '?resource=' + resource + '&action=' + action;
 	if(apiutil.isSafeString(tenant)){
-		urlarg		+= '&tenant=' + tenant;
+		urlarg += '&tenant=' + tenant;
 	}
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/policy/' + name + encodeURI(urlarg),
-						'method':			'HEAD',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	'/v1/policy/' + name + encodeURI(urlarg),
+		'method':	'HEAD',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

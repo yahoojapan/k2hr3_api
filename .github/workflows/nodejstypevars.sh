@@ -73,13 +73,13 @@ elif [ "${CI_NODEJS_MAJOR_VERSION}" = "20" ]; then
 	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
 	INSTALLER_BIN="apt-get"
 	INSTALL_QUIET_ARG="-qq"
-	IS_PUBLISHER=1
+	IS_PUBLISHER=0
 
 elif [ "${CI_NODEJS_MAJOR_VERSION}" = "22" ]; then
 	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
 	INSTALLER_BIN="apt-get"
 	INSTALL_QUIET_ARG="-qq"
-	IS_PUBLISHER=0
+	IS_PUBLISHER=1
 fi
 
 #---------------------------------------------------------------

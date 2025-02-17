@@ -63,18 +63,18 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--set" ] || [ "$1" = "--SET" ]; then
+	elif echo "$1" | grep -q -i -e "^-s$" -e "^--set$"; then
 		if [ -n "${PROC_MODE}" ]; then
 			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
 			exit 1
 		fi
 		PROC_MODE="set"
 
-	elif [ "$1" = "-r" ] || [ "$1" = "-R" ] || [ "$1" = "--restore" ] || [ "$1" = "--RESTORE" ]; then
+	elif echo "$1" | grep -q -i -e "^-r$" -e "^--restore$"; then
 		if [ -n "${PROC_MODE}" ]; then
 			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
 			exit 1

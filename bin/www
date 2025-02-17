@@ -119,7 +119,7 @@ if(cluster.isMaster && (undefined == apiConf.isMultiProc() || false !== apiConf.
 				process.setuid(user);
 				console.log('Succeeded to setuid');
 			} catch (err) {
-				console.log('Failed to setuid');
+				console.log('Failed to setuid', JSON.stringify(err));
 				process.exit(1);
 			}
 		}

@@ -42,19 +42,18 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function getV1Version(is_top)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	ver_path	= is_top ? '/' : '/v1';
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	0
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			ver_path,
-						'method':			'GET',
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	ver_path = is_top ? '/' : '/v1';
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	0
+	};
+	var	options = {
+		'host':		hostname,
+		'port':		hostport,
+		'path': 	ver_path,
+		'method':	'GET',
+		'headers':	headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

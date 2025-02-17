@@ -27,6 +27,10 @@ name: Node.js AntPickax CI
 #
 on:
   push:
+    branches-ignore:
+      - 'gh-pages'
+    tags:
+      - '*'
   pull_request:
   #
   # CRON event is fire on every sunday(UTC).
@@ -125,7 +129,7 @@ jobs:
         # <default tag flag>:   If you want to use the created Docker image as the default image, specify "default".
         #
         imageinfo:
-          - alpine:3.20,alpine:3.20,alpine,default
+          - alpine:3.21,alpine:3.21,alpine,default
           - ubuntu:24.04,ubuntu:24.04,ubuntu
 
     #

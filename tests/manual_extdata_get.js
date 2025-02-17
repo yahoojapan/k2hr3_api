@@ -43,7 +43,6 @@ var	is_https = apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function getV1ExtData(uri, path, ua, is_gzip)
 {
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
 	var	headers				= {};
 	var	typehead			= 'Content-Type';
 	var	uahead				= 'User-Agent';
@@ -56,11 +55,11 @@ function getV1ExtData(uri, path, ua, is_gzip)
 	if(is_gzip){
 		headers[gziphead]	= 'gzip';
 	}
-	var	options				= {	'host':				hostname,
-								'port':				hostport,
-								'method':			'GET'
-							  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'method':			'GET'
+	};
 
 	options.headers	= headers;
 	options.path	= '/v1/extdata/' + uri + '/' + path;

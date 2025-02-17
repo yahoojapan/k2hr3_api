@@ -55,19 +55,18 @@ function rawPutPostV1Acr(method, tenant, token, service)
 		}
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'Content-Length':	strbody.length,
-						'X-Auth-Token':		'U=' + token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			'/v1/acr/' + service + urlarg,
-						'method':			method,
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':		'application/json',
+		'Content-Length':	strbody.length,
+		'X-Auth-Token':		'U=' + token
+	};
+	var	options = {
+		'host':				hostname,
+		'port':				hostport,
+		'path': 			'/v1/acr/' + service + urlarg,
+		'method':			method,
+		'headers':			headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));

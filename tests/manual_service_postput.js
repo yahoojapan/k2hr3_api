@@ -116,17 +116,16 @@ function rawPutPostV1Service(method, token, service, is_create, verify, is_verif
 		}
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		'U=' + token
-					  };
-	var	options		= {	'host':				hostname,
-						'port':				hostport,
-						'path': 			basepath,
-						'method':			method
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':	'application/json',
+		'X-Auth-Token':	'U=' + token
+	};
+	var	options = {
+		'host':			hostname,
+		'port':			hostport,
+		'path': 		basepath,
+		'method':		method
+	};
 
 	if(apiutil.compareCaseString('POST', method)){
 		headers['Content-Length']	= strbody.length;

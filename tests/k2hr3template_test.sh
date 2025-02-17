@@ -67,18 +67,18 @@ while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
 		break
 
-	elif [ "$1" = "-h" ] || [ "$1" = "-H" ] || [ "$1" = "--help" ] || [ "$1" = "--HELP" ]; then
+	elif echo "$1" | grep -q -i -e "^-h$" -e "^--help$"; then
 		PrintUsage "${PRGNAME}"
 		exit 0
 
-	elif [ "$1" = "-i" ] || [ "$1" = "-I" ] || [ "$1" = "--inspect" ] || [ "$1" = "--INSPECT" ]; then
+	elif echo "$1" | grep -q -i -e "^-i$" -e "^--inspect$"; then
 		if [ "${DEBUG_USE_INSPECT}" -ne 0 ]; then
 			echo "[ERROR] Already specified --inspect(-i) option"
 			exit 1
 		fi
 		DEBUG_USE_INSPECT=1
 
-	elif [ "$1" = "-d" ] || [ "$1" = "-D" ] || [ "$1" = "--debuglevel" ] || [ "$1" = "--DEBUGLEVEL" ]; then
+	elif echo "$1" | grep -q -i -e "^-d$" -e "^--debuglevel$"; then
 		#
 		# DEBUG option
 		#
@@ -87,25 +87,25 @@ while [ $# -ne 0 ]; do
 			echo "[ERROR] --debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
-		if [ "$1" = "dbg" ] || [ "$1" = "DBG" ] || [ "$1" = "debug" ] || [ "$1" = "DEBUG" ]; then
+		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
-		elif [ "$1" = "msg" ] || [ "$1" = "MSG" ] || [ "$1" = "message" ] || [ "$1" = "MESSAGE" ] || [ "$1" = "info" ] || [ "$1" = "INFO" ]; then
+		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
-		elif [ "$1" = "warn" ] || [ "$1" = "WARN" ] || [ "$1" = "warning" ] || [ "$1" = "WARNING" ]; then
+		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
-		elif [ "$1" = "err" ] || [ "$1" = "ERR" ] || [ "$1" = "error" ] || [ "$1" = "ERROR" ]; then
+		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
 				echo "[ERROR] --debuglevel(-dl) option already is set"
 				exit 1
@@ -121,7 +121,7 @@ while [ $# -ne 0 ]; do
 			DEBUG_ENV_CUSTOM="${DEBUG_ENV_CUSTOM}$1"
 		fi
 
-	elif [ "$1" = "-v" ] || [ "$1" = "-V" ] || [ "$1" = "--varlist" ] || [ "$1" = "--VARLIST" ]; then
+	elif echo "$1" | grep -q -i -e "^-v$" -e "^--varlist$"; then
 		#
 		# input variable list file path
 		#
@@ -140,7 +140,7 @@ while [ $# -ne 0 ]; do
 		fi
 		INPUT_VARFILE="$1"
 
-	elif [ "$1" = "-t" ] || [ "$1" = "-T" ] || [ "$1" = "--templ" ] || [ "$1" = "--TEMPL" ] || [ "$1" = "--template" ] || [ "$1" = "--TEMPLATE" ]; then
+	elif echo "$1" | grep -q -i -e "^-t$" -e "^--templ$" -e "^--template$"; then
 		#
 		# input template file path
 		#
@@ -163,7 +163,7 @@ while [ $# -ne 0 ]; do
 		fi
 		INPUT_TEMPLFILE="$1"
 
-	elif [ "$1" = "-s" ] || [ "$1" = "-S" ] || [ "$1" = "--str" ] || [ "$1" = "--STR" ] || [ "$1" = "--string" ] || [ "$1" = "--STRING" ]; then
+	elif echo "$1" | grep -q -i -e "^-s$" -e "^--str$" -e "^--string$"; then
 		#
 		# input template string
 		#
@@ -182,7 +182,7 @@ while [ $# -ne 0 ]; do
 		fi
 		INPUT_TEMPLSTR="$1"
 
-	elif [ "$1" = "-a" ] || [ "$1" = "-A" ] || [ "$1" = "--async" ] || [ "$1" = "--ASYNC" ]; then
+	elif echo "$1" | grep -q -i -e "^-a$" -e "^--async$"; then
 		#
 		# async mode
 		#
@@ -271,7 +271,7 @@ if [ -z "${INPUT_TEMPLFILE}" ]; then
 			printf '> '
 			read -r TEMPLLINE
 
-			if [ "${TEMPLLINE}" = "EOF" ] || [ "${TEMPLLINE}" = "eof" ]; then
+			if echo "${TEMPLLINE}" | grep -q -i "^eof$"; then
 				IS_EOF=1
 			else
 				echo "${TEMPLLINE}" >> "${INPUT_TEMPLFILE}"

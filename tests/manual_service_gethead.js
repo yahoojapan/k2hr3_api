@@ -42,24 +42,22 @@ var	is_https	= apiutil.compareCaseString('yes', process.env.HTTPS_ENV);
 //
 function rawGetHeadV1Service(method, token, service, tenant)
 {
-	var	basepath	= '/v1/service/' + service;
+	var	basepath = '/v1/service/' + service;
 	if(apiutil.compareCaseString('HEAD', method) && apiutil.isSafeString(tenant)){
-		basepath	+= '?tenant=' + encodeURI(tenant);
+		basepath += '?tenant=' + encodeURI(tenant);
 	}
 
-	/* eslint-disable indent, no-mixed-spaces-and-tabs */
-	var	headers		= {
-						'Content-Type':		'application/json',
-						'X-Auth-Token':		'U=' + token
-					  };
-	var	options		= {
-						'host':				hostname,
-						'port':				hostport,
-						'path': 			basepath,
-						'method':			method,
-						'headers':			headers
-					  };
-	/* eslint-enable indent, no-mixed-spaces-and-tabs */
+	var	headers = {
+		'Content-Type':	'application/json',
+		'X-Auth-Token':	'U=' + token
+	};
+	var	options = {
+		'host':			hostname,
+		'port':			hostport,
+		'path': 		basepath,
+		'method':		method,
+		'headers':		headers
+	};
 
 	r3logger.dlog('request options   = ' + JSON.stringify(options));
 	r3logger.dlog('request headers   = ' + JSON.stringify(headers));
