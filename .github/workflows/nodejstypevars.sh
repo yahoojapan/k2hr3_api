@@ -172,21 +172,6 @@ SHELLCHECK_EXCEPT_PATHS="/node_modules/"
 #	run_publish			: publishing package				yes
 #	run_post_publish	: after publishing package			no
 #
-run_audit()
-{
-	# [NOTE]
-	# Added a temporary workaround(added --audit-level=high option).
-	# This is necessary due to missing fixes for request@2.88.2,
-	# which @kubernetes/client-node depends on.
-	# It will be remove this option once @kubernetes/client-node
-	# fix is done.
-	#
-	if ! /bin/sh -c "npm audit --audit-level=high"; then
-		PRNERR "Failed to run \"npm audit\"."
-		return 1
-	fi
-	return 0
-}
 
 #
 # Local variables:
