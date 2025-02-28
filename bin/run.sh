@@ -36,8 +36,9 @@ LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
 PID_FILE_BASEDIR="/var/run/antpickax"
 PID_FILE_TMPDIR="/tmp"
 
-MAINPROC_PID_BASENAME="${PRGNAME}.pid"
-WATCHPROC_PID_BASENAME="${PRGNAME}-watch.pid"
+PRGNAME_PREFIX=$(echo "${PRGNAME}" | sed -e 's#\.sh.*$##g')
+MAINPROC_PID_BASENAME="k2hr3pi-${PRGNAME_PREFIX}.pid"
+WATCHPROC_PID_BASENAME="k2hr3pi-${PRGNAME_PREFIX}-watch.pid"
 
 TARGET_PROGRAM=""
 MAIN_PROGRAM="bin/www"
