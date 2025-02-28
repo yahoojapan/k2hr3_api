@@ -1,6 +1,6 @@
 {
   "name": "k2hr3-api",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "dependencies": {
     "@kubernetes/client-node": "^1.0.0",
     "body-parser": "^1.20.3",
@@ -9,7 +9,7 @@
     "dateformat": "^4.6.3",
     "debug": "~4.4.0",
     "express": "^4.21.2",
-    "jose": "^5.9.6",
+    "jose": "^5.10.0",
     "k2hdkc": "^1.0.13",
     "morgan": "~1.10.0",
     "rotating-file-stream": "^3.2.6"
@@ -30,7 +30,7 @@
   "devDependencies": {
     "chai": "^4.5.0",
     "chai-http": "^4.4.0",
-    "eslint": "^9.20.1",
+    "eslint": "^9.21.0",
     "mocha": "^11.1.0",
     "nyc": "^17.1.0"
   },

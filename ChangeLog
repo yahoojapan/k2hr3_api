@@ -1,3 +1,9 @@
+k2hr3-api (1.0.41) unstable; urgency=low
+
+  * Changed the PID file name to avoid collisions - #133
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 28 Feb 2025 19:44:20 +0900
+
 k2hr3-api (1.0.40) unstable; urgency=low
 
   * Fixed the options as the npm audit issue was fixed - #131
