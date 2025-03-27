@@ -1,3 +1,9 @@
+k2hr3-api (1.0.42) unstable; urgency=low
+
+  * Updated the version of the dependent packages - #135
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 27 Mar 2025 10:34:44 +0900
+
 k2hr3-api (1.0.41) unstable; urgency=low
 
   * Changed the PID file name to avoid collisions - #133
