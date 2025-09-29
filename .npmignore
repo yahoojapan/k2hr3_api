@@ -17,30 +17,44 @@
 # REVISION:
 #
 
-### Git
+#
+# Git
+#
 .git/
 .gitignore
 
-### npm generated
+#
+# npm generated
+#
 package-lock.json
 node_modules/
 
-### Files
+#
+# Files
+#
 AUTHORS
-LICENSE
+.npmignore
+eslint.config.mjs
 *.yaml
 *.yml
-.publishrc
-.eslintrc.js
-.travis_helper.sh
+*.ts
+*.tsx
+tsconfig.json
 
-### Directories
+#
+# Directories
+#
 .github/
+src/
+tests/
 package/
 .nyc_output/
 coverage/
+dist/tests/
 
-### Generated
+#
+# Generated
+#
 artifacts
 *.log
 *.xml

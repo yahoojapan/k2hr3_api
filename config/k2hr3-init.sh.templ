@@ -234,13 +234,13 @@ check_create_file()
 		_LOCAL_CC_MODE=0644
 	fi
 
-	if [ -f "${_LOCAL_CC_FILE}" ]; then
+	if [ -n "${_LOCAL_CC_FILE}" ] && [ -f "${_LOCAL_CC_FILE}" ]; then
 		_LOCAL_CC_TMP=$(tr -d '\n' < "${_LOCAL_CC_FILE}" 2>/dev/null)
 
 		# [NOTE]
 		# Since the condition becomes complicated, use "X"(temporary word).
 		#
-		if [ "X${_LOCAL_CC_TMP}" = "X${_LOCAL_CC_VALUE}" ]; then
+		if [ -n "${_LOCAL_CC_VALUE}" ] && [ -n "${_LOCAL_CC_VALUE}" ] && [ "${_LOCAL_CC_TMP}" = "${_LOCAL_CC_VALUE}" ]; then
 			# Same value, thus nothing to do
 			return 0
 		fi

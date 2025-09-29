@@ -25,13 +25,88 @@ PRGNAME=$(basename "$0")
 SCRIPTDIR=$(dirname "$0")
 SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
 SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
+DISTDIR=$(cd "${SRCTOP}/dist" || exit 1; pwd)
 
 #
 # Variables
 #
-LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
+LOCAL_HOSTNAME="$(hostname -f | tr -d '\n')"
 DEFAULT_TEST_PROG="tests/k2hr3template_test.js"
 ASYNC_TEST_PROG="tests/k2hr3template_test_async.js"
+
+#==========================================================
+# Utility functions for print
+#==========================================================
+#
+# Escape sequence
+#
+SetColor()
+{
+	CBLD=$(printf '\033[1m')
+	CREV=$(printf '\033[7m')
+	CRED=$(printf '\033[31m')
+	CYEL=$(printf '\033[33m')
+#	CGRN=$(printf '\033[32m')
+	CDEF=$(printf '\033[0m')
+}
+
+UnSetColor()
+{
+	CBLD=""
+	CREV=""
+	CRED=""
+	CYEL=""
+#	CGRN=""
+	CDEF=""
+}
+
+if [ -t 1 ]; then
+	SetColor
+else
+	UnSetColor
+fi
+
+#--------------------------------------------------------------
+# Message functions
+#--------------------------------------------------------------
+#PRNTITLE()
+#{
+#	echo "${CGRN}${CREV}[TITLE]${CDEF} ${CGRN}$*${CDEF}"
+#}
+
+PRNMSG()
+{
+	echo "${CYEL}${CREV}[MSG]${CDEF} ${CYEL}$*${CDEF}"
+}
+
+PRNERR()
+{
+	echo "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+}
+
+#PRNWARN()
+#{
+#	echo "${CBLD}${CYEL}[WARNING]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNINFO()
+{
+	echo "${CREV}[INFO]${CDEF} $*"
+}
+
+#PRNSUCCESS()
+#{
+#	echo ""
+#	echo "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+#	echo ""
+#}
+
+#PRNFAILURE()
+#{
+#	echo ""
+#	echo "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+#	echo ""
+#}
 
 #==============================================================
 # Utility functions
@@ -73,7 +148,7 @@ while [ $# -ne 0 ]; do
 
 	elif echo "$1" | grep -q -i -e "^-i$" -e "^--inspect$"; then
 		if [ "${DEBUG_USE_INSPECT}" -ne 0 ]; then
-			echo "[ERROR] Already specified --inspect(-i) option"
+			PRNERR "Already specified --inspect(-i) option"
 			exit 1
 		fi
 		DEBUG_USE_INSPECT=1
@@ -84,30 +159,30 @@ while [ $# -ne 0 ]; do
 		#
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
+			PRNERR "--debuglevel(-dl) option needs parameter(dbg/msg/warn/err/custom debug level)"
 			exit 1
 		fi
 		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-dl) option already is set"
+				PRNERR "--debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
 		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-dl) option already is set"
+				PRNERR "--debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
 		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-dl) option already is set"
+				PRNERR "--debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
 		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-dl) option already is set"
+				PRNERR "--debuglevel(-dl) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=1
@@ -126,16 +201,16 @@ while [ $# -ne 0 ]; do
 		# input variable list file path
 		#
 		if [ -n "${INPUT_VARFILE}" ]; then
-			echo "[ERROR] Already specified variable list file ${INPUT_VARFILE}"
+			PRNERR "Already specified variable list file ${INPUT_VARFILE}"
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --varlist(-v) option needs parameter( input variable JSON file path )"
+			PRNERR "--varlist(-v) option needs parameter( input variable JSON file path )"
 			exit 1
 		fi
 		if [ ! -f "$1" ]; then
-			echo "[ERROR] could not find variable list file $1"
+			PRNERR "could not find variable list file $1"
 			exit 1
 		fi
 		INPUT_VARFILE="$1"
@@ -145,20 +220,20 @@ while [ $# -ne 0 ]; do
 		# input template file path
 		#
 		if [ -n "${INPUT_TEMPLFILE}" ]; then
-			echo "[ERROR] Already specified template file ${INPUT_TEMPLFILE}"
+			PRNERR "Already specified template file ${INPUT_TEMPLFILE}"
 			exit 1
 		fi
 		if [ -n "${INPUT_TEMPLSTR}" ]; then
-			echo "[ERROR] Already specified template string \"${INPUT_TEMPLSTR}\""
+			PRNERR "Already specified template string \"${INPUT_TEMPLSTR}\""
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --templ(-t) option needs parameter( input template file path )"
+			PRNERR "--templ(-t) option needs parameter( input template file path )"
 			exit 1
 		fi
 		if [ ! -f "$1" ]; then
-			echo "[ERROR] could not find template file $1"
+			PRNERR "could not find template file $1"
 			exit 1
 		fi
 		INPUT_TEMPLFILE="$1"
@@ -168,16 +243,16 @@ while [ $# -ne 0 ]; do
 		# input template string
 		#
 		if [ -n "${INPUT_TEMPLSTR}" ]; then
-			echo "[ERROR] Already specified template string ${INPUT_TEMPLSTR}"
+			PRNERR "Already specified template string ${INPUT_TEMPLSTR}"
 			exit 1
 		fi
 		if [ -n "${INPUT_TEMPLFILE}" ]; then
-			echo "[ERROR] Already specified template file ${INPUT_TEMPLFILE}"
+			PRNERR "Already specified template file ${INPUT_TEMPLFILE}"
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --string(-s) option needs parameter( input template string )"
+			PRNERR "--string(-s) option needs parameter( input template string )"
 			exit 1
 		fi
 		INPUT_TEMPLSTR="$1"
@@ -187,13 +262,13 @@ while [ $# -ne 0 ]; do
 		# async mode
 		#
 		if [ "${INPUT_ASYNCMODE}" -ne 0 ]; then
-			echo "[ERROR] --async(-a) option is already specified"
+			PRNERR "--async(-a) option is already specified"
 			exit 1
 		fi
 		INPUT_ASYNCMODE=1
 
 	else
-		echo "[ERROR] unknown option $1"
+		PRNERR "unknown option $1"
 		exit 1
 	fi
 	shift
@@ -249,7 +324,7 @@ if [ -z "${INPUT_TEMPLFILE}" ]; then
 		# Put input template string to temporary file
 		#
 		if ! echo "${INPUT_TEMPLSTR}" >"${INPUT_TEMPLFILE}"; then
-			echo "[ERROR] Could not create ${INPUT_TEMPLFILE} file"
+			PRNERR "Could not create ${INPUT_TEMPLFILE} file"
 			exit 1
 		fi
 	else
@@ -257,14 +332,12 @@ if [ -z "${INPUT_TEMPLFILE}" ]; then
 		# Get template string from stdin
 		#
 		if ! touch "${INPUT_TEMPLFILE}"; then
-			echo "[ERROR] Could not create ${INPUT_TEMPLFILE} file"
+			PRNERR "Could not create ${INPUT_TEMPLFILE} file"
 			exit 1
 		fi
 
-		echo "---------------------------------------------------------------"
-		echo " Please input template string."
-		echo " You can end template string input by entering \"EOF\"."
-		echo "---------------------------------------------------------------"
+		PRNINFO "Please input template string."
+		printf  "      You can end template string input by entering \"EOF\".\n"
 
 		IS_EOF=0
 		while [ "${IS_EOF}" -eq 0 ]; do
@@ -285,17 +358,17 @@ fi
 # Input template string
 #
 if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
-	echo "---------------------------------------------------------------"
-	echo " Template string"
-	echo "---------------------------------------------------------------"
+	PRNMSG "Template string"
 	sed -e 's/^/  /g' "${INPUT_TEMPLFILE}"
-	echo "---------------------------------------------------------------"
+	printf "\n"
 fi
 
 #==========================================================
 # Do work
 #==========================================================
-cd "${SRCTOP}" || exit 1
+#PRNTITLE "Test template engine"
+
+cd "${DISTDIR}" || exit 1
 
 if [ "${DEBUG_USE_INSPECT}" -eq 1 ]; then
 	DEBUG_INSPECT_OPTION="--inspect"
@@ -308,24 +381,24 @@ else
 fi
 
 if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
-	echo "***** Run *****"
-	echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_PRINT_OPTIONS}${TEST_PROG}${DEBUG_PRINT_PIPELINE}"
-	echo ""
+	PRNINFO "Run : NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} R3TEMPLFILE=${INPUT_TEMPLFILE} R3VARFILE=${INPUT_VARFILE} node ${DEBUG_PRINT_OPTIONS}${TEST_PROG}${DEBUG_PRINT_PIPELINE}"
 fi
 
 if [ "${DEBUG_USE_INSPECT}" -eq 1 ]; then
 	if ! NODE_PATH="${NODE_PATH}" NODE_DEBUG="${DEBUG_ENV_PARAM}" R3TEMPLFILE="${INPUT_TEMPLFILE}" R3VARFILE="${INPUT_VARFILE}" node "${DEBUG_INSPECT_OPTION}" "${DEBUG_BREAK_OPTION}" "${TEST_PROG}" 2>&1 | sed -e "s/127.0.0.1/${LOCAL_HOSTNAME}/"; then
 		EXIT_CODE="$?"
-		echo "[ERROR] Failed to run test with error code : ${EXIT_CODE}"
+		PRNERR "Failed to run test with error code : ${EXIT_CODE}"
 		exit 1
 	fi
 else
 	if ! NODE_PATH="${NODE_PATH}" NODE_DEBUG="${DEBUG_ENV_PARAM}" R3TEMPLFILE="${INPUT_TEMPLFILE}" R3VARFILE="${INPUT_VARFILE}" node "${TEST_PROG}"; then
 		EXIT_CODE="$?"
-		echo "[ERROR] Failed to run test with error code : ${EXIT_CODE}"
+		PRNERR "Failed to run test with error code : ${EXIT_CODE}"
 		exit 1
 	fi
 fi
+
+#PRNSUCCESS "Test template engine"
 
 exit 0
 

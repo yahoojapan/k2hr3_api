@@ -44,6 +44,76 @@ DEFAULT_REMOTE_K2HDKC_CTRL_PORT=8031
 DEFAULT_TENANT_MAIN="tenant0"
 DEFAULT_TENANT_SUB="tenant1"
 
+#==========================================================
+# Utility functions for print
+#==========================================================
+#
+# Escape sequence
+#
+SetColor()
+{
+	CBLD=$(printf '\033[1m')
+	CREV=$(printf '\033[7m')
+	CRED=$(printf '\033[31m')
+#	CYEL=$(printf '\033[33m')
+	CGRN=$(printf '\033[32m')
+	CDEF=$(printf '\033[0m')
+}
+
+UnSetColor()
+{
+	CBLD=""
+	CREV=""
+	CRED=""
+#	CYEL=""
+	CGRN=""
+	CDEF=""
+}
+
+if [ -t 1 ]; then
+	SetColor
+else
+	UnSetColor
+fi
+
+#--------------------------------------------------------------
+# Message functions
+#--------------------------------------------------------------
+PRNTITLE()
+{
+	printf "%s" "${CGRN}${CREV}[TITLE]${CDEF} ${CGRN}$*${CDEF}"
+}
+
+#PRNMSG()
+#{
+#	printf "%s\n" "${CYEL}${CREV}[MSG]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNERR()
+{
+	printf "%s\n" "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+}
+
+#PRNWARN()
+#{
+#	printf "%s\n" "${CBLD}${CYEL}[WARNING]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+#PRNINFO()
+#{
+#	printf "%s\n" "${CREV}[INFO]${CDEF} $*"
+#}
+
+PRNSUCCESS()
+{
+	printf "%s\n" "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+}
+
+PRNFAILURE()
+{
+	printf "%s\n" "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+}
+
 #==============================================================
 # Utility functions
 #==============================================================
@@ -83,7 +153,7 @@ while [ $# -ne 0 ]; do
 
 	elif echo "$1" | grep -q -i -e "^-f$" -e "^--for_auto_test$"; then
 		if [ -n "${EXEC_MODE}" ]; then
-			echo "[ERROR] Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
+			PRNERR "Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
 			exit 1
 		fi
 		EXEC_MODE="auto"
@@ -93,16 +163,16 @@ while [ $# -ne 0 ]; do
 		# input main tenant name
 		#
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
-			echo "[ERROR] Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
+			PRNERR "Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
 			exit 1
 		fi
 		if [ -n "${TENANT_MAIN}" ]; then
-			echo "[ERROR] Already specified --main(-m) option."
+			PRNERR "Already specified --main(-m) option."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --main(-m) option needs parameter"
+			PRNERR "--main(-m) option needs parameter"
 			exit 1
 		fi
 		TENANT_MAIN="$1"
@@ -113,16 +183,16 @@ while [ $# -ne 0 ]; do
 		# input sub tenant name
 		#
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
-			echo "[ERROR] Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
+			PRNERR "Already specified --for_auto_test(-f) or --main(-m) or --sub(-s) option."
 			exit 1
 		fi
 		if [ -n "${TENANT_SUB}" ]; then
-			echo "[ERROR] Already specified --sub(-s) option."
+			PRNERR "Already specified --sub(-s) option."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --sub(-s) option needs parameter"
+			PRNERR "--sub(-s) option needs parameter"
 			exit 1
 		fi
 		TENANT_SUB="$1"
@@ -130,51 +200,51 @@ while [ $# -ne 0 ]; do
 
 	elif echo "$1" | grep -q -i -e "^-c$" -e "^--conf$"; then
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
-			echo "[ERROR] --conf(-c) option is specified, but already set --for_auto_test(-f) option."
+			PRNERR "--conf(-c) option is specified, but already set --for_auto_test(-f) option."
 			exit 1
 		fi
 		if [ -n "${REMOTE_K2HDKC_CONF_PATH}" ]; then
-			echo "[ERROR] Already specified --conf(-c) option."
+			PRNERR "Already specified --conf(-c) option."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-		    echo "[ERROR] --conf(-c) option needs parameter"
-		    exit 1
+			PRNERR "--conf(-c) option needs parameter"
+			exit 1
 		fi
 		if [ ! -f "$1" ]; then
-		    echo "[ERROR] $1 file is not existed"
-		    exit 1
+			PRNERR "$1 file is not existed"
+			exit 1
 		fi
 		REMOTE_K2HDKC_CONF_PATH="$1"
 		EXEC_MODE="notauto"
 
 	elif echo "$1" | grep -q -i -e "^-p$" -e "^--port$"; then
 		if [ -n "${EXEC_MODE}" ] && [ "${EXEC_MODE}" = "auto" ]; then
-			echo "[ERROR] --port(-p) option is specified, but already set --for_auto_test(-f) option."
+			PRNERR "--port(-p) option is specified, but already set --for_auto_test(-f) option."
 			exit 1
 		fi
 		if [ "${REMOTE_K2HDKC_CTRL_PORT}" -ne 0 ]; then
-			echo "[ERROR] Already specified --port(-p) option."
+			PRNERR "Already specified --port(-p) option."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-		    echo "[ERROR] --port(-p) option needs parameter"
-		    exit 1
+			PRNERR "--port(-p) option needs parameter"
+			exit 1
 		fi
 		if echo "$1" | grep -q '[^0-9]'; then
-			echo "[ERROR] --port(-p) option parameter must be number"
+			PRNERR "--port(-p) option parameter must be number"
 			exit 1
 		elif [ "$1" -eq 0 ]; then
-			echo "[ERROR] --port(-p) option parameter must be positive number"
+			PRNERR "--port(-p) option parameter must be positive number"
 			exit 1
 		fi
 		REMOTE_K2HDKC_CTRL_PORT="$1"
 		EXEC_MODE="notauto"
 
 	else
-		echo "[ERROR] Unknown option $1"
+		PRNERR "Unknown option $1"
 		exit 1
 	fi
 	shift
@@ -184,7 +254,7 @@ done
 # Check options
 #
 if [ -z "${EXEC_MODE}" ]; then
-	echo "[ERROR] no option is specified."
+	PRNERR "no option is specified."
 	exit 1
 fi
 
@@ -207,41 +277,44 @@ fi
 if [ "${EXEC_MODE}" = "auto" ]; then
 	K2HDKC_CONF_PATH="${AUTO_K2HDKC_CONF_PATH}"
 	K2HDKC_CTRL_PORT="${AUTO_K2HDKC_CTRL_PORT}"
-	LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
+	LOCAL_HOSTNAME="$(hostname -f | tr -d '\n')"
 	IPADDR="127.10.10.10"
 else
 	K2HDKC_CONF_PATH="${REMOTE_K2HDKC_CONF_PATH}"
 	K2HDKC_CTRL_PORT="${REMOTE_K2HDKC_CTRL_PORT}"
-	LOCAL_HOSTNAME="$(hostname | tr -d '\n')"
+	LOCAL_HOSTNAME="$(hostname -f | tr -d '\n')"
 	IPADDR="$(nslookup "${LOCAL_HOSTNAME}" | grep 'Address' | grep -v '#' | awk '{print $2}' | head -1 | tr -d '\n')"
 fi
 
 if [ ! -f "${K2HDKC_CONF_PATH}" ]; then
-    echo "[ERROR] slave chmpx configuration file(${K2HDKC_CONF_PATH}) does not exist."
-    exit 1
+	PRNERR "slave chmpx configuration file(${K2HDKC_CONF_PATH}) does not exist."
+	exit 1
 fi
 
 #==========================================================
 # Do work
 #==========================================================
+PRNTITLE "Loaded test data"
+
 #
 # Copy file with convert
 #
 if ! sed -e "s#__LOCAL_HOST_NAME__#${LOCAL_HOSTNAME}#g"  -e "s#__LOCAL_HOST_IP__#${IPADDR}#g"  -e "s#__TENANT_NAME_MAIN__#${TENANT_MAIN}#g"  -e "s#__TENANT_NAME_SUB__#${TENANT_SUB}#g" "${TEST_DATA_TEMPLATE_FILE}" >"${TEST_DATA_CUSTOMIZED_FILE}" 2>/dev/null; then
-    echo "[ERROR] Failed to convert and copy file(${SCRIPTDIR}/k2hdkc_test.data) to /tmp."
-    exit 1
+	PRNFAILURE "Failed to convert and copy file(${SCRIPTDIR}/k2hdkc_test.data) to /tmp."
+	exit 1
 fi
 
 #
 # Run process
 #
 if ! k2hdkclinetool -conf "${K2HDKC_CONF_PATH}" -ctlport "${K2HDKC_CTRL_PORT}" -run "${TEST_DATA_CUSTOMIZED_FILE}" >/dev/null 2>&1; then
-	echo "[ERROR] Failed to load test data."
+	PRNFAILURE "Failed to load test data."
 	rm -f "${TEST_DATA_CUSTOMIZED_FILE}"
 	exit 1
 fi
 rm -f "${TEST_DATA_CUSTOMIZED_FILE}"
-echo "[SUCCEED] Loaded test data."
+
+PRNSUCCESS "Loaded test data"
 
 exit 0
 

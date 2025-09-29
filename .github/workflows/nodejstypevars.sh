@@ -29,13 +29,21 @@
 # for each repository.
 #
 # In the initial state, you need to set the following variables:
+#   INSTALLER_BIN     : Package management command
+#   UPDATE_CMD        : Update sub command for package management command
+#   UPDATE_CMD_ARG    : Update sub command arguments for package management
+#                       command
+#   INSTALL_CMD       : Install sub command for package management command
+#   INSTALL_CMD_ARG   : Install sub command arguments for package management
+#                       command
+#   INSTALL_AUTO_ARG  : No interaption arguments for package management
+#                       command
+#   INSTALL_QUIET_ARG : Output suppression parameters during installation
 #   INSTALL_PKG_LIST  : A list of packages to be installed for build and
 #                       packaging
-#   INSTALLER_BIN     : Package management command
-#   INSTALL_QUIET_ARG : Output suppression parameters during installation
-#   IS_PUBLISHER      : Set to 1 when publishing a package.
+#   IS_NPM_PUBLISHER  : Set to 1 when publishing a NPM package.
 #                       Set this value to only one of the target nodejs
-#                       major versions.
+#                       major versions and OS types.
 #   PUBLISH_DOMAIN    : Publish to NPM domain(default: registry.npmjs.org)
 #
 # Set these variables according to the CI_NODEJS_MAJOR_VERSION variable.
@@ -47,39 +55,65 @@
 #---------------------------------------------------------------
 # Default values
 #---------------------------------------------------------------
-INSTALL_PKG_LIST=""
 INSTALLER_BIN=""
+UPDATE_CMD=""
+UPDATE_CMD_ARG=""
+INSTALL_CMD=""
+INSTALL_CMD_ARG=""
+INSTALL_AUTO_ARG=""
 INSTALL_QUIET_ARG=""
+INSTALL_PKG_LIST=""
 
-IS_PUBLISHER=0
+IS_NPM_PUBLISHER=0
 PUBLISH_DOMAIN="registry.npmjs.org"
 
 #---------------------------------------------------------------
 # Variables for each Node.js Major Version
 #---------------------------------------------------------------
+# [NOTE]
+# Running on GHA is only possible on Ubuntu OS
+#
 if [ -z "${CI_NODEJS_MAJOR_VERSION}" ]; then
 	#
 	# Unknown NodeJS Major version : Nothing to do
 	#
 	:
 
-elif [ "${CI_NODEJS_MAJOR_VERSION}" = "18" ]; then
-	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
-	INSTALLER_BIN="apt-get"
-	INSTALL_QUIET_ARG="-qq"
-	IS_PUBLISHER=0
-
 elif [ "${CI_NODEJS_MAJOR_VERSION}" = "20" ]; then
-	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
 	INSTALLER_BIN="apt-get"
+	UPDATE_CMD="update"
+	UPDATE_CMD_ARG=""
+	INSTALL_CMD="install"
+	INSTALL_CMD_ARG=""
+	INSTALL_AUTO_ARG="-y"
 	INSTALL_QUIET_ARG="-qq"
-	IS_PUBLISHER=0
+	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
+
+	IS_NPM_PUBLISHER=0
 
 elif [ "${CI_NODEJS_MAJOR_VERSION}" = "22" ]; then
-	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
 	INSTALLER_BIN="apt-get"
+	UPDATE_CMD="update"
+	UPDATE_CMD_ARG=""
+	INSTALL_CMD="install"
+	INSTALL_CMD_ARG=""
+	INSTALL_AUTO_ARG="-y"
 	INSTALL_QUIET_ARG="-qq"
-	IS_PUBLISHER=1
+	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
+
+	IS_NPM_PUBLISHER=0
+
+elif [ "${CI_NODEJS_MAJOR_VERSION}" = "24" ]; then
+	INSTALLER_BIN="apt-get"
+	UPDATE_CMD="update"
+	UPDATE_CMD_ARG=""
+	INSTALL_CMD="install"
+	INSTALL_CMD_ARG=""
+	INSTALL_AUTO_ARG="-y"
+	INSTALL_QUIET_ARG="-qq"
+	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
+
+	IS_NPM_PUBLISHER=1
 fi
 
 #---------------------------------------------------------------
@@ -113,7 +147,6 @@ fi
 #	RUN_POST_PUBLISH		0
 #
 RUN_CPPCHECK=0
-RUN_BUILD=0
 
 #---------------------------------------------------------------
 # Variables for each process
@@ -123,8 +156,9 @@ RUN_BUILD=0
 # processes.
 # Each value has a default value for NodeJS processing.
 #
-#	CPPCHECK_TARGET					"."
-#	CPPCHECK_BASE_OPT				"--quiet --error-exitcode=1 --inline-suppr -j 4 --std=c++03 --xml"
+#	CPPCHECK_EXCLUDE_OPTS			"-i node_modules"
+#	CPPCHECK_TARGET					"${CPPCHECK_EXCLUDE_OPTS} ."
+#	CPPCHECK_BASE_OPT				"--quiet --error-exitcode=1 --inline-suppr -j 8 --std=c++17 --xml"
 #	CPPCHECK_ENABLE_VALUES			"warning style information missingInclude"
 #	CPPCHECK_IGNORE_VALUES			"unmatchedSuppression missingIncludeSystem normalCheckLevelMaxBranches"
 #	CPPCHECK_BUILD_DIR				"/tmp/cppcheck"
@@ -153,7 +187,7 @@ SHELLCHECK_EXCEPT_PATHS="/node_modules/"
 # and PRNINFO defined in nodejs_helper.sh.
 #
 #	<function name>		<which processing>			<implemented or not>
-#	run_pre_install		: before installing npm packages	yes
+#	run_pre_install		: before installing npm packages	no
 #	run_install			: installing npm packages			yes
 #	run_post_install	: after installing npm packages		no
 #	run_pre_audit		: before audit checking				no
@@ -170,8 +204,26 @@ SHELLCHECK_EXCEPT_PATHS="/node_modules/"
 #	run_post_test		: after testing						no
 #	run_pre_publish		: before publishing package			yes
 #	run_publish			: publishing package				yes
-#	run_post_publish	: after publishing package			no
+#	run_post_publish	: after publishing package			yes
 #
+
+#
+# Override Audit
+#
+run_audit()
+{
+	if ! /bin/sh -c "npm audit"; then
+		echo ""
+		PRNWARN "Failed to run \"npm audit\", but will not stop due to this error."
+		echo "          You should investigate this error."
+		echo "          It may be an error in a package you use."
+		echo "          We won't stop here in case npm audit fix can't fix it."
+		return 0
+	fi
+	PRNINFO "Finished to run \"npm audit\"."
+
+	return 0
+}
 
 #
 # Local variables:

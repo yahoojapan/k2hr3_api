@@ -65,7 +65,7 @@ RUNNER_INSTALL_PACKAGES=""
 #
 # Directory name to Dockerfile.templ file
 #
-DOCKERFILE_TEMPL_SUBDIR="templ"
+DOCKERFILE_TEMPL_SUBDIR="buildutils"
 
 #---------------------------------------------------------------------
 # Variables for each Docker image Type

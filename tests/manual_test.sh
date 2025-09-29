@@ -25,6 +25,7 @@ PRGNAME=$(basename "$0")
 SCRIPTDIR=$(dirname "$0")
 SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
 SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
+DISTDIR=$(cd "${SRCTOP}/dist" || exit 1; pwd)
 
 #
 # Variables
@@ -64,6 +65,82 @@ COMMANDS="
 	allusertenant_get
 	k2hr3keys_get
 "
+
+#==========================================================
+# Utility functions for print
+#==========================================================
+#
+# Escape sequence
+#
+SetColor()
+{
+	CBLD=$(printf '\033[1m')
+	CREV=$(printf '\033[7m')
+	CRED=$(printf '\033[31m')
+#	CYEL=$(printf '\033[33m')
+	CGRN=$(printf '\033[32m')
+	CDEF=$(printf '\033[0m')
+}
+
+UnSetColor()
+{
+	CBLD=""
+	CREV=""
+	CRED=""
+#	CYEL=""
+	CGRN=""
+	CDEF=""
+}
+
+if [ -t 1 ]; then
+	SetColor
+else
+	UnSetColor
+fi
+
+#--------------------------------------------------------------
+# Message functions
+#--------------------------------------------------------------
+PRNTITLE()
+{
+	echo "${CGRN}---------------------------------------------------------------------${CDEF}"
+	echo "${CGRN}${CREV}[TITLE]${CDEF} ${CGRN}$*${CDEF}"
+	echo "${CGRN}---------------------------------------------------------------------${CDEF}"
+}
+
+#PRNMSG()
+#{
+#	echo "${CYEL}${CREV}[MSG]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNERR()
+{
+	echo "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+}
+
+#PRNWARN()
+#{
+#	echo "${CBLD}${CYEL}[WARNING]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNINFO()
+{
+	echo "${CREV}[INFO]${CDEF} $*"
+}
+
+PRNSUCCESS()
+{
+	echo ""
+	echo "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+	echo ""
+}
+
+PRNFAILURE()
+{
+	echo ""
+	echo "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+	echo ""
+}
 
 #==============================================================
 # Utility functions
@@ -167,12 +244,12 @@ while [ $# -ne 0 ]; do
 		# API HOST
 		#
 		if [ -n "${APIHOST}" ]; then
-			echo "[ERROR] already specified --apihost option"
+			PRNERR "already specified --apihost option"
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --apihost(-h) option needs parameter(hostname)"
+			PRNERR "--apihost(-h) option needs parameter(hostname)"
 			exit 1
 		fi
 		APIHOST="$1"
@@ -182,33 +259,33 @@ while [ $# -ne 0 ]; do
 		# API PORT
 		#
 		if [ "${APIPORT}" -ne 0 ]; then
-			echo "[ERROR] already specified --apiport option"
+			PRNERR "already specified --apiport option"
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-				echo "[ERROR] --apiport(-p) option needs parameter(port number)"
+				PRNERR "--apiport(-p) option needs parameter(port number)"
 			exit 1
 		fi
 		if echo "$1" | grep -q '[^0-9]'; then
-			echo "[ERROR] --apiport(-p) option parameter must be number"
+			PRNERR "--apiport(-p) option parameter must be number"
 			exit 1
 		elif [ "$1" -eq 0 ]; then
-			echo "[ERROR] --apiport(-p) option parameter must be positive number"
+			PRNERR "--apiport(-p) option parameter must be positive number"
 			exit 1
 		fi
 		APIPORT="$1"
 
 	elif echo "$1" | grep -q -i "^--https$"; then
 		if [ -n "${HTTPS_ENV}" ]; then
-			echo "[ERROR] already specified --https or --http option"
+			PRNERR "already specified --https or --http option"
 			exit 1
 		fi
 		HTTPS_ENV="yes"
 
 	elif echo "$1" | grep -q -i "^--http$"; then
 		if [ -n "${HTTPS_ENV}" ]; then
-			echo "[ERROR] already specified --https or --http option"
+			PRNERR "already specified --https or --http option"
 			exit 1
 		fi
 		HTTPS_ENV="no"
@@ -219,30 +296,30 @@ while [ $# -ne 0 ]; do
 		#
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --debuglevel(-d) option needs parameter(dbg/msg/warn/err)"
+			PRNERR "--debuglevel(-d) option needs parameter(dbg/msg/warn/err)"
 			exit 1
 		fi
 		if echo "$1" | grep -q -i -e "^dbg$" -e "^debug$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-d) option already is set"
+				PRNERR "--debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=4
 		elif echo "$1" | grep -q -i -e "^msg$" -e "^message$" -e "^info$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-d) option already is set"
+				PRNERR "--debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=3
 		elif echo "$1" | grep -q -i -e "^wan$" -e "^warn$" -e "^warning$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-d) option already is set"
+				PRNERR "--debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=2
 		elif echo "$1" | grep -q -i -e "^err$" -e "^error$"; then
 			if [ "${DEBUG_ENV_LEVEL}" -ne 0 ]; then
-				echo "[ERROR] --debuglevel(-d) option already is set"
+				PRNERR "--debuglevel(-d) option already is set"
 				exit 1
 			fi
 			DEBUG_ENV_LEVEL=1
@@ -261,11 +338,11 @@ while [ $# -ne 0 ]; do
 		# Run test command
 		#
 		if [ -n "${COMMAND}" ]; then
-			echo "[ERROR] Already specified command name(${COMMAND}), could not specify multi command $1"
+			PRNERR "Already specified command name(${COMMAND}), could not specify multi command $1"
 			exit 1
 		fi
 		if ! COMMAND=$(CheckCommands "$1"); then
-			echo "[ERROR] $1 is not command name"
+			PRNERR "$1 is not command name"
 			exit 1
 		fi
 	fi
@@ -276,7 +353,7 @@ done
 # Check Command
 #
 if [ -z "${COMMAND}" ]; then
-	echo "[ERROR] Command name is not specified"
+	PRNERR "Command name is not specified"
 	exit 1
 fi
 
@@ -313,7 +390,7 @@ fi
 # Check K2HR3 API HOST/PORT
 #
 if [ -z "${APIHOST}" ]; then
-	APIHOST="$(hostname | tr -d '\n')"
+	APIHOST="$(hostname -f | tr -d '\n')"
 fi
 if [ "${APIPORT}" -eq 0 ]; then
 	if [ "${HTTPS_ENV}" = "yes" ]; then
@@ -326,20 +403,21 @@ fi
 #==========================================================
 # Do work
 #==========================================================
-cd "${SRCTOP}" || exit 1
+PRNTITLE "Test : ${COMMAND}"
+
+cd "${DISTDIR}" || exit 1
 
 if [ "${DEBUG_ENV_LEVEL}" -ge 4 ]; then
-	echo "***** RUN *****"
-	echo "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} APIHOST=${APIHOST} APIPORT=${APIPORT} HTTPS_ENV=${HTTPS_ENV} node ${DEBUG_OPTION} tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"
-	echo "***************"
+	PRNINFO "Run NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} APIHOST=${APIHOST} APIPORT=${APIPORT} HTTPS_ENV=${HTTPS_ENV} node ${DEBUG_OPTION} tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"
 fi
 
 if ! /bin/sh -c "NODE_PATH=${NODE_PATH} NODE_DEBUG=${DEBUG_ENV_PARAM} APIHOST=${APIHOST} APIPORT=${APIPORT} HTTPS_ENV=${HTTPS_ENV} node ${DEBUG_OPTION} tests/${CMD_PREFIX}${COMMAND}${CMD_SUFFIX}"; then
 	EXIT_CODE="$?"
-	echo "[ERROR] Failed to run command with exit code : ${EXIT_CODE}"
+	PRNFAILURE "Failed to run ${COMMAND} with exit code : ${EXIT_CODE}"
 	exit "${EXIT_CODE}"
 fi
 
+PRNSUCCESS "Run ${COMMAND}"
 exit 0
 
 #

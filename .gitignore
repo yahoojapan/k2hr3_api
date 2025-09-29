@@ -31,6 +31,7 @@
 #
 # Logs
 #
+log
 logs
 *.log
 npm-debug.log*
@@ -44,6 +45,18 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+#
+# Generated files
+#
+src/bin/*.js
+src/lib/*.js
+src/routes/*.js
+
+#
+# Dist directory
+#
+dist/*
 
 #
 # Dockerfile
@@ -130,18 +143,6 @@ typings/
 # local.json / local.json5
 #
 config/local.json*
-
-#
-# coverage
-#
-coverage/
-.nyc_output/
-
-#
-# Log directory
-#
-log
-logs
 
 #
 # Local variables:

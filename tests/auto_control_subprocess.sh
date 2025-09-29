@@ -32,6 +32,76 @@ SCRIPTDIR=$(dirname "$0")
 SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
 #SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 
+#==========================================================
+# Utility functions for print
+#==========================================================
+#
+# Escape sequence
+#
+SetColor()
+{
+	CBLD=$(printf '\033[1m')
+	CREV=$(printf '\033[7m')
+	CRED=$(printf '\033[31m')
+	CYEL=$(printf '\033[33m')
+	CGRN=$(printf '\033[32m')
+	CDEF=$(printf '\033[0m')
+}
+
+UnSetColor()
+{
+	CBLD=""
+	CREV=""
+	CRED=""
+	CYEL=""
+	CGRN=""
+	CDEF=""
+}
+
+if [ -t 1 ]; then
+	SetColor
+else
+	UnSetColor
+fi
+
+#--------------------------------------------------------------
+# Message functions
+#--------------------------------------------------------------
+PRNTITLE()
+{
+	printf "%s" "${CGRN}${CREV}[TITLE]${CDEF} ${CGRN}$*${CDEF}"
+}
+
+#PRNMSG()
+#{
+#	printf "%s\n" "${CYEL}${CREV}[MSG]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNERR()
+{
+	printf "%s\n" "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+}
+
+PRNWARN()
+{
+	printf "%s" "${CBLD}${CYEL}[WARNING]${CDEF} ${CYEL}$*${CDEF}"
+}
+
+PRNINFO()
+{
+	printf "%s" "${CREV}[INFO]${CDEF} $*"
+}
+
+PRNSUCCESS()
+{
+	printf "%s\n" "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+}
+
+PRNFAILURE()
+{
+	printf "%s\n" "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+}
+
 #==============================================================
 # Utility functions
 #==============================================================
@@ -70,45 +140,45 @@ while [ $# -ne 0 ]; do
 
 	elif echo "$1" | grep -q -i -e "^-str$" -e "^--start$"; then
 		if [ -n "${EXEC_MODE}" ]; then
-			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
+			PRNERR "Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
 		EXEC_MODE="start"
 
 	elif echo "$1" | grep -q -i -e "^-stp$" -e "^--stop$"; then
 		if [ -n "${EXEC_MODE}" ]; then
-			echo "[ERROR] Already run mode(--start(-str) or --stop(-stp) option) is specified."
+			PRNERR "Already run mode(--start(-str) or --stop(-stp) option) is specified."
 			exit 1
 		fi
 		EXEC_MODE="stop"
 
 	elif echo "$1" | grep -q -i -e "^-k$" -e "^--key$"; then
 		if [ -n "${PID_FILENAME_EXT_PART}" ]; then
-			echo "[ERROR] Already --key(-k) option is specified."
+			PRNERR "Already --key(-k) option is specified."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --key(-k) option needs parameter"
+			PRNERR "--key(-k) option needs parameter"
 			exit 1
 		fi
 		PID_FILENAME_EXT_PART="_$1"
 
 	elif echo "$1" | grep -q -i -e "^-i$" -e "^-int$" -e "^--interval$"; then
 		if [ "${RUN_INTERVAL}" -ne 0 ]; then
-			echo "[ERROR] Already --interval(-i) option is specified."
+			PRNERR "Already --interval(-i) option is specified."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			echo "[ERROR] --interval(-i) option needs parameter"
+			PRNERR "--interval(-i) option needs parameter"
 			exit 1
 		fi
 		if echo "$1" | grep -q '[^0-9]'; then
-			echo "[ERROR] --interval(-i) option parameter must be number(second)"
+			PRNERR "--interval(-i) option parameter must be number(second)"
 			exit 1
 		elif [ "$1" -eq 0 ]; then
-			echo "[ERROR] --interval(-i) option parameter must be positive number(second)"
+			PRNERR "--interval(-i) option parameter must be positive number(second)"
 			exit 1
 		fi
 		RUN_INTERVAL="$1"
@@ -118,12 +188,12 @@ while [ $# -ne 0 ]; do
 		# Finish to parse option, rest arguments are command and it's args
 		#
 		if [ -n "${CHILD_PROCESS_NAME}" ]; then
-			echo "[ERROR] Already \"-- <process> <arg>...\" option is specified(${CHILD_PROCESS_CMD})"
+			PRNERR "Already \"-- <process> <arg>...\" option is specified(${CHILD_PROCESS_CMD})"
 			exit 1
 		fi
 		shift
 		if [ -z "$1" ]; then
-			echo "[ERROR] \"-- <process> <arg>...\" option need parameter"
+			PRNERR "\"-- <process> <arg>...\" option need parameter"
 			exit 1
 		fi
 		CHILD_PROCESS_NAME="$1"
@@ -131,7 +201,7 @@ while [ $# -ne 0 ]; do
 		break
 
 	else
-		echo "[ERROR] Unknown option $1."
+		PRNERR "Unknown option $1."
 		exit 1
 	fi
 	shift
@@ -141,7 +211,7 @@ done
 # Check execute mode
 #
 if [ -z "${EXEC_MODE}" ]; then
-	echo "[ERROR] You must specify --start(-str) or --stop(-stp) option."
+	PRNERR "You must specify --start(-str) or --stop(-stp) option."
 	exit 1
 fi
 
@@ -149,7 +219,7 @@ fi
 # Check sub process options
 #
 if [ -z "${CHILD_PROCESS_NAME}" ] || [ -z "${CHILD_PROCESS_CMD}" ]; then
-	echo "[ERROR] No sub process and arguments are specified."
+	PRNERR "No sub process and arguments are specified."
 	exit 1
 fi
 
@@ -166,6 +236,8 @@ if [ "${EXEC_MODE}" = "start" ]; then
 	#
 	# Start Process
 	#
+	PRNTITLE "Start : ${CHILD_PROCESS_CMD} => "
+
 	${CHILD_PROCESS_CMD} >"${CHILD_PROCESS_LOGFILE}" 2>&1 &
 	CHILD_PROCESS_PID=$!
 
@@ -175,17 +247,19 @@ if [ "${EXEC_MODE}" = "start" ]; then
 
 	# shellcheck disable=SC2009
 	if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
-		echo "[ERROR] Could not start child process : ${CHILD_PROCESS_CMD}"
+		PRNFAILURE "Could not start child process"
 		exit 1
 	fi
 	echo "${CHILD_PROCESS_PID}" >"${CHILD_PROCESS_PIDFILE}"
 
-	echo "[SUCCEED] Start process(${CHILD_PROCESS_PID}) : ${CHILD_PROCESS_CMD}"
+	PRNSUCCESS "Start process(${CHILD_PROCESS_PID})"
 
 else
 	#
 	# Stop Process
 	#
+	PRNTITLE "Stop : Processes => "
+
 	if [ -n "${CHILD_PROCESS_PIDFILE}" ] && [ -f "${CHILD_PROCESS_PIDFILE}" ]; then
 
 		CHILD_PROCESS_PID="$(tr -d '\n' < "${CHILD_PROCESS_PIDFILE}")"
@@ -195,8 +269,10 @@ else
 			#
 			# Try stop
 			#
+			PRNINFO "Try to stop : ${CHILD_PROCESS_PID} => "
+
 			if ! kill -HUP "${CHILD_PROCESS_PID}"; then
-				echo "[WARNING] Failed to stop(HUP) process : ${CHILD_PROCESS_NAME}"
+				PRNWARN "Failed to stop(HUP) process : ${CHILD_PROCESS_NAME} => "
 			fi
 			if [ "${RUN_INTERVAL}" -gt 0 ]; then
 				sleep "${RUN_INTERVAL}"
@@ -207,8 +283,10 @@ else
 				#
 				# Retry stop
 				#
+				PRNINFO "Re-Try to stop : ${CHILD_PROCESS_PID} => "
+
 				if ! kill -KILL "${CHILD_PROCESS_PID}"; then
-					echo "[WARNING] Failed to stop(KILL) process : ${CHILD_PROCESS_NAME}"
+					PRNWARN "Failed to stop(KILL) process : ${CHILD_PROCESS_NAME} => "
 				fi
 				if [ "${RUN_INTERVAL}" -gt 0 ]; then
 					sleep "${RUN_INTERVAL}"
@@ -216,18 +294,17 @@ else
 
 				# shellcheck disable=SC2009
 				if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${CHILD_PROCESS_PID}$" || exit 1 && exit 0 ); then
-					echo "[ERROR] Could not stop process : ${CHILD_PROCESS_NAME}"
+					PRNERR "Could not stop process : ${CHILD_PROCESS_NAME}"
 					exit 1
 				fi
 			fi
-
-			echo "[SUCCEED] Stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
+			PRNSUCCESS "Stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
 		else
-			echo "[SUCCEED] Already stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
+			PRNSUCCESS "Already stop process : ${CHILD_PROCESS_NAME}(${CHILD_PROCESS_PID})"
 		fi
 		rm -f "${CHILD_PROCESS_PIDFILE}"
 	else
-		echo "[SUCCEED] Already stop process, because not found child process pid file : ${CHILD_PROCESS_PIDFILE}"
+		PRNSUCCESS "Already stop process(not found pid file) : ${CHILD_PROCESS_PIDFILE}"
 	fi
 fi
 
