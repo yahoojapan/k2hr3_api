@@ -1,0 +1,419 @@
+/*
+ * K2HR3 REST API
+ *
+ * Copyright 2017 Yahoo Japan Corporation.
+ *
+ * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers 
+ * common management information for the cloud.
+ * K2HR3 can dynamically manage information as "who", "what", "operate".
+ * These are stored as roles, resources, policies in K2hdkc, and the
+ * client system can dynamically read and modify these information.
+ *
+ * For the full copyright and license information, please view
+ * the license file that was distributed with this source code.
+ *
+ * AUTHOR:   Takeshi Nakatani
+ * CREATE:   Tue Dec 19 2017
+ * REVISION:
+ *
+ */
+
+import	apiutil						from '../src/lib/k2hr3apiutil';
+import	* as tokenutil				from './auto_token_util';			// Token utility
+import	{ app, expect, request }	from './auto_common';
+import type { AllToken }			from './auto_token_util';
+
+//
+// Test in Register function
+//
+export function registerListTests(): void {
+
+	//--------------------------------------------------------------
+	// Main describe section
+	//--------------------------------------------------------------
+	describe('API : LIST', function(){
+
+		const alltokens: AllToken = tokenutil.createAllToken();
+
+		//
+		// Before in describe section
+		//
+		before(function(done){
+			// Nothing to do
+			tokenutil.before(this, alltokens, done);
+		});
+
+		//
+		// After in describe section
+		//
+		after(function(){
+			// Nothing to do
+		});
+
+		it('GET /v1/list/policy with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/policy')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(6);
+					done();
+				});
+		});
+
+		it('GET /v1/list/policy/acr-policy with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/policy/acr-policy')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(0);
+					done();
+				});
+		});
+
+		it('GET /v1/list/policy?expand=true with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/policy?expand=true')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(6);
+					done();
+				});
+		});
+
+		it('GET /v1/list/policy with invalid x-auth-token header', function(done){
+			request.execute(app)
+				.get('/v1/list/policy')
+				.set('x-auth-token', 'x')
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(401);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('token(x) is not existed, because it is expired or not set yet.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/policy?expand=x with invalid expand urlparam', function(done){
+			request.execute(app)
+				.get('/v1/list/policy?expand=x')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('GET/HEAD expand url argument parameter("x") is wrong, it must be true or false.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/resource with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/resource')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(4);
+					done();
+				});
+		});
+
+		it('GET /v1/list/resource/test_service_resource with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/resource/test_service_resource')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(0);
+					done();
+				});
+		});
+
+		it('GET /v1/list/resource?expand=true with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/resource?expand=true')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(4);
+					done();
+				});
+		});
+
+		it('GET /v1/list/resource with invalid x-auth-token header', function(done){
+			request.execute(app)
+				.get('/v1/list/resource')
+				.set('x-auth-token', 'x')
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(401);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('token(x) is not existed, because it is expired or not set yet.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/resource?expand=x with invalid expand urlparam', function(done){
+			request.execute(app)
+				.get('/v1/list/resource?expand=x')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('GET/HEAD expand url argument parameter("x") is wrong, it must be true or false.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/role with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/role')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(6);
+					done();
+				});
+		});
+
+		it('GET /v1/list/role/acr-role with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/role/acr-role')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(0);
+					done();
+				});
+		});
+
+		it('GET /v1/list/role?expand=true with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/role?expand=true')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(6);
+					done();
+				});
+		});
+
+		it('GET /v1/list/role with invalid x-auth-token header', function(done){
+			request.execute(app)
+				.get('/v1/list/role')
+				.set('x-auth-token', 'x')
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(401);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('token(x) is not existed, because it is expired or not set yet.');
+					done();
+				});
+		});
+
+		// 3.5 GET /v1/list/role?expand=x HTTP/1.1
+		it('GET /v1/list/role?expand=x with invalid expand urlparam', function(done){
+			request.execute(app)
+				.get('/v1/list/role?expand=x')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('GET/HEAD expand url argument parameter("x") is wrong, it must be true or false.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/service with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/service')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(1);
+					expect(res.body.children[0]).to.deep.equal({'name':'testservice','children':[]});
+					done();
+				});
+		});
+
+		it('GET /v1/list/service?expand=true with status 200', function(done){
+			request.execute(app)
+				.get('/v1/list/service?expand=true')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.true;
+					expect(res.body.message).to.be.null;
+					expect(res.body.children).to.have.lengthOf(1);
+					expect(res.body.children[0]).to.deep.equal({'name':'testservice','children':[]});
+					done();
+				});
+		});
+
+		it('GET /v1/list/service with invalid x-auth-token header', function(done){
+			request.execute(app)
+				.get('/v1/list/service')
+				.set('x-auth-token', 'x')
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(401);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('token(x) is not existed, because it is expired or not set yet.');
+					done();
+				});
+		});
+
+		it('GET /v1/list/service?expand=x with invalid expand urlparam', function(done){
+			request.execute(app)
+				.get('/v1/list/service?expand=x')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.result).to.be.a('boolean').to.be.false;
+					expect(res.body.message).to.have.string('GET/HEAD expand url argument parameter("x") is wrong, it must be true or false.');
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/service with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/service')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/resource with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/resource')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/resource/test_service_resource with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/resource/test_service_resource')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/policy with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/policy')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/policy/acr-policy with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/policy/acr-policy')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/role with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/role')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+
+		it('HEAD /v1/list/role/acr-role with status 204', function(done){
+			request.execute(app)
+				.head('/v1/list/role/acr-role')
+				.set('x-auth-token', apiutil.getSafeString(alltokens.scopedtoken.tenant0))
+				.end(function(err: Error | null, res: ChaiHttp.Response){
+					expect(res).to.have.status(204);
+					expect(res.body).to.be.empty;
+					done();
+				});
+		});
+	});
+}
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noexpandtab sw=4 ts=4 fdm=marker
+ * vim<600: noexpandtab sw=4 ts=4
+ */

@@ -41,6 +41,80 @@ LOCALDEVELOP_JSON5="${CONFIGDIR}/local-development.json5"
 LOCALDEVELOP_JSON5_BUP="${LOCALDEVELOP_JSON5}_AUTOTEST_BUP"
 DUMMY_JSON5="${CONFIGDIR}/dummyuser.json5"
 
+#==========================================================
+# Utility functions for print
+#==========================================================
+#
+# Escape sequence
+#
+SetColor()
+{
+	CBLD=$(printf '\033[1m')
+	CREV=$(printf '\033[7m')
+	CRED=$(printf '\033[31m')
+	CYEL=$(printf '\033[33m')
+	CGRN=$(printf '\033[32m')
+	CDEF=$(printf '\033[0m')
+}
+
+UnSetColor()
+{
+	CBLD=""
+	CREV=""
+	CRED=""
+	CYEL=""
+	CGRN=""
+	CDEF=""
+}
+
+if [ -t 1 ]; then
+	SetColor
+else
+	UnSetColor
+fi
+
+#--------------------------------------------------------------
+# Message functions
+#--------------------------------------------------------------
+PRNTITLE()
+{
+	echo "${CGRN}${CREV}[TITLE]${CDEF} ${CGRN}$*${CDEF}"
+}
+
+#PRNMSG()
+#{
+#	echo "${CYEL}${CREV}[MSG]${CDEF} ${CYEL}$*${CDEF}"
+#}
+
+PRNERR()
+{
+	echo "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+}
+
+PRNWARN()
+{
+	echo "${CBLD}${CYEL}[WARNING]${CDEF} ${CYEL}$*${CDEF}"
+}
+
+PRNINFO()
+{
+	echo "${CREV}[INFO]${CDEF} $*"
+}
+
+PRNSUCCESS()
+{
+	echo ""
+	echo "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+	echo ""
+}
+
+#PRNFAILURE()
+#{
+#	echo ""
+#	echo "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+#	echo ""
+#}
+
 #==============================================================
 # Utility functions
 #==============================================================
@@ -69,27 +143,27 @@ while [ $# -ne 0 ]; do
 
 	elif echo "$1" | grep -q -i -e "^-s$" -e "^--set$"; then
 		if [ -n "${PROC_MODE}" ]; then
-			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
+			PRNERR "already specified --set(-s) or --restore(-r) option"
 			exit 1
 		fi
 		PROC_MODE="set"
 
 	elif echo "$1" | grep -q -i -e "^-r$" -e "^--restore$"; then
 		if [ -n "${PROC_MODE}" ]; then
-			echo "[ERROR] already specified --set(-s) or --restore(-r) option"
+			PRNERR "already specified --set(-s) or --restore(-r) option"
 			exit 1
 		fi
 		PROC_MODE="restore"
 
 	else
-		echo "[ERROR] Unknown option $1"
+		PRNERR "Unknown option $1"
 		exit 1
 	fi
 	shift
 done
 
 if [ -z "${PROC_MODE}" ]; then
-	echo "[ERROR] You must specify --set(-s) or --restore(-r) option."
+	PRNERR "You must specify --set(-s) or --restore(-r) option."
 	exit 1
 fi
 
@@ -100,18 +174,19 @@ if [ "${PROC_MODE}" = "set" ]; then
 	#
 	# Set Mode
 	#
+	PRNTITLE "Set mode : Start"
 
 	#
 	# Check local.json5
 	#
 	if [ -f "${LOCAL_JSON5}" ]; then
 		if [ ! -L "${LOCAL_JSON5}" ]; then
-			echo "[ERROR] ${LOCAL_JSON5} is existed as real file."
+			PRNERR "${LOCAL_JSON5} is existed as real file."
 			exit 1
 		fi
 
 		if ! SLINK_FILE=$(readlink "${LOCAL_JSON5}"); then
-			echo "[ERROR] Could not read link as ${LOCAL_JSON5}"
+			PRNERR "Could not read link as ${LOCAL_JSON5}"
 			exit 1
 		fi
 
@@ -119,14 +194,14 @@ if [ "${PROC_MODE}" = "set" ]; then
 			#
 			# local.json5 is already linked to dummyuser.json5
 			#
-			echo "[INFO] Already ${LOCAL_JSON5} file is linked ${DUMMY_JSON5}"
+			PRNINFO "Already ${LOCAL_JSON5} file is linked ${DUMMY_JSON5}"
 
 		else
 			#
 			# Make backup and create new symbolic link file
 			#
 			if [ -f "${LOCAL_JSON5_BUP}" ]; then
-				echo "[ERROR] Could not rename file ${LOCAL_JSON5} to ${LOCAL_JSON5_BUP}, because ${LOCAL_JSON5_BUP} already exists."
+				PRNERR "Could not rename file ${LOCAL_JSON5} to ${LOCAL_JSON5_BUP}, because ${LOCAL_JSON5_BUP} already exists."
 				exit 1
 			fi
 
@@ -134,7 +209,7 @@ if [ "${PROC_MODE}" = "set" ]; then
 			# Rename
 			#
 			if ! mv "${LOCAL_JSON5}" "${LOCAL_JSON5_BUP}" >/dev/null 2>&1; then
-				echo "[ERROR] Could not rename file ${LOCAL_JSON5} to ${LOCAL_JSON5_BUP}"
+				PRNERR "Could not rename file ${LOCAL_JSON5} to ${LOCAL_JSON5_BUP}"
 				exit 1
 			fi
 
@@ -142,7 +217,7 @@ if [ "${PROC_MODE}" = "set" ]; then
 			# Make symbolic link local.json5
 			#
 			if ! ln -s "${DUMMY_JSON5}" "${LOCAL_JSON5}" >/dev/null 2>&1; then
-				echo "[ERROR] Could not create symbolic file ${DUMMY_JSON5} to ${LOCAL_JSON5}"
+				PRNERR "Could not create symbolic file ${DUMMY_JSON5} to ${LOCAL_JSON5}"
 				exit 1
 			fi
 		fi
@@ -151,7 +226,7 @@ if [ "${PROC_MODE}" = "set" ]; then
 		# There is no local.json5, thus only make symbolic link local.json5
 		#
 		if ! ln -s "${DUMMY_JSON5}" "${LOCAL_JSON5}" >/dev/null 2>&1; then
-			echo "[ERROR] Could not create symbolic file ${DUMMY_JSON5} to ${LOCAL_JSON5}"
+			PRNERR "Could not create symbolic file ${DUMMY_JSON5} to ${LOCAL_JSON5}"
 			exit 1
 		fi
 	fi
@@ -161,7 +236,7 @@ if [ "${PROC_MODE}" = "set" ]; then
 	#
 	if [ -f "${LOCALDEVELOP_JSON5}" ]; then
 		if [ -f "${LOCALDEVELOP_JSON5_BUP}" ]; then
-			echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON5} to ${LOCALDEVELOP_JSON5_BUP}, because ${LOCALDEVELOP_JSON5_BUP} already exists."
+			PRNERR "Could not rename file ${LOCALDEVELOP_JSON5} to ${LOCALDEVELOP_JSON5_BUP}, because ${LOCALDEVELOP_JSON5_BUP} already exists."
 			exit 1
 		fi
 
@@ -169,14 +244,18 @@ if [ "${PROC_MODE}" = "set" ]; then
 		# Rename
 		#
 		if ! mv "${LOCALDEVELOP_JSON5}" "${LOCALDEVELOP_JSON5_BUP}" >/dev/null 2>&1; then
-			echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON5} to ${LOCALDEVELOP_JSON5_BUP}"
+			PRNERR "Could not rename file ${LOCALDEVELOP_JSON5} to ${LOCALDEVELOP_JSON5_BUP}"
 			exit 1
 		fi
 	fi
+
+	PRNSUCCESS "Set mode : Start"
+
 else
 	#
 	# Restore Mode
 	#
+	PRNTITLE "Restore mode : Start"
 
 	#
 	# Restore local.json5
@@ -184,13 +263,13 @@ else
 	if [ ! -f "${LOCAL_JSON5_BUP}" ]; then
 		if [ -f "${LOCAL_JSON5}" ]; then
 			if [ ! -L "${LOCAL_JSON5}" ]; then
-				echo "[WARNING] Not found ${LOCAL_JSON5_BUP} and exists ${LOCAL_JSON5} as real file, so nothing to do"
+				PRNWARN "Not found ${LOCAL_JSON5_BUP} and exists ${LOCAL_JSON5} as real file, so nothing to do"
 			else
 				#
 				# local.json5 is symbolic link
 				#
 				if ! SLINK_FILE=$(readlink "${LOCAL_JSON5}"); then
-					echo "[ERROR] Could not read link as ${LOCAL_JSON5}"
+					PRNERR "Could not read link as ${LOCAL_JSON5}"
 					exit 1
 				fi
 
@@ -199,35 +278,35 @@ else
 					# local.json5 is linked to dummyuser.json5
 					#
 					if ! rm -f "${LOCAL_JSON5}"; then
-						echo "[ERROR] Could not remove file ${LOCAL_JSON5}"
+						PRNERR "Could not remove file ${LOCAL_JSON5}"
 						exit 1
 					fi
 				else
 					#
 					# local.json5 is not linked to dummyuser.json5
 					#
-					echo "[WARNING] Not found ${LOCAL_JSON5_BUP} and exists ${LOCAL_JSON5} as symbolic link, but it is not linking to dummyuser.json5"
+					PRNWARN "Not found ${LOCAL_JSON5_BUP} and exists ${LOCAL_JSON5} as symbolic link, but it is not linking to dummyuser.json5"
 				fi
 			fi
 		else
-			echo "[WARNING] Not found ${LOCAL_JSON5_BUP} and ${LOCAL_JSON5}."
+			PRNWARN "Not found ${LOCAL_JSON5_BUP} and ${LOCAL_JSON5}."
 		fi
 	else
 		if [ -f "${LOCAL_JSON5}" ]; then
 			if [ ! -L "${LOCAL_JSON5}" ]; then
-				echo "[WARNING] ${LOCAL_JSON5} is not created by ${PRGNAME} program, because it is not symbolic link."
+				PRNWARN "${LOCAL_JSON5} is not created by ${PRGNAME} program, because it is not symbolic link."
 			else
 				if ! SLINK_FILE=$(readlink "${LOCAL_JSON5}"); then
-					echo "[ERROR] Could not read link as ${LOCAL_JSON5}"
+					PRNERR "Could not read link as ${LOCAL_JSON5}"
 					exit 1
 				fi
 
 				if [ "${SLINK_FILE}" != "${DUMMY_JSON5}" ]; then
-					echo "[WARNING] ${LOCAL_JSON5} is not created by ${PRGNAME} program, because it is not symbolic link to ${DUMMY_JSON5}."
+					PRNWARN "${LOCAL_JSON5} is not created by ${PRGNAME} program, because it is not symbolic link to ${DUMMY_JSON5}."
 				else
 					# remove
 					if ! rm -f "${LOCAL_JSON5}"; then
-						echo "[ERROR] Could not remove file ${LOCAL_JSON5}"
+						PRNERR "Could not remove file ${LOCAL_JSON5}"
 						exit 1
 					fi
 				fi
@@ -238,7 +317,7 @@ else
 		# Rename
 		#
 		if ! mv "${LOCAL_JSON5_BUP}" "${LOCAL_JSON5}" >/dev/null 2>&1; then
-			echo "[ERROR] Could not rename file ${LOCAL_JSON5_BUP} to ${LOCAL_JSON5}"
+			PRNERR "Could not rename file ${LOCAL_JSON5_BUP} to ${LOCAL_JSON5}"
 			exit 1
 		fi
 	fi
@@ -247,20 +326,22 @@ else
 	# Restore local-development.json5
 	#
 	if [ ! -f "${LOCALDEVELOP_JSON5_BUP}" ]; then
-		echo "[INFO] Not found ${LOCALDEVELOP_JSON5_BUP}, skip restoring ${LOCALDEVELOP_JSON5}."
+		PRNINFO "Not found ${LOCALDEVELOP_JSON5_BUP}, skip restoring ${LOCALDEVELOP_JSON5}."
 	else
 		if [ -f "${LOCALDEVELOP_JSON5}" ]; then
-			echo "[WARNING] ${LOCALDEVELOP_JSON5} already exists, could not restoring from ${LOCALDEVELOP_JSON5_BUP}."
+			PRNWARN "${LOCALDEVELOP_JSON5} already exists, could not restoring from ${LOCALDEVELOP_JSON5_BUP}."
 		else
 			#
 			# Rename
 			#
 			if ! mv "${LOCALDEVELOP_JSON5_BUP}" "${LOCALDEVELOP_JSON5}" >/dev/null 2>&1; then
-				echo "[ERROR] Could not rename file ${LOCALDEVELOP_JSON5_BUP} to ${LOCALDEVELOP_JSON5}"
+				PRNERR "Could not rename file ${LOCALDEVELOP_JSON5_BUP} to ${LOCALDEVELOP_JSON5}"
 				exit 1
 			fi
 		fi
 	fi
+
+	PRNSUCCESS "Restore mode : Start"
 fi
 
 exit 0

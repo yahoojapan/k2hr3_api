@@ -52,7 +52,7 @@ fi
 PRGNAME=$(basename "$0")
 SCRIPTDIR=$(dirname "$0")
 SCRIPTDIR=$(cd "${SCRIPTDIR}" || exit 1; pwd)
-SRCTOP=$(cd "${SCRIPTDIR}"/.. || exit 1; pwd)
+SRCTOP=$(cd "${SCRIPTDIR}"/../.. || exit 1; pwd)
 
 #
 # Message variables
@@ -65,17 +65,19 @@ IN_GHAGROUP_AREA=0
 CI_NODEJS_TYPE=""
 CI_NODEJS_MAJOR_VERSION=""
 
+CI_GITHUB_TOKEN=""
 CI_NODEJS_TYPE_VARS_FILE="${SCRIPTDIR}/nodejstypevars.sh"
 CI_USE_PACKAGECLOUD_REPO=1
 CI_PACKAGECLOUD_OWNER="antpickax"
 CI_PACKAGECLOUD_DOWNLOAD_REPO="stable"
-CI_NPM_TOKEN=""
+CI_NPM_OIDC_AUDIENCE=""
+CI_NPM_OIDC_EXCHANGE_URL=""
 CI_FORCE_PUBLISHER=""
 CI_FORCE_NOT_PUBLISHER=0
 
 CI_IN_SCHEDULE_PROCESS=0
 CI_PUBLISH_TAG_NAME=""
-CI_DO_PUBLISH=0
+CI_DO_NPM_PUBLISH=0
 
 #==============================================================
 # Utility functions and variables for messaging
@@ -137,11 +139,13 @@ PRNERR()
 PRNSUCCESS()
 {
 	echo "${CBLD}${CGRN}${CREV}[SUCCEED]${CDEF} ${CGRN}$*${CDEF}"
+	echo ""
 	PRNGROUPEND
 }
 PRNFAILURE()
 {
 	echo "${CBLD}${CRED}${CREV}[FAILURE]${CDEF} ${CRED}$*${CDEF}"
+	echo ""
 	PRNGROUPEND
 }
 RUNCMD()
@@ -152,6 +156,53 @@ RUNCMD()
 		return 1
 	fi
 	return 0
+}
+
+#----------------------------------------------------------
+# Make sure the repository is original (not forked)
+#----------------------------------------------------------
+# Environments:
+#	GITHUB_EVENT_PATH	The path to the file on the runner that
+#						contains the full event webhook payload
+#
+is_current_repo_original()
+{
+	if [ -z "${GITHUB_EVENT_PATH}" ] || [ ! -f "${GITHUB_EVENT_PATH}" ]; then
+		return 1
+	fi
+
+	#
+	# Convert multiple line to single line
+	#
+	_FILTER_RESULT=$(tr -d '\n' < "${GITHUB_EVENT_PATH}" 2>/dev/null)
+
+	#
+	# Check "repository" key
+	#
+	if ! echo "${_FILTER_RESULT}" | grep -q '^.*\"repository\"[[:space:]]*:[[:space:]]*'; then
+		return 1
+	fi
+	_FILTER_RESULT=$(echo "${_FILTER_RESULT}" | sed -e 's#^.*\"repository\"[[:space:]]*:[[:space:]]*##g')
+
+	#
+	# Check "fork" key (in "repository" value)
+	#
+	if ! echo "${_FILTER_RESULT}" | grep -q '^.*\"fork\"[[:space:]]*:[[:space:]]*'; then
+		return 1
+	fi
+
+	#
+	# Get "fork" value
+	#
+	# [NOTE]
+	# The "repository" object must have a "fork" key.
+	#
+	_FILTER_RESULT=$(echo "${_FILTER_RESULT}" | sed -e 's#^.*\"fork\"[[:space:]]*:[[:space:]]*##g' -e 's#\}.*##g' -e 's#\].*##g' -e 's#[[:space:]]*$##g')
+
+	if echo "${_FILTER_RESULT}" | grep -q -i 'false'; then
+		return 0
+	fi
+	return 1
 }
 
 #----------------------------------------------------------
@@ -168,8 +219,9 @@ func_usage()
 	echo ""
 	echo "  Option:"
 	echo "    --nodejstype-vars-file(-f)                <file path>  specify the file that describes the package list to be installed before build(default is nodejstypevars.sh)"
-	echo "    --npm-token(-token)                       <token>      npm token for uploading(specify when uploading)"
-	echo "    --force-publisher(-fp)                    <version>    specify publisher node major version(ex. 10/11/12)."
+	echo "    --oidc-audience(-oa)                      <string>     OIDC Audience for automation NPM token(ex. npm)"
+	echo "    --oidc-exchange-url(-oeu)                 <URL>        OIDC exchange URL for automation NPM token(ex. https://registry.npmjs.org/-/v1/oidc/exchange)"
+	echo "    --force-publisher(-fp)                    <version>    specify publisher node major version(ex. 22/24)."
 	echo "    --force-not-publisher(-np)                             do not allow to publish any packages."
 	echo ""
 	echo "  Option for packagecloud.io:"
@@ -179,13 +231,16 @@ func_usage()
 	echo "    --packagecloudio-download-repo(-pcdlrepo) <repository> repository name of installing packages in packagecloud.io, this is part of the repository path(default is stable)"
 	echo ""
 	echo "  Environments:"
+	echo "    ENV_GITHUB_TOKEN                          token for github"
 	echo "    ENV_NODEJS_TYPE_VARS_FILE                 the file for custom variables                             ( same as option '--nodejstype-vars-file(-f)' )"
-	echo "    ENV_NPM_TOKEN                             the token for publishing to npm                           ( same as option '--npm-token(-token)' )"
+	echo "    ENV_NPM_OIDC_AUDIENCE                     OIDC Audience for automation NPM token                    ( same as option '--oidc-audience(-oa)' )"
+	echo "    ENV_NPM_OIDC_EXCHANGE_URL                 OIDC exchange URL for automation NPM token                ( same as option '--oidc-exchange-url(-oeu)' )"
 	echo "    ENV_FORCE_PUBLISHER                       nodejs major version to publish packages                  ( same as option '--force-publisher(-fp)' )"
 	echo "    ENV_FORCE_NOT_PUBLISHER                   do not allow to publish any packages                      ( same as option '--force-not-publisher(-np)' )"
 	echo "    ENV_USE_PACKAGECLOUD_REPO                 use packagecloud.io repository: true/false                ( same as option '--use-packagecloudio-repo(-usepc)' and '--not-use-packagecloudio-repo(-notpc)' )"
 	echo "    ENV_PACKAGECLOUD_OWNER                    owner name for uploading to packagecloud.io               ( same as option '--packagecloudio-owner(-pcowner)' )"
 	echo "    ENV_PACKAGECLOUD_DOWNLOAD_REPO            repository name of installing packages in packagecloud.io ( same as option '--packagecloudio-download-repo(-pcdlrepo)' )"
+	echo "    ENV_NPM_TOKEN                             [Deprecated] currently use automation NPM token."
 	echo ""
 	echo "  Note:"
 	echo "    Environment variables and options have the same parameter items."
@@ -218,7 +273,7 @@ RUN_TEST=1
 RUN_POST_TEST=0
 RUN_PRE_PUBLISH=1
 RUN_PUBLISH=1
-RUN_POST_PUBLISH=0
+RUN_POST_PUBLISH=1
 
 #
 # Before install
@@ -269,6 +324,8 @@ run_audit()
 		PRNERR "Failed to run \"npm audit\"."
 		return 1
 	fi
+	PRNINFO "Finished to run \"npm audit\"."
+
 	return 0
 }
 
@@ -324,6 +381,8 @@ run_cppcheck()
 		PRNERR "Failed to run \"cppcheck\"."
 		return 1
 	fi
+	PRNINFO "Finished to run \"cppcheck\"."
+
 	return 0
 }
 
@@ -380,9 +439,9 @@ run_shellcheck()
 		SHELLCHECK_EXCEPT_PATHS_CMD="${SHELLCHECK_EXCEPT_PATHS_CMD} | grep -v '${_one_path}'"
 	done
 
-	SHELLCHECK_FILES_NO_SH="$(/bin/sh -c      "grep -ril '^\#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep -v '\.sh' ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
-	SHELLCHECK_FILES_SH="$(/bin/sh -c         "grep -ril '^\#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep '\.sh'    ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
-	SHELLCHECK_FILES_INCLUDE_SH="$(/bin/sh -c "grep -Lir '^\#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep '\.sh'    ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
+	SHELLCHECK_FILES_NO_SH="$(/bin/sh -c      "grep -ril '^#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep -v '\.sh' ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
+	SHELLCHECK_FILES_SH="$(/bin/sh -c         "grep -ril '^#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep '\.sh'    ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
+	SHELLCHECK_FILES_INCLUDE_SH="$(/bin/sh -c "grep -Lir '^#!/bin/sh' ${SHELLCHECK_TARGET_DIRS} | grep '\.sh'    ${SHELLCHECK_EXCEPT_PATHS_CMD} | tr '\n' ' '")"
 
 	#
 	# Check scripts
@@ -408,6 +467,8 @@ run_shellcheck()
 		PRNERR "Failed to run \"shellcheck\"."
 		return 1
 	fi
+	PRNINFO "Finished to run \"shellcheck\"."
+
 	return 0
 }
 
@@ -485,20 +546,52 @@ run_post_test()
 #
 run_pre_publish()
 {
-	if [ -z "${PUBLISH_DOMAIN}" ] || [ -z "${CI_NPM_TOKEN}" ]; then
-		PRNERR "PUBLISH_DOMAIN(=${PUBLISH_DOMAIN}) or CI_NPM_TOKEN(=${CI_NPM_TOKEN}) is empty."
-		return 1
-	fi
-	export NODE_AUTH_TOKEN="${CI_NPM_TOKEN}"
+	#
+	# Setup NPM TOKEN and .npmrc(only old method type)
+	#
+	if [ "${CI_DO_NPM_PUBLISH}" -eq 1 ]; then
+		# [NOTE]
+		# Currently, we use "NPM Trusted publishing".
+		# (You need to configure Trusted publishing for each package on the NPM site.)
+		# Keep to support the old method,  if GitHub Actions Secret.NPM_TOKEN value
+		# is set, we use it.
+		#
+		if [ -n "${ENV_NPM_TOKEN}" ]; then
+			#
+			# Set NPM token for old method type
+			#
+			# [Deprecated]
+			# This is left in for debugging purposes only, but the NPM configuration is
+			# configured to reject no OIDC tokens, so it should not be used normally.
+			#
+			export NODE_AUTH_TOKEN="${ENV_NPM_TOKEN}"
 
-	if ! echo "https://${PUBLISH_DOMAIN}/" > "${HOME}"/.npmrc; then
-		PRNERR "Failed to run process before publish, could not set domain to .npmrc"
+			#
+			# Setup .npmrc file
+			#
+			if ! echo "https://${PUBLISH_DOMAIN}/" > "${HOME}"/.npmrc; then
+				PRNERR "Failed to run process before publish, could not set domain to .npmrc"
+				return 1
+			fi
+			if ! echo "//${PUBLISH_DOMAIN}/:_authToken=${NODE_AUTH_TOKEN}" >> "${HOME}"/.npmrc; then
+				PRNERR "Failed to run process before publish, could not set token to .npmrc"
+				return 1
+			fi
+			PRNINFO "Finished to set NPM_TOKEN and create .npmrc(as old publishing type)."
+		else
+			PRNINFO "Using NPM trusted publishing, so nothing to set NPM_TOKEN and .npmrc"
+		fi
+	fi
+
+	#
+	# Build npm package
+	#
+	if ! /bin/sh -c "npm pack"; then
+		PRNERR "Failed to run \"npm pack\"."
 		return 1
 	fi
-	if ! echo "//${PUBLISH_DOMAIN}/:_authToken=${NODE_AUTH_TOKEN}" >> "${HOME}"/.npmrc; then
-		PRNERR "Failed to run process before publish, could not set token to .npmrc"
-		return 1
-	fi
+	PRNINFO "Finished to run \"npm pack\"."
+
 	return 0
 }
 
@@ -507,9 +600,42 @@ run_pre_publish()
 #
 run_publish()
 {
-	if ! /bin/sh -c "npm publish"; then
-		PRNERR "Failed to run \"npm publish\"."
-		return 1
+	#
+	# Forked repository is not publish 
+	#
+	_IS_ORIGINAL_REPOSITORY=0
+	if is_current_repo_original; then
+		_IS_ORIGINAL_REPOSITORY=1
+	fi
+
+	#
+	# Publish NPM package
+	#
+	if [ "${CI_DO_NPM_PUBLISH}" -eq 1 ]; then
+		if [ "${_IS_ORIGINAL_REPOSITORY}" -eq 1 ]; then
+			#
+			# Run publish
+			#
+			if [ -n "${ENV_NPM_TOKEN}" ]; then
+				if ! /bin/sh -c "npm publish"; then
+					PRNERR "Failed to run \"npm publish\"."
+					return 1
+				fi
+			else
+				# [NOTE]
+				# Always specify "--provenance" and "--access public" (for first uploading)
+				#
+				if ! /bin/sh -c "npm publish --provenance --access public"; then
+					PRNERR "Failed to run \"npm publish\"."
+					return 1
+				fi
+			fi
+			PRNINFO "Finished to run \"npm publish\"."
+		else
+			PRNINFO "\"npm publish\" skipped because this repository is forked."
+		fi
+	else
+		PRNINFO "Nothing to publish NPM package."
 	fi
 	return 0
 }
@@ -519,7 +645,14 @@ run_publish()
 #
 run_post_publish()
 {
-	PRNWARN "Not implement process after publish."
+	#
+	# Remove .npmrc file
+	#
+	if [ -f "${HOME}"/.npmrc ]; then
+		rm -f "${HOME}"/.npmrc 2>/dev/null
+	fi
+	PRNINFO "Finished to remove .npmrc file."
+
 	return 0
 }
 
@@ -538,7 +671,8 @@ OPT_FORCE_NOT_PUBLISHER=0
 OPT_USE_PACKAGECLOUD_REPO=
 OPT_PACKAGECLOUD_OWNER=""
 OPT_PACKAGECLOUD_DOWNLOAD_REPO=""
-OPT_NPM_TOKEN=""
+OPT_NPM_OIDC_AUDIENCE=""
+OPT_NPM_OIDC_EXCHANGE_URL=""
 
 while [ $# -ne 0 ]; do
 	if [ -z "$1" ]; then
@@ -571,7 +705,7 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 		if [ ! -f "$1" ]; then
-			PRNERR "$1 file is not existed, it is specified \"--ostype-vars-file(-f)\" option."
+			PRNERR "$1 file is not existed, it is specified \"--nodejstype-vars-file(-f)\" option."
 			exit 1
 		fi
 		OPT_NODEJS_TYPE_VARS_FILE="$1"
@@ -587,7 +721,7 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 		if echo "$1" | grep -q '[^0-9]'; then
-			PRNERR "\"--force-publisher(-fp)\" option specify with Node.js major version(ex, 14/16/18...)."
+			PRNERR "\"--force-publisher(-fp)\" option specify with Node.js major version(ex, 22/24...)."
 			exit 1
 		fi
 		OPT_FORCE_PUBLISHER="$1"
@@ -613,17 +747,29 @@ while [ $# -ne 0 ]; do
 		fi
 		OPT_USE_PACKAGECLOUD_REPO=0
 
-	elif echo "$1" | grep -q -i -e "^-token$" -e "^--npm-token$"; then
-		if [ -n "${OPT_NPM_TOKEN}" ]; then
-			PRNERR "already set \"--npm-token(-token)\" option."
+	elif echo "$1" | grep -q -i -e "^-oa$" -e "^--oidc-audience$"; then
+		if [ -n "${OPT_NPM_OIDC_AUDIENCE}" ]; then
+			PRNERR "already set \"--oidc-audience(-oa)\" option."
 			exit 1
 		fi
 		shift
 		if [ $# -eq 0 ]; then
-			PRNERR "\"--npm-token(-token)\" option is specified without parameter."
+			PRNERR "\"--oidc-audience(-oa)\" option is specified without parameter."
 			exit 1
 		fi
-		OPT_NPM_TOKEN="$1"
+		OPT_NPM_OIDC_AUDIENCE="$1"
+
+	elif echo "$1" | grep -q -i -e "^-oeu$" -e "^--oidc-exchange-url$"; then
+		if [ -n "${OPT_NPM_OIDC_EXCHANGE_URL}" ]; then
+			PRNERR "already set \"--oidc-exchange-url(-oeu)\" option."
+			exit 1
+		fi
+		shift
+		if [ $# -eq 0 ]; then
+			PRNERR "\"--oidc-exchange-url(-oeu)\" option is specified without parameter."
+			exit 1
+		fi
+		OPT_NPM_OIDC_EXCHANGE_URL="$1"
 
 	elif echo "$1" | grep -q -i -e "^-pcowner$" -e "^--packagecloudio-owner$"; then
 		if [ -n "${OPT_PACKAGECLOUD_OWNER}" ]; then
@@ -675,6 +821,10 @@ fi
 #
 # Check other options and enviroments
 #
+if [ -n "${ENV_GITHUB_TOKEN}" ]; then
+	CI_GITHUB_TOKEN="${ENV_GITHUB_TOKEN}"
+fi
+
 if [ -n "${OPT_NODEJS_TYPE_VARS_FILE}" ]; then
 	CI_NODEJS_TYPE_VARS_FILE="${OPT_NODEJS_TYPE_VARS_FILE}"
 elif [ -n "${ENV_OSTYPE_VARS_FILE}" ]; then
@@ -736,10 +886,26 @@ elif [ -n "${ENV_PACKAGECLOUD_DOWNLOAD_REPO}" ]; then
 	CI_PACKAGECLOUD_DOWNLOAD_REPO="${ENV_PACKAGECLOUD_DOWNLOAD_REPO}"
 fi
 
-if [ -n "${OPT_NPM_TOKEN}" ]; then
-	CI_NPM_TOKEN="${OPT_NPM_TOKEN}"
-elif [ -n "${ENV_NPM_TOKEN}" ]; then
-	CI_NPM_TOKEN="${ENV_NPM_TOKEN}"
+if [ -n "${OPT_NPM_OIDC_AUDIENCE}" ]; then
+	CI_NPM_OIDC_AUDIENCE="${OPT_NPM_OIDC_AUDIENCE}"
+elif [ -n "${ENV_NPM_OIDC_AUDIENCE}" ]; then
+	CI_NPM_OIDC_AUDIENCE="${ENV_NPM_OIDC_AUDIENCE}"
+fi
+
+if [ -n "${OPT_NPM_OIDC_EXCHANGE_URL}" ]; then
+	CI_NPM_OIDC_EXCHANGE_URL="${OPT_NPM_OIDC_EXCHANGE_URL}"
+elif [ -n "${ENV_NPM_OIDC_EXCHANGE_URL}" ]; then
+	CI_NPM_OIDC_EXCHANGE_URL="${ENV_NPM_OIDC_EXCHANGE_URL}"
+fi
+
+#
+# Check running as root user
+#
+RUN_USER_ID=$(id -u)
+if [ -n "${RUN_USER_ID}" ] && [ "${RUN_USER_ID}" -eq 0 ]; then
+	SUDO_CMD=""
+else
+	SUDO_CMD="sudo"
 fi
 
 # [NOTE] for ubuntu/debian
@@ -757,8 +923,9 @@ PRNSUCCESS "Start to check options and environments"
 #
 # Default command parameters for each phase
 #
-CPPCHECK_TARGET="."
-CPPCHECK_BASE_OPT="--quiet --error-exitcode=1 --inline-suppr -j 4 --std=c++03 --xml --enable=warning,style,information,missingInclude"
+CPPCHECK_EXCLUDE_OPTS="-i node_modules"
+CPPCHECK_TARGET="${CPPCHECK_EXCLUDE_OPTS} ."
+CPPCHECK_BASE_OPT="--quiet --error-exitcode=1 --inline-suppr -j 8 --std=c++17 --xml --enable=warning,style,information,missingInclude"
 CPPCHECK_ENABLE_VALUES="warning style information missingInclude"
 CPPCHECK_IGNORE_VALUES="unmatchedSuppression missingIncludeSystem normalCheckLevelMaxBranches"
 CPPCHECK_BUILD_DIR="/tmp/cppcheck"
@@ -818,13 +985,25 @@ PRNTITLE "Check whether to execute processes"
 # Check whether to publish
 #
 if [ "${CI_FORCE_NOT_PUBLISHER}" -eq 0 ]; then
-	if [ "${IS_PUBLISHER}" -eq 1 ] || { [ -n "${CI_FORCE_PUBLISHER}" ] && [ "${CI_FORCE_PUBLISHER}" = "${CI_NODEJS_MAJOR_VERSION}" ]; }; then
-		if [ -n "${CI_PUBLISH_TAG_NAME}" ]; then
-			if [ -z "${CI_NPM_TOKEN}" ]; then
-				PRNERR "Specified release tag for publish, but NPM token is not specified."
-				exit 1
+	if [ -n "${CI_PUBLISH_TAG_NAME}" ]; then
+		#
+		# Check force publisher
+		#
+		if [ -n "${CI_FORCE_PUBLISHER}" ]; then
+			if [ "${CI_FORCE_PUBLISHER}" = "${CI_NODEJS_MAJOR_VERSION}" ]; then
+				IS_NPM_PUBLISHER=1
+			else
+				IS_NPM_PUBLISHER=0
 			fi
-			CI_DO_PUBLISH=1
+		fi
+		if [ "${IS_NPM_PUBLISHER}" -eq 1 ]; then
+			if [ -z "${CI_NPM_OIDC_AUDIENCE}" ] && [ -z "${CI_NPM_OIDC_EXCHANGE_URL}" ] && [ -z "${ENV_NPM_TOKEN}" ]; then
+				PRNWARN "Specified release tag for publish, but OIDC audience and URL is empty and NPM token specified directly is empty. Then will fail to publish."
+			fi
+			if [ -z "${PUBLISH_DOMAIN}" ]; then
+				PRNWARN "Specified release tag for publish, but publish domain name is not specified. Then will fail to publish."
+			fi
+			CI_DO_NPM_PUBLISH=1
 		fi
 	fi
 fi
@@ -850,16 +1029,56 @@ echo "  CI_IN_SCHEDULE_PROCESS        = ${CI_IN_SCHEDULE_PROCESS}"
 echo "  CI_USE_PACKAGECLOUD_REPO      = ${CI_USE_PACKAGECLOUD_REPO}"
 echo "  CI_PACKAGECLOUD_OWNER         = ${CI_PACKAGECLOUD_OWNER}"
 echo "  CI_PACKAGECLOUD_DOWNLOAD_REPO = ${CI_PACKAGECLOUD_DOWNLOAD_REPO}"
-echo "  CI_NPM_TOKEN                  = **********"
+
+if [ -n "${CI_GITHUB_TOKEN}" ]; then
+	echo "  CI_GITHUB_TOKEN               = **********"
+else
+	echo "  CI_GITHUB_TOKEN               = (empty)"
+fi
+if [ -n "${CI_NPM_OIDC_AUDIENCE}" ]; then
+	echo "  CI_NPM_OIDC_AUDIENCE          = **********"
+else
+	echo "  CI_NPM_OIDC_AUDIENCE          = (empty)"
+fi
+if [ -n "${CI_NPM_OIDC_EXCHANGE_URL}" ]; then
+	echo "  CI_NPM_OIDC_EXCHANGE_URL      = **********"
+else
+	echo "  CI_NPM_OIDC_EXCHANGE_URL      = (empty)"
+fi
+if [ -n "${ENV_NPM_TOKEN}" ]; then
+	echo "  ENV_NPM_TOKEN(deprecated)     = **********"
+else
+	echo "  ENV_NPM_TOKEN(deprecated)     = (empty)"
+fi
+
 echo "  CI_FORCE_PUBLISHER            = ${CI_FORCE_PUBLISHER}"
 echo "  CI_FORCE_NOT_PUBLISHER        = ${CI_FORCE_NOT_PUBLISHER}"
 echo "  CI_PUBLISH_TAG_NAME           = ${CI_PUBLISH_TAG_NAME}"
-echo "  CI_DO_PUBLISH                 = ${CI_DO_PUBLISH}"
+echo "  CI_DO_NPM_PUBLISH             = ${CI_DO_NPM_PUBLISH}"
 echo ""
-echo "  INSTALL_PKG_LIST              = ${INSTALL_PKG_LIST}"
 echo "  INSTALLER_BIN                 = ${INSTALLER_BIN}"
+echo "  UPDATE_CMD                    = ${UPDATE_CMD}"
+echo "  UPDATE_CMD_ARG                = ${UPDATE_CMD_ARG}"
+echo "  INSTALL_CMD                   = ${INSTALL_CMD}"
+echo "  INSTALL_CMD_ARG               = ${INSTALL_CMD_ARG}"
+echo "  INSTALL_AUTO_ARG              = ${INSTALL_AUTO_ARG}"
+echo "  INSTALL_QUIET_ARG             = ${INSTALL_QUIET_ARG}"
+echo "  INSTALL_PKG_LIST              = ${INSTALL_PKG_LIST}"
+echo ""
+echo "  CPPCHECK_TARGET               = ${CPPCHECK_TARGET}"
+echo "  CPPCHECK_BASE_OPT             = ${CPPCHECK_BASE_OPT}"
+echo "  CPPCHECK_ENABLE_VALUES        = ${CPPCHECK_ENABLE_VALUES}"
+echo "  CPPCHECK_IGNORE_VALUES        = ${CPPCHECK_IGNORE_VALUES}"
+echo "  CPPCHECK_BUILD_DIR            = ${CPPCHECK_BUILD_DIR}"
+echo ""
+echo "  SHELLCHECK_TARGET_DIRS        = ${SHELLCHECK_TARGET_DIRS}"
+echo "  SHELLCHECK_BASE_OPT           = ${SHELLCHECK_BASE_OPT}"
+echo "  SHELLCHECK_EXCEPT_PATHS       = ${SHELLCHECK_EXCEPT_PATHS}"
+echo "  SHELLCHECK_IGN                = ${SHELLCHECK_IGN}"
+echo "  SHELLCHECK_INCLUDE_IGN        = ${SHELLCHECK_INCLUDE_IGN}"
+echo ""
 echo "  PUBLISH_DOMAIN                = ${PUBLISH_DOMAIN}"
-echo "  IS_PUBLISHER                  = ${IS_PUBLISHER}"
+echo "  IS_NPM_PUBLISHER              = ${IS_NPM_PUBLISHER}"
 echo ""
 
 PRNSUCCESS "Show execution environment variables"
@@ -873,7 +1092,7 @@ PRNTITLE "Update repository and Install curl"
 # Update local packages
 #
 PRNINFO "Update local packages"
-if ({ RUNCMD sudo "${INSTALLER_BIN}" update -y "${INSTALL_QUIET_ARG}" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+if ({ RUNCMD "${SUDO_CMD}" "${INSTALLER_BIN}" "${UPDATE_CMD}" "${INSTALL_AUTO_ARG}" "${INSTALL_QUIET_ARG}" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 	PRNERR "Failed to update local packages"
 	exit 1
 fi
@@ -883,7 +1102,7 @@ fi
 #
 if ! CURLCMD=$(command -v curl); then
 	PRNINFO "Install curl command"
-	if ({ RUNCMD sudo "${INSTALLER_BIN}" install -y "${INSTALL_QUIET_ARG}" curl || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+	if ({ RUNCMD "${SUDO_CMD}" "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_AUTO_ARG}" "${INSTALL_QUIET_ARG}" curl || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 		PRNERR "Failed to install curl command"
 		exit 1
 	fi
@@ -894,6 +1113,7 @@ if ! CURLCMD=$(command -v curl); then
 else
 	PRNINFO "Already curl is insatlled."
 fi
+
 PRNSUCCESS "Update repository and Install curl"
 
 #--------------------------------------------------------------
@@ -908,9 +1128,11 @@ if [ "${CI_USE_PACKAGECLOUD_REPO}" -eq 1 ]; then
 	# [NOTE]
 	# The container OS must be ubuntu now.
 	#
-	PRNINFO "Download script and setup packagecloud.io reposiory"
 	PC_REPO_ADD_SH="script.deb.sh"
-	if ({ RUNCMD "${CURLCMD} -s https://packagecloud.io/install/repositories/${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_DOWNLOAD_REPO}/${PC_REPO_ADD_SH} | sudo bash" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+	PC_REPO_ADD_SH_RUN="bash"
+
+	PRNINFO "Download script and setup packagecloud.io reposiory"
+	if ({ RUNCMD "${CURLCMD} -s https://packagecloud.io/install/repositories/${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_DOWNLOAD_REPO}/${PC_REPO_ADD_SH} | ${SUDO_CMD} ${PC_REPO_ADD_SH_RUN}" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 		PRNERR "Failed to download script or setup packagecloud.io reposiory"
 		exit 1
 	fi
@@ -926,7 +1148,8 @@ PRNTITLE "Install packages for building/packaging"
 
 if [ -n "${INSTALL_PKG_LIST}" ]; then
 	PRNINFO "Install packages"
-	if ({ RUNCMD sudo "${INSTALLER_BIN}" install -y "${INSTALL_QUIET_ARG}" "${INSTALL_PKG_LIST}" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+
+	if ({ RUNCMD "${SUDO_CMD}" "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_AUTO_ARG}" "${INSTALL_QUIET_ARG}" "${INSTALL_PKG_LIST}" || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 		PRNERR "Failed to install packages"
 		exit 1
 	fi
@@ -947,7 +1170,7 @@ if [ "${RUN_CPPCHECK}" -eq 1 ]; then
 	# [NOTE]
 	# The container OS must be ubuntu now.
 	#
-	if ({ RUNCMD sudo "${INSTALLER_BIN}" install -y cppcheck || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+	if ({ RUNCMD "${SUDO_CMD}" "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_CMD_ARG}" "${INSTALL_AUTO_ARG}" cppcheck || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 		PRNERR "Failed to install cppcheck"
 		exit 1
 	fi
@@ -967,8 +1190,8 @@ if [ "${RUN_SHELLCHECK}" -eq 1 ]; then
 	# [NOTE]
 	# The container OS must be ubuntu now.
 	#
-	if ({ RUNCMD sudo "${INSTALLER_BIN}" install -y shellcheck || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-		PRNERR "Failed to install cppcheck"
+	if ({ RUNCMD "${SUDO_CMD}" "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_CMD_ARG}" "${INSTALL_AUTO_ARG}" shellcheck || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+		PRNERR "Failed to install shellcheck"
 		exit 1
 	fi
 else
@@ -1208,45 +1431,40 @@ fi
 #--------------------------------------------------------------
 # Publish
 #--------------------------------------------------------------
-if [ "${CI_DO_PUBLISH}" -eq 1 ]; then
-	#
-	# Before Publish
-	#
-	if [ "${RUN_PRE_PUBLISH}" -eq 1 ]; then
-		PRNTITLE "Before Publish"
-		if ({ run_pre_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-			PRNFAILURE "Failed \"Before Publish\"."
-			exit 1
-		fi
-		PRNSUCCESS "Before Publish."
+#
+# Before Publish
+#
+if [ "${RUN_PRE_PUBLISH}" -eq 1 ]; then
+	PRNTITLE "Before Publish"
+	if ({ run_pre_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+		PRNFAILURE "Failed \"Before Publish\"."
+		exit 1
 	fi
+	PRNSUCCESS "Before Publish."
+fi
 
-	#
-	# Publish
-	#
-	if [ "${RUN_PUBLISH}" -eq 1 ]; then
-		PRNTITLE "Publish"
-		if ({ run_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-			PRNFAILURE "Failed \"Publish\"."
-			exit 1
-		fi
-		PRNSUCCESS "Published, MUST CHECK NPM repository!."
+#
+# Publish
+#
+if [ "${RUN_PUBLISH}" -eq 1 ]; then
+	PRNTITLE "Publish"
+	if ({ run_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+		PRNFAILURE "Failed \"Publish\"."
+		exit 1
 	fi
+	PRNSUCCESS "Published, MUST CHECK NPM repository!."
+fi
 
-	#
-	# After Publish
-	#
-	if [ "${RUN_POST_PUBLISH}" -eq 1 ]; then
-		PRNTITLE "After Publish"
-		if ({ run_post_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-			PRNFAILURE "Failed \"After Publish\"."
-			exit 1
-		fi
-		PRNSUCCESS "After Publish."
+#
+# After Publish
+#
+if [ "${RUN_POST_PUBLISH}" -eq 1 ]; then
+	PRNTITLE "After Publish"
+	if ({ run_post_publish 2>&1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+		PRNFAILURE "Failed \"After Publish\"."
+		exit 1
 	fi
-else
-	PRNTITLE "Publish processing"
-	PRNSUCCESS "This CI process does not publish package."
+	PRNSUCCESS "After Publish."
 fi
 
 #----------------------------------------------------------

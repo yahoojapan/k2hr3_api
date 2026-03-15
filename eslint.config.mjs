@@ -22,41 +22,79 @@
 // [NOTE]
 // This file is the old .eslintrc.js file converted by @eslint/migrate-config.
 //
-import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import globals				from "globals";
+import path					from "node:path";
+import { fileURLToPath }	from "node:url";
+import js					from "@eslint/js";
+import { FlatCompat }		from "@eslint/eslintrc";
+import parser				from "@typescript-eslint/parser";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
+const	__filename	= fileURLToPath(import.meta.url);
+const	__dirname	= path.dirname(__filename);
+const	compat		= new FlatCompat({
 	baseDirectory: __dirname,
 	recommendedConfig: js.configs.recommended,
 	allConfig: js.configs.all
 });
 
-export default [...compat.extends("eslint:recommended"), {
-	languageOptions: {
-		globals: {
-			...globals.node,
-			...globals.browser,
-			...globals.commonjs,
+export default [
+	{
+		ignores: ["dist/**", "node_modules/**", "coverage/**"]
+	},
+
+	...compat.extends("eslint:recommended"),	// base recommended
+	{
+		languageOptions: {
+			globals: {
+				...globals.node,
+				...globals.browser,
+				...globals.commonjs
+			},
+			ecmaVersion: 2022,
+			sourceType: "commonjs"				// default CommonJS
 		},
-		ecmaVersion: 2017,
-		sourceType: "commonjs",
+		files: ["**/*.js", "**/*.ts", "**/www", "**/watcher"],
+		rules: {
+			indent: ["error", "tab", {
+				SwitchCase: 1,
+			}],
+			"no-console": "off",
+			"linebreak-style": ["error", "unix"],
+			quotes: ["error", "single"],		// quates is single
+			semi: ["error", "always"]
+		}
 	},
-	files: ["**/*.js", "**/*.ts", "**/www", "**/watcher"],
-	rules: {
-		indent: ["error", "tab", {
-			SwitchCase: 1,
-		}],
-		"no-console": 0,
-		"linebreak-style": ["error", "unix"],
-		quotes: ["error", "single"],
-		semi: ["error", "always"],
+
+	...compat.extends("plugin:@typescript-eslint/recommended"),	// typescript recommended
+	{
+		files: ["**/*.ts", "**/*.tsx"],
+		languageOptions: {
+			parser,								// parser object
+			parserOptions: {
+				ecmaVersion: 2022,
+				sourceType: "module"			// allow import/export
+			}
+		},
+		rules: {								// override base rules
+			"no-unused-vars": "off",
+			"@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+			"@typescript-eslint/explicit-module-boundary-types": "off",
+			"@typescript-eslint/no-explicit-any": "warn",
+			"@typescript-eslint/consistent-type-imports": "error"
+		},
 	},
-}];
+
+	// [NOTE]
+	// For escape @typescript-eslint/no-unused-expressions error in test code.
+	// ex. "expect(res).to.be.json" is property, so it put an error.
+	//
+	{
+		files: ["tests/**/*.js", "tests/**/*.ts", "test/**/*.js", "test/**/*.ts"],
+		rules: {
+			"@typescript-eslint/no-unused-expressions": "off"
+		}
+	}
+];
 
 /*
  * Local variables:

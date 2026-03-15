@@ -1,0 +1,3138 @@
+/*
+ * K2HR3 REST API
+ *
+ * Copyright 2017 Yahoo Japan Corporation.
+ *
+ * K2HR3 is K2hdkc based Resource and Roles and policy Rules, gathers
+ * common management information for the cloud.
+ * K2HR3 can dynamically manage information as "who", "what", "operate".
+ * These are stored as roles, resources, policies in K2hdkc, and the
+ * client system can dynamically read and modify these information.
+ *
+ * For the full copyright and license information, please view
+ * the license file that was distributed with this source code.
+ *
+ * AUTHOR:   Takeshi Nakatani
+ * CREATE:   Wed Jun 8 2017
+ * REVISION:
+ *
+ */
+
+import	k2hr3				from './k2hr3dkc';
+import	apiutil				from './k2hr3apiutil';
+import	r3logger			from './dbglogging';
+
+import	{ getK2hr3Keys }	from './k2hr3keys';
+const	r3keys				= getK2hr3Keys;
+
+import	{ r3ApiConfig }		from './k2hr3config';
+const	apiConf				= new r3ApiConfig();
+
+import type { K2hdkc }						from 'k2hdkc';
+import type	{ Request }						from 'express';
+import type	{ resTypeMakeStringToken256 }	from './k2hr3apiutil';
+import type	{ cbTypeCommonK2hr3Api, resTypeBaseResult, valTypeOsapiTenantInfoList, valTypeAll, Osapi }	from './types';
+import type	{ dkcTypeHostRawValueSet, resTypeBasicUserInfo, resTypeFindHost, resTypeLocalTenantList }	from './k2hr3dkc';
+
+//---------------------------------------------------------
+// Types
+//---------------------------------------------------------
+//
+// Variables
+//
+//
+// Local types from k2hdkc values
+//
+type dkcTypeSourceUserHostInfo = {
+	user:			string | null;
+	hostname:		string | null;
+	ip:				string | null;
+	port:			number;
+	cuk:			string | null;
+};
+
+type dkcTypeBaseRoleToken = dkcTypeSourceUserHostInfo & {
+	date:			string;
+	expire:			string;
+	registerpath?:	string;
+};
+
+type dkcTypeRoleTokenValue = dkcTypeBaseRoleToken & {
+	role:			string;
+	creator:		string;
+	extra:			string | null;
+	tenant:			string;
+	base?:			string;
+	verify?:		Buffer;
+};
+
+type dkcTypeTenantNameList = {
+	name:			string;
+	display:		string;
+};
+
+type valTypeUserTenantInfo = {
+	user?:			string | null;
+	tenant?:		string | null;
+	userid?:		string | null;
+	display?:		string | null;
+	id?:			string | null;
+	description?:	string | null;
+	region?:		string | null;
+	[key: string]:	string | number | boolean | null | undefined;		// for the key name specified variable to access object members
+};
+
+type resTypeGetRoleToken = resTypeBaseResult & {
+	token?:			string;
+};
+
+type resTypeObjRoleTokens = {
+	[key: string]:	dkcTypeBaseRoleToken;
+};
+
+type resTypeListRoleTokens = resTypeBaseResult & {
+	tokens?:		string[] | resTypeObjRoleTokens;
+};
+
+type resTypeCheckKindToken = dkcTypeSourceUserHostInfo & valTypeUserTenantInfo & {
+	role:			string | null;
+	extra:			string | null;
+	scoped:			boolean;
+};
+
+type resTypeCheckUserToken = resTypeCheckKindToken;
+type resTypeCheckRoleToken = resTypeCheckKindToken;
+
+type resTypeCheckToken = resTypeBaseResult & {
+	status:			number;
+	token?:			string | null;
+	token_type?:	string;
+	token_info?:	resTypeCheckRoleToken | null;
+};
+
+// [NOTE]
+// This type is the type of the object returned by osapiModule.
+// Since osapiModule is designed to be used by this module(function
+// group), the type is declared in this file.
+//
+type valTypeJwtParam = {
+	issuer?:		string;
+	audience?:		string;
+	[key: string]:	string | undefined;
+};
+
+type resTypeCreateUserToken = resTypeBaseResult & {
+	token?:			string;
+	expire_at?:		string;
+	token_seed?:	string;
+	userid?:		string;
+};
+
+type resTypeUserTenantInfo = resTypeBaseResult & {
+	user?:			string;
+	userid?:		string;
+	tenant?:		string | null;
+};
+
+type resTypeUserToken = {
+	user:			string;
+	userid:			string;
+	scoped:			boolean;
+	token:			string;
+	expire:			string | null;
+	region:			string;
+	token_seed:		string;
+};
+
+//
+// Check type
+//
+const rawIsDkcTypeSourceUserHostInfo = (val: unknown): val is dkcTypeSourceUserHostInfo => {
+
+	if(!apiutil.isPlainObject(val)){
+		return false;
+	}
+	if(	(null !== val.user		&& !apiutil.isString(val.user))		||
+		(null !== val.hostname	&& !apiutil.isString(val.hostname))	||
+		(null !== val.ip		&& !apiutil.isString(val.ip))		||
+		!apiutil.isSafeNumber(val.port)								||
+		(null !== val.cuk		&& !apiutil.isString(val.cuk))		)
+	{
+		return false;
+	}
+	return true;
+};
+
+const rawIsValTypeUserTenantInfo = (val: unknown): val is valTypeUserTenantInfo => {
+
+	if(!apiutil.isPlainObject(val)){
+		return false;
+	}
+	if(	(undefined !== val.user			&& null !== val.user		&& !apiutil.isString(val.user))			||
+		(undefined !== val.tenant		&& null !== val.tenant		&& !apiutil.isString(val.tenant))		||
+		(undefined !== val.userid		&& null !== val.userid		&& !apiutil.isString(val.userid))		||
+		(undefined !== val.display		&& null !== val.display		&& !apiutil.isString(val.display))		||
+		(undefined !== val.id			&& null !== val.id			&& !apiutil.isString(val.id))			||
+		(undefined !== val.description	&& null !== val.description	&& !apiutil.isString(val.description))	||
+		(undefined !== val.region		&& null !== val.region		&& !apiutil.isString(val.region))		||
+		!rawIsDkcTypeSourceUserHostInfo(val)																)
+	{
+		return false;
+	}
+	return true;
+};
+
+const rawIsDkcTypeBaseRoleToken = (val: unknown): val is dkcTypeBaseRoleToken => {
+
+	if(!apiutil.isPlainObject(val)){
+		return false;
+	}
+	if(	!apiutil.isString(val.date)												||
+		!apiutil.isString(val.expire)											||
+		(undefined !== val.registerpath	&& !apiutil.isString(val.registerpath))	)
+	{
+		return false;
+	}
+	return true;
+};
+
+const rawIsResTypeObjRoleTokens = (val: unknown): val is resTypeObjRoleTokens => {
+
+	if(!apiutil.isPlainObject(val)){
+		return false;
+	}
+	for(const [, value] of Object.entries(val)){
+		if(!rawIsDkcTypeBaseRoleToken(value)){
+			return false;
+		}
+	}
+	return true;
+};
+
+const rawIsResTypeCheckKindToken = (val: unknown): val is resTypeCheckKindToken => {
+
+	if(!apiutil.isPlainObject(val)){
+		return false;
+	}
+	if(	(null !== val.role	&& !apiutil.isString(val.role))	||
+		(null !== val.extra	&& !apiutil.isString(val.extra))||
+		!apiutil.isBoolean(val.scoped)						||
+		!rawIsDkcTypeSourceUserHostInfo(val)				)
+	{
+		return false;
+	}
+	return true;
+};
+
+const rawIsResTypeCheckUserToken = (val: unknown): val is resTypeCheckUserToken => {
+
+	return rawIsResTypeCheckKindToken(val);
+};
+
+const rawIsResTypeCheckRoleToken = (val: unknown): val is resTypeCheckRoleToken => {
+
+	return rawIsResTypeCheckKindToken(val);
+};
+
+//
+// Callbacks
+//
+type cbTypeCleanupUserToken = (result: boolean) => void;
+type cbTypeCleanupRoleToken = (result: boolean) => void;
+type cbTypeInitializeTenantList = (err: Error | null, result: dkcTypeTenantNameList[] | null) => void;
+
+// [NOTE]
+// This type is the type of the object returned by osapiModule.
+// Since osapiModule is designed to be used by this module(function
+// group), the type is declared in this file.
+//
+type cbTypeGetUserScopedToken = (err: Error | null, jsonres: resTypeUserToken | null) => void;
+type cbTypeGetUserUnscopedToken = (err: Error | null, jsonres: resTypeUserToken | null) => void;
+type cbTypeGetUserTenantList = (err: Error | null, jsonres: valTypeOsapiTenantInfoList | null) => void;
+
+//---------------------------------------------------------
+// Configuration
+//	* Keystone api wrapper
+//	* Get expiration for role tokens
+//---------------------------------------------------------
+// [NOTE]
+// We use config which has keystone.type value.
+// Default value is "keystone_v3".
+//
+let osapi: Osapi | null			= null;
+let	expire_rtoken: number		= 0;
+let	expire_reg_rtoken: number	= 0;
+
+(async () => {
+	const keystone_type	= './' + apiConf.getKeystoneType();
+	const osapiModule	= await apiutil.tryLoadModule<Osapi>(keystone_type);
+	if(apiutil.isSafeEntity(osapiModule)){
+		osapi			= osapiModule;
+	}
+	expire_rtoken		= apiConf.getExpireTimeRoleToken();
+	expire_reg_rtoken	= apiConf.getExpireTimeRegRoleToken();
+})();
+
+//---------------------------------------------------------
+// set user/tenant token
+//---------------------------------------------------------
+//	tenant		undefined(or null) thus token must be unscoped.
+//	expire		UTC ISO 8601 format
+//
+//	[NOTE]		Must initialize User/Tenant before calling this function.
+//
+const rawSetUserToken = (
+	user:		string | null,
+	tenant:		string | null,
+	token:		string | null,
+	expire:		string | null,
+	region:		string | null,
+	seed:		string | null
+): boolean => {
+
+	if(!apiutil.isSafeString(user) || !apiutil.isSafeString(token) || !apiutil.isSafeString(expire) || !apiutil.isSafeString(region)){	// allow tenant/seed is null
+		r3logger.elog('some parameters are wrong : user=' + JSON.stringify(user) + ', tenant=' + JSON.stringify(tenant) + ', token=' + JSON.stringify(token) + ', expire=' + JSON.stringify(expire) + ', region=' + JSON.stringify(region));
+		return false;
+	}
+
+	const dkcobj	= k2hr3.getK2hdkc(true, false);										// use permanent object(need to clean)
+	const keys		= r3keys(user, tenant);
+	if(!apiutil.isPlainObject(dkcobj)){
+		return false;
+	}
+
+	//
+	// Check user key exists and create these.
+	//
+	const expire_limit			= apiutil.calcExpire(expire);							// UTC ISO 8601 to unixtime
+	const token_value_key		= keys.TOKEN_USER_TOP_KEY + '/' + token;				// "yrn:yahoo::::token:user/<token>"
+	const user_token_key		= keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY + '/' + token;	// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+	const user_token_seed_key	= user_token_key + '/' + keys.SEED_KW;					// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed"
+
+	// [NOTE]
+	// If tenant is null, following keys have not tenant keyword in that key string.
+	//												[ not have tenant name ]				vs		[ have tenant name ]
+	// keys.USER_TENANT_AMBIGUOUS_KEY			---> "yrn:yahoo::::user:<user>:tenant/"			or "yrn:yahoo::::user:<user>:tenant/<tenant>"
+	// keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY		---> "yrn:yahoo::::user:<user>:tenant//token"	or "yrn:yahoo::::user:<user>:tenant/<tenant>/token"
+	//
+
+	// token top
+	let subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.USER_TENANT_AMBIGUOUS_KEY, true));
+	if(apiutil.tryAddStringToArray(subkeylist, keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY)){
+		if(!dkcobj.setSubkeys(keys.USER_TENANT_AMBIGUOUS_KEY, subkeylist)){	// add subkey yrn:yahoo::::user:<user>:tenant/{<tenant>}/token -> yrn:yahoo::::user:<user>:tenant/{<tenant>}
+			r3logger.elog('could not add ' + keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY + ' subkey under ' + keys.USER_TENANT_AMBIGUOUS_KEY + ' key');
+			dkcobj.clean();
+			return false;
+		}
+	}
+
+	// to token key
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY, true));
+	if(apiutil.tryAddStringToArray(subkeylist, user_token_key)){
+		if(!dkcobj.setSubkeys(keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY, subkeylist)){	// add subkey yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token> -> yrn:yahoo::::user:<user>:tenant/{<tenant>}/token
+			r3logger.elog('could not add ' + user_token_key + ' subkey under ' + keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY + ' key');
+			dkcobj.clean();
+			return false;
+		}
+	}
+
+	// get/set token value
+	let	old_value = apiutil.getSafeString(dkcobj.getValue(user_token_key, null, true, null));
+	if(old_value != region){
+		if(!dkcobj.setValue(user_token_key, region, null, null, expire_limit)){	// update new token key(value with region and expire) -> yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>
+			r3logger.elog('could not set ' + apiutil.getSafeString(region) + '(expire=' + apiutil.getSafeString(expire) + ') to ' + user_token_key + ' key');
+			dkcobj.clean();
+			return false;
+		}
+	}
+
+	// get/set seed value
+	if(apiutil.isSafeString(seed)){
+		old_value = apiutil.getSafeString(dkcobj.getValue(user_token_seed_key, null, true, null));
+		if(old_value != seed){
+			if(!dkcobj.setValue(user_token_seed_key, seed, null, null, expire_limit)){		// update new token seed key(value with expire) -> yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed
+				r3logger.elog('could not set ' + seed + '(expire=' + expire + ') to ' + user_token_seed_key + ' key');
+				dkcobj.clean();
+				return false;
+			}
+		}
+		subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(user_token_key, true));
+		if(apiutil.tryAddStringToArray(subkeylist, user_token_seed_key)){
+			if(!dkcobj.setSubkeys(user_token_key, subkeylist)){					// add subkey yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed -> yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>
+				r3logger.elog('could not add ' + user_token_seed_key + ' subkey under ' + user_token_key + ' key');
+				dkcobj.clean();
+				return false;
+			}
+		}
+	}
+
+	// create new token under token top key
+	//
+	// [NOTE]
+	// This key is not set expire limit. if you need to check expire,
+	// you look up key under user key.
+	//
+	if(!dkcobj.setValue(token_value_key, user_token_key)){							// create(over write) value(="yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>") without expire -> yrn:yahoo::::token/<token>
+		r3logger.elog('could not set ' + user_token_key + ' value without expire to ' + token_value_key + ' key');
+		dkcobj.clean();
+		return false;
+	}
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_USER_TOP_KEY, true));
+	if(apiutil.tryAddStringToArray(subkeylist, token_value_key)){
+		if(!dkcobj.setSubkeys(keys.TOKEN_USER_TOP_KEY, subkeylist)){				// add subkey yrn:yahoo::::token:user/<token> -> yrn:yahoo::::token:user
+			r3logger.elog('could not add ' + token_value_key + ' subkey under ' + keys.TOKEN_USER_TOP_KEY + ' key');
+			dkcobj.clean();
+			return false;
+		}
+	}
+
+	dkcobj.clean();
+	return true;
+};
+
+//---------------------------------------------------------
+// get user unscoped token
+//---------------------------------------------------------
+//
+// Get user token from keystone
+//
+//	result: null or resTypeUserToken
+//				{
+//					user:		user name(if existed, from parameter)
+//					userid:		user id(if existed, from "yrn:yahoo::::user:<user name>:id")
+//					scoped:		false(always false)
+//					token:		token string(id)
+//					expire:		expire string(if existed, null)
+//					region:		region string
+//				}
+//
+// [NOTE]
+// This function is wrapper for osapi.getUserUnscopedToken().
+// This function checks existing unscoped token before call it.
+//
+const rawGetUserUnscopedTokenWrap = (
+	user:		string | null,
+	passwd:		string | null,
+	callback:	cbTypeCommonK2hr3Api<resTypeUserToken>
+): void => {
+
+	const _user		= user;
+	const _passwd	= apiutil.getSafeString(passwd);
+	const _callback	= callback;
+
+	if(!apiutil.isSafeEntity(osapi)){
+		const error = new Error('could not load osapi file(object)');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+
+	// get unscoped token
+	osapi.getUserUnscopedToken(_user, _passwd, (err: Error | null, jsonres: resTypeUserToken | null) => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get user access token by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// init user
+		const	resobj = k2hr3.initUser(jsonres.user, jsonres.userid, jsonres.user, null);
+		if(!resobj.result){
+			const error = new Error(resobj.message ?? '');
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// set unscoped token
+		const	token_seed = apiutil.isSafeString(jsonres.token_seed) ? jsonres.token_seed : null;
+		if(!rawSetUserToken(jsonres.user, null, jsonres.token, jsonres.expire, jsonres.region, token_seed)){
+			const error = new Error('failed to set unscoped/scoped user token');
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// succeed
+		_callback(null, jsonres);
+		return;
+	});
+};
+
+//---------------------------------------------------------
+// Get Scoped User Token from keystone
+//---------------------------------------------------------
+const rawGetScopedUserToken = (
+	unscopedtoken:	string | null,
+	username:		string | null,
+	userid:			string | null,
+	tenant:			string | null,
+	callback:		cbTypeCommonK2hr3Api<string>
+): void => {
+
+	const _callback = callback;
+
+	if(!apiutil.isSafeEntity(osapi)){
+		const error = new Error('could not load osapi file(object)');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+	if(!apiutil.isSafeString(unscopedtoken) || !apiutil.isSafeString(username) || !apiutil.isSafeString(userid) || !apiutil.isSafeString(tenant)){
+		const error = new Error('unscopedtoken or username or userid or tenant parameters are wrong');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+	const _unscopedtoken	= unscopedtoken;
+	const _username			= username;
+	const _userid			= userid;
+	const _tenant			= tenant.toLowerCase();
+
+	// get tenant list for check
+	osapi.getUserTenantList(_unscopedtoken, _userid, (err: Error | null, jsonres: valTypeOsapiTenantInfoList | null): void => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get tenant list for user ' + _username + '(token=' + _unscopedtoken + ') by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+		//r3logger.dlog('get user tenant list jsonres=\n' + JSON.stringify(jsonres));
+
+		// check tenants(and initialize tenants)
+		let		_tenant_name: string | null		= null;
+		//let	_tenant_id: string | null		= null;
+		//let	_tenant_desc: string | null		= null;
+		//let	_tenant_display: string | null	= null;
+		const	_tenant_list: string[]			= new Array(0);
+		for(let cnt = 0; cnt < jsonres.length; ++cnt){
+			if(!apiutil.isSafeEntity(jsonres[cnt])){
+				continue;
+			}
+			// over write
+			const resobj: resTypeBaseResult = k2hr3.initUserTenant(_username, _userid, _username, jsonres[cnt].name, jsonres[cnt].id, jsonres[cnt].description, jsonres[cnt].display);
+			if(!resobj.result){
+				const error = new Error(resobj.message ?? '');
+				r3logger.elog(error.message);
+				_callback(error, null);
+				return;
+			}
+			if(apiutil.compareCaseString(jsonres[cnt].name, _tenant)){
+				// find target tenant
+				_tenant_name	= jsonres[cnt].name;
+				//_tenant_id		= jsonres[cnt].id;
+				//_tenant_desc		= jsonres[cnt].description;
+				//_tenant_display	= jsonres[cnt].display;
+			}
+			_tenant_list.push(jsonres[cnt].name);
+		}
+
+		// get and add local tenants
+		const tmpresobj: resTypeLocalTenantList = k2hr3.listLocalTenant(_username, true);
+		if(!apiutil.isPlainObject(tmpresobj) || !apiutil.isBoolean(tmpresobj.result) || false === tmpresobj.result || !apiutil.isSafeEntity(tmpresobj.tenants)){
+			if(apiutil.isPlainObject(tmpresobj) && apiutil.isSafeString(tmpresobj.message)){
+				r3logger.wlog('failed to get local tenant list by ' + tmpresobj.message);
+			}else{
+				r3logger.wlog('failed to get local tenant list.');
+			}
+		}else{
+			if(k2hr3.isDkcTypeTenantInfoList(tmpresobj.tenants)){
+				for(let cnt2 = 0; cnt2 < tmpresobj.tenants.length; ++cnt2){
+					if(!k2hr3.isDkcTypeTenantInfo(tmpresobj.tenants[cnt2])){
+						continue;
+					}
+					if(apiutil.compareCaseString(tmpresobj.tenants[cnt2].name, _tenant)){
+						// find target tenant
+						_tenant_name	= tmpresobj.tenants[cnt2].name;
+						//_tenant_id		= tmpresobj.tenants[cnt2].id;
+						//_tenant_desc		= tmpresobj.tenants[cnt2].desc;
+						//_tenant_display	= tmpresobj.tenants[cnt2].display;
+					}
+					_tenant_list.push(tmpresobj.tenants[cnt2].name);
+				}
+			}
+		}
+
+		// check and remove old tenant for user
+		if(!k2hr3.removeComprehensionByNewTenants(_username, _tenant_list)){
+			r3logger.elog('failed to remove some tenant for user, but continue...');
+		}
+
+		if(!apiutil.isSafeEntity(osapi)){
+			const error = new Error('could not load osapi file(object)');
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// get scoped token
+		osapi.getUserScopedToken(_unscopedtoken, _tenant_name, (err: Error | null, jsonres: resTypeUserToken | null): void => {
+			if(null !== err || null === jsonres){
+				const error = new Error('could not get scoped user token for user ' + _username + ' by ' + (err?.message ?? 'unknown'));
+				r3logger.elog(error.message);
+				_callback(error, null);
+				return;
+			}
+			//r3logger.dlog('get user scoped token jsonres=\n' + JSON.stringify(jsonres));
+
+			const token_seed = apiutil.isSafeString(jsonres.token_seed) ? jsonres.token_seed : null;
+			if(!rawSetUserToken(_username, _tenant_name, jsonres.token, jsonres.expire, jsonres.region, token_seed)){
+				const error = new Error('failed to set unscoped/scoped user token');
+				r3logger.elog(error.message);
+				_callback(error, null);
+				return;
+			}
+
+			// succeed
+			_callback(null, jsonres.token);
+			return;
+		});
+	});
+};
+
+//---------------------------------------------------------
+// Get User Token
+//---------------------------------------------------------
+//
+// Get scoped/unscoped user token from keystone
+//
+const rawGetUserToken = (
+	user:		string | null,
+	passwd:		string | null,
+	tenant:		string | null,
+	callback:	cbTypeCommonK2hr3Api<string>
+): void => {
+
+	const _callback = callback;
+
+	if(!apiutil.isSafeString(user)){
+		const	error = new Error('user parameter is wrong');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+
+	const	_tenant	= apiutil.getSafeString(tenant).toLowerCase();
+	let		_user	= user;
+	const	_passwd	= apiutil.getSafeString(passwd);
+
+	// get unscoped token
+	rawGetUserUnscopedTokenWrap(_user, _passwd, (err: Error | null, jsonres: resTypeUserToken | null) => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get user access token by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// save to local val
+		_user					= jsonres.user;								// over write
+		const _userid			= jsonres.userid;
+		const _username			= jsonres.user;
+		const _unscopedtoken	= jsonres.token;
+		//const _tokenexpire	= jsonres.expire;
+		//const _region			= jsonres.region;
+
+		// break when unscoped token
+		if(!apiutil.isSafeString(_tenant)){
+			_callback(null, _unscopedtoken);
+			return;
+		}
+
+		// get scoped user token
+		return rawGetScopedUserToken(_unscopedtoken, _username, _userid, _tenant, _callback);
+	});
+};
+
+//---------------------------------------------------------
+// get user unscoped token from token issued by another authentication system
+//---------------------------------------------------------
+//
+// Get user token from token issued by another authentication system
+//
+//	result: null or resTypeUserToken
+//				{
+//					user:		user name(if existed, from parameter)
+//					userid:		user id(if existed, from "yrn:yahoo::::user:<user name>:id")
+//					scoped:		false(always false)
+//					token:		token string(id)
+//					expire:		expire string(if existed, null)
+//					region:		region string
+//				}
+//
+// [NOTE]
+// This function is wrapper for osapi.getUserUnscopedTokenByToken().
+// This function checks existing unscoped token before call it.
+//
+const rawGetUserUnscopedTokenbyTokenWrap = (
+	token:		string | null,
+	callback:	cbTypeCommonK2hr3Api<resTypeUserToken>
+): void => {
+
+	const _orgtoken	= token;
+	const _callback	= callback;
+
+	if(!apiutil.isSafeEntity(osapi)){
+		const error = new Error('could not load osapi file(object)');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+
+	// get unscoped token
+	osapi.getUserUnscopedTokenByToken(_orgtoken, (err: Error | null, jsonres: resTypeUserToken | null): void => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get user access token by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// init user
+		const resobj = k2hr3.initUser(jsonres.user, jsonres.userid, jsonres.user, null);
+		if(!resobj.result){
+			const error = new Error(resobj.message ?? '');
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// set unscoped token
+		const token_seed = apiutil.isSafeString(jsonres.token_seed) ? jsonres.token_seed : null;
+		if(!rawSetUserToken(jsonres.user, null, jsonres.token, jsonres.expire, jsonres.region, token_seed)){
+			const error = new Error('failed to set unscoped/scoped user token');
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// succeed
+		_callback(null, jsonres);
+		return;
+	});
+};
+
+//---------------------------------------------------------
+// Get User Token from token issued by another authentication system
+//---------------------------------------------------------
+//
+// Get scoped/unscoped user token from token issued by another authentication system
+// (ex. openstack identity token which is not registered in k2hr3 yet.)
+//
+const rawGetUserTokenByToken = (
+	token:		string | null,
+	tenant:		string | null,
+	callback:	cbTypeCommonK2hr3Api<string>
+): void => {
+
+	const _callback = callback;
+
+	if(!apiutil.isSafeString(token)){
+		const error = new Error('token parameter is wrong');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+
+	const _tenant	= apiutil.getSafeString(tenant).toLowerCase();
+	const _orgtoken	= token;
+
+	// get unscoped token
+	rawGetUserUnscopedTokenbyTokenWrap(_orgtoken, (err: Error | null, jsonres: resTypeUserToken | null) => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get user access token by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+
+		// save to local val
+		const _userid			= jsonres.userid;
+		const _username			= jsonres.user;
+		const _unscopedtoken	= jsonres.token;
+		//const _tokenexpire	= jsonres.expire;							// eslint-disable-line no-unused-vars
+		//const _region			= jsonres.region;							// eslint-disable-line no-unused-vars
+
+		// break when unscoped token
+		if(!apiutil.isSafeString(_tenant)){
+			_callback(null, _unscopedtoken);
+			return;
+		}
+
+		// get scoped user token
+		return rawGetScopedUserToken(_unscopedtoken, _username, _userid, _tenant, _callback);
+	});
+};
+
+//
+// Get scoped user token from unscoped user token
+//
+const rawGetScopedUserTokenByUnscoped = (
+	unscopedtoken:	string | null,
+	username:		string | null,
+	tenant:			string | null,
+	callback:		cbTypeCommonK2hr3Api<string>
+): void => {
+
+	if(!apiutil.isSafeString(unscopedtoken) || !apiutil.isSafeString(username) || !apiutil.isSafeString(tenant)){
+		const error = new Error('unscopedtoken or username or tenant parameters are wrong');
+		r3logger.elog(error.message);
+		callback(error, null);
+		return;
+	}
+
+	// user id from user name
+	const _tenant									= tenant.toLowerCase();
+	const user_info: resTypeBasicUserInfo | null	= k2hr3.getUserId(username);				// user id from user name
+	if(null === user_info || !apiutil.isSafeEntity(user_info.name) || !apiutil.isSafeEntity(user_info.id)){
+		const error = new Error('could not find username(' + username + ') from unscoped token in k2hdkc.');
+		r3logger.elog(error.message);
+		callback(error, null);
+		return;
+	}
+
+	// get scoped user token
+	return rawGetScopedUserToken(unscopedtoken, user_info.name, user_info.id, _tenant, callback);
+};
+
+//---------------------------------------------------------
+// cleanup user/tenant by token
+//---------------------------------------------------------
+//	utility local function
+//
+// [NOTE]
+// This process can be time consuming when subkey list is too many.
+// In that case, there is a possibility that the consistency of the subkey will be lost.
+// If a new token is added to the subkey list during processing with this function, that
+// token subkey will be overwritten(lost) when this function completes processing.
+// Originally, this subkey list of "yrn:yahoo::::token:user" key has no direct use, so this
+// is not a problem. Because it normally reads the sub key(token key) directly.
+// Please do not read subkey(token key) from the subkey list of "yrn:yahoo::::token:user" key.
+// This subkeys are only useful for "notes".
+//
+const rawCleanupUserToken = (callback: cbTypeCleanupUserToken): void => {
+
+	const dkcobj = k2hr3.getK2hdkc(true, false);											// use permanent object(need to clean)
+	if(!apiutil.isPlainObject(dkcobj)){
+		callback(false);
+		return;
+	}
+
+	const	keys			= r3keys();
+	let		subkeylist		= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_USER_TOP_KEY, true));	// get subkeys under "yrn:yahoo::::token:user"
+	const	retrive_skeys	= new Array(0);
+	for(let cnt = 0; cnt < subkeylist.length; ++cnt){
+		const	user_token_key = apiutil.getSafeString(dkcobj.getValue(subkeylist[cnt], null, true, null));
+		if(!apiutil.isSafeString(user_token_key)){
+			// value is not existed, so this key should be removing
+			retrive_skeys.push(subkeylist[cnt]);
+		}else{
+			//
+			// user_token_key => "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+			//
+			const	value = apiutil.getSafeString(dkcobj.getValue(user_token_key, null, true, null));
+			if(!apiutil.isSafeString(value)){
+				// user_token_key is not existed or expired.
+				retrive_skeys.push(subkeylist[cnt]);
+
+				// try remove user_token_key from "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token" subkey list
+				const	parent_user_key = apiutil.getParentPath(user_token_key);
+				if(apiutil.isSafeString(parent_user_key)){
+					const	user_skeys = apiutil.getSafeStringArray(dkcobj.getSubkeys(parent_user_key, true));	// get subkeys under "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token"
+					if(apiutil.removeStringFromArray(user_skeys, user_token_key)){
+						if(!dkcobj.setSubkeys(parent_user_key, user_skeys)){									// update subkey -> "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token"
+							r3logger.wlog('could not update subkey under ' + parent_user_key + ' key, but continue...');
+						}
+					}
+				}else{
+					r3logger.wlog('could not get parent key from ' + user_token_key + ' key, but skip it and continue...');
+				}
+			}
+		}
+	}
+	if(0 < retrive_skeys.length){
+		// need to remove keys from subkey list
+		let	is_update	= false;
+		subkeylist		= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_USER_TOP_KEY, true));			// re-get subkeys under "yrn:yahoo::::token:user"
+
+		for(let cnt = 0; cnt < retrive_skeys.length; ++cnt){
+			if(apiutil.removeStringFromArray(subkeylist, retrive_skeys[cnt])){
+				is_update = true;
+			}
+		}
+		if(is_update){
+			if(!dkcobj.setSubkeys(keys.TOKEN_USER_TOP_KEY, subkeylist)){										// update subkey -> "yrn:yahoo::::token:user"
+				r3logger.elog('could not update subkey under ' + keys.TOKEN_USER_TOP_KEY + ' key, but continue...');
+				dkcobj.clean();
+				callback(false);
+				return;
+			}
+		}
+	}
+
+	dkcobj.clean();
+	callback(true);
+};
+
+//---------------------------------------------------------
+// get tenant list by token
+//---------------------------------------------------------
+// result:	resTypeUserTenantInfo = {
+//					user: xxx,
+//					tenant: xxxx,
+//					region: xxxxx
+//			}
+//
+//	[NOTE]		Must initialize User/Tenant before calling this function.
+//
+const rawGetUserTenantByToken = (token: string | null): valTypeUserTenantInfo | null => {
+
+	if(!apiutil.isSafeString(token)){
+		r3logger.elog('token parameters are wrong : token=' + JSON.stringify(token));
+		return null;
+	}
+
+	const	dkcobj = k2hr3.getK2hdkc(true, false);											// use permanent object(need to clean)
+	if(!apiutil.isPlainObject(dkcobj)){
+		return null;
+	}
+
+	//
+	// Get subkeys under token top key
+	//
+	const	keys			= r3keys();
+	const	token_value_key	= keys.TOKEN_USER_TOP_KEY + '/' + token;						// "yrn:yahoo::::token:user/<token>"
+
+	// get token key under user key
+	const	user_token_key	= apiutil.getSafeString(dkcobj.getValue(token_value_key, null, true, null));	// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+	if(!apiutil.isSafeString(user_token_key)){
+		r3logger.dlog('token key(' + token_value_key + ') for token(' + token + ') is not existed.');
+		dkcobj.clean();
+		//
+		// check and remove old token under token top key("yrn:yahoo::::token:user" and "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>")
+		// if old token is expired
+		//
+		// [NOTE]
+		// This processing is taking time, so it runs asynchronously.
+		// And for notes on this processing, refer to NOTE of rawCleanupUserToken function.
+		//
+		rawCleanupUserToken((result: boolean): void => {
+			if(!result){
+				r3logger.wlog('Failed to cleanup expired user tokens under ' + keys.TOKEN_USER_TOP_KEY + ' key, but continue...');
+			}
+		});
+		return null;
+	}
+
+	// get user token key's value which is region
+	const	region = apiutil.getSafeString(dkcobj.getValue(user_token_key, null, true, null));	// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>" value is region
+	if(!apiutil.isSafeString(region)){
+		r3logger.dlog('token key(' + user_token_key + ') for token(' + token + ') is not existed.');
+		dkcobj.clean();
+		//
+		// check and remove old token under token top key("yrn:yahoo::::token:user" and "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>")
+		// if old token is expired
+		//
+		// [NOTE] look forwards
+		//
+		rawCleanupUserToken((result: boolean): void => {
+			if(!result){
+				r3logger.wlog('Failed to cleanup expired user tokens under ' + keys.TOKEN_USER_TOP_KEY + ' key, but continue...');
+			}
+		});
+		return null;
+	}
+
+	// user_token_key format is "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+	const	pattern	= new RegExp('^' + keys.MATCH_ANY_USER_TOKEN);							// regex = /^yrn:yahoo::::user:(.*):tenant/(.*)/token/(.*)/
+	const	matches	= user_token_key.match(pattern);										// reverse to user/tenant names
+	if(!apiutil.isNotEmptyArray(matches) || matches.length < 4 || '' === apiutil.getSafeString(matches[1])){
+		r3logger.elog('token key(' + token_value_key + ') for token(' + token + ') has wrong format value(' + user_token_key + ')');
+		dkcobj.clean();
+		return null;
+	}
+	const	user_name 						= apiutil.getSafeString(matches[1]);
+	let		tenant_name: string | null		= apiutil.getSafeString(matches[2]);
+	let		tenant_display: string | null	= null;
+	let		tenant_id: string | null		= null;
+	let		tenant_desc: string | null		= null;
+
+	if('' === tenant_name){
+		tenant_name = null;
+	}else{
+		const	tenant_keys	= r3keys(user_name, tenant_name);
+		tenant_display	= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_DISP_KEY, null, true, null));
+		tenant_id		= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_ID_KEY, null, true, null));
+		tenant_desc		= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_DESC_KEY, null, true, null));
+	}
+
+	// if token has seed, need to check seed
+	const	user_token_seed_key = user_token_key + '/' + keys.SEED_KW;						// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed"
+	const	token_seed			= apiutil.getSafeString(dkcobj.getValue(user_token_seed_key, null, true, null));
+	if(apiutil.isSafeString(token_seed)){
+		// token has seed, then we need to check manually.
+		//
+		//r3logger.dlog('token key(' + user_token_key + ') has seed.');
+
+		if(!apiutil.isSafeEntity(osapi)){
+			r3logger.elog('could not load osapi file(object)');
+			dkcobj.clean();
+			return null;
+		}
+		const vres: resTypeBaseResult = osapi.verifyUserToken(dkcobj, user_name, tenant_name, token, token_seed);
+		if(!vres.result){
+			r3logger.elog('failed to verify token(' + token + ') with seed by ' + (vres?.message ?? ''));
+			dkcobj.clean();
+			return null;
+		}
+	}
+	dkcobj.clean();
+
+	const result: valTypeUserTenantInfo = {
+		user:			user_name,
+		tenant:			tenant_name,
+		display:		tenant_display,
+		id:				tenant_id,
+		description:	tenant_desc,
+		region:			region
+	};
+
+	return result;
+};
+
+//---------------------------------------------------------
+// Check User Token
+//---------------------------------------------------------
+//
+// Check User Token
+//
+// result		:	null or token information
+//					{
+//						role:			role name
+//						user:			user name
+//						hostname:		always null
+//						ip:				always null
+//						port:			always 0
+//						cuk:			always null
+//						extra:			always null
+//						tenant:			tenant name
+//						display:		display alias name for tenant
+//						id:				tenant id string
+//						description:	description for tenant
+//						scoped:			role token is always scoped(true)
+//						region:			when user token, the creator region name of the token
+//					}
+//
+const rawCheckUserToken = (token: string | null): resTypeCheckUserToken | null => {
+
+	if(!apiutil.isSafeString(token)){
+		r3logger.elog('token parameter is wrong');
+		return null;
+	}
+
+	// get user/tenant from token
+	const tenant_info = rawGetUserTenantByToken(token);
+	if(null === tenant_info || !apiutil.isSafeEntity(tenant_info.user)){
+		r3logger.elog('token is not any user/tenant(expired or wrong token)');
+		return null;
+	}
+
+	// check scoped flag
+	let	scoped = false;
+	if(apiutil.isSafeEntity(tenant_info.tenant)){
+		scoped = true;
+	}
+
+	const token_info: resTypeCheckUserToken = {
+		role:			null,
+		user:			tenant_info.user ?? null,
+		hostname:		null,
+		ip:				null,
+		port:			0,
+		cuk:			null,
+		extra:			null,
+		tenant:			tenant_info.tenant ?? null,
+		display:		tenant_info.display ?? null,
+		id:				tenant_info.id ?? null,
+		description:	tenant_info.description ?? null,
+		region:			tenant_info.region ?? null,
+		scoped:			scoped
+	};
+
+	return token_info;
+};
+
+//---------------------------------------------------------
+// remove scoped user token
+//---------------------------------------------------------
+//
+//	token		scoped user token
+//
+//	[NOTE]		This removes(force expire) scoped user token for
+//				using ACR API.
+//				The token used by ACR must be removed after checking
+//				it, because this case allows using token one time.
+//
+const rawRemoveScopedUserToken = (token?: string): boolean => {
+
+	if(!apiutil.isSafeString(token)){
+		r3logger.elog('parameter is wrong : token=' + JSON.stringify(token));
+		return false;
+	}
+
+	//
+	// Check token
+	//
+	if(0 === token.indexOf('R=')){
+		r3logger.elog('token(' + JSON.stringify(token) + ') is role token.');
+		return false;
+	}else if(0 === token.indexOf('U=')){
+		token = token.substr(2);												// cut 'U='
+	}
+	const token_info = rawCheckUserToken(token);
+	if(	null === token_info							||
+		!apiutil.isSafeString(token_info.user)		||
+		!apiutil.isSafeString(token_info.tenant)	||
+		!apiutil.isSafeEntity(token_info.scoped)	||
+		!apiutil.isBoolean(token_info.scoped)		||
+		true !== token_info.scoped					)
+	{
+		r3logger.elog('token(' + JSON.stringify(token) + ') is something wrong.');
+		return false;
+	}
+
+	//
+	// Remove token
+	//
+	const	dkcobj	= k2hr3.getK2hdkc(true, false);									// use permanent object(need to clean)
+	let		errmsg	= '';
+	if(!apiutil.isSafeEntity(dkcobj)){
+		return false;
+	}
+
+	//
+	// Keys
+	//
+	const keys				= r3keys(token_info.user, token_info.tenant);
+	const token_top_key		= keys.TOKEN_USER_TOP_KEY;								// "yrn:yahoo::::token:user"
+	const token_value_key	= keys.TOKEN_USER_TOP_KEY + '/' + token;				// "yrn:yahoo::::token:user/<token>"
+	const utoken_top_key	= keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY;					// "yrn:yahoo::::user:<user>:tenant/<tenant>/token"
+	const utoken_token_key	= keys.USER_TENANT_AMBIGUOUS_TOKEN_KEY + '/' + token;	// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+	const utoken_seed_key	= utoken_token_key + '/' + keys.SEED_KW;				// "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed"
+
+	//
+	// check under token top
+	//
+	let subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(token_top_key, true));
+	if(apiutil.removeStringFromArray(subkeylist, token_value_key)){					// remove subkeys "yrn:yahoo::::token:user/<token>" -> "yrn:yahoo::::token:user"
+		if(!dkcobj.setSubkeys(token_top_key, subkeylist)){
+			errmsg += 'could not remove ' + token_value_key + ' subkey under ' + token_top_key + ' key, ';
+		}
+	}
+	if(!dkcobj.remove(token_value_key, false)){										// remove key "yrn:yahoo::::token:user/<token>"
+		errmsg += 'could not remove ' + token_value_key + 'key, probably it is not existed, ';
+	}
+
+	//
+	// check under user top
+	//
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(utoken_top_key, true));
+	if(apiutil.removeStringFromArray(subkeylist, utoken_token_key)){					// remove subkeys "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>" -> "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token"
+		if(!dkcobj.setSubkeys(utoken_top_key, subkeylist)){
+			errmsg += 'could not remove ' + utoken_token_key + ' subkey under ' + utoken_top_key + ' key, ';
+		}
+	}
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(utoken_token_key, true));
+	if(apiutil.removeStringFromArray(subkeylist, utoken_seed_key)){						// remove subkeys "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed" -> "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+		if(!dkcobj.setSubkeys(utoken_token_key, subkeylist)){
+			errmsg += 'could not remove ' + utoken_seed_key + ' subkey under ' + utoken_token_key + ' key, ';
+		}
+	}
+	if(!dkcobj.remove(utoken_seed_key, false)){								// remove key "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>/seed"
+		errmsg += 'could not remove ' + utoken_seed_key + 'key, probably it is not existed, ';
+	}
+	if(!dkcobj.remove(utoken_token_key, false)){								// remove key "yrn:yahoo::::user:<user>:tenant/{<tenant>}/token/<token>"
+		errmsg += 'could not remove ' + utoken_token_key + 'key, probably it is not existed, ';
+	}
+
+	if(apiutil.isSafeString(errmsg)){
+		r3logger.elog(errmsg);
+	}
+
+	dkcobj.clean();
+	return true;																		// Returns true even if there is an error in deletion processing
+};
+
+//---------------------------------------------------------
+// [Role Token]
+//---------------------------------------------------------
+//
+// Token:				Token Id(################)
+// X-Auth-Token:		R=Token Id
+// Token Id:			The "Token Id" is a unique hex number string for 128bit.
+//						"Token Id" = "(<base id(64bit:8byte)> ^ <crypt id(64bit:8byte)>)" + "(<role id(64bit:8byte)> ^ <crypt id(64bit:8byte)>)"
+// Role Token Key:		"yrn:yahoo::::token:role/<Token Id>"
+// Role Token Value:	= dkcTypeRoleTokenValue {
+//							role:		"role full yrn"
+//							date:		"UTC ISO 8601 time at create"
+//							expire:		"UTC ISO 8601 time at expire"
+//							creator:	"Host full yrn" or "User full yrn"
+//							base:		"id from host" or "last 64bit string in UserToken"
+//							user:		"user name", if creator is user, this value is user name.(if not, this is null)
+//							ip:			"ip address", if creator is host, this value is ip address.(if not, this is null)
+//							hostname:	"hostname", if creator is host, this value is hostname.(if not, this is null)
+//							port:		"port number", if creator is host, this value is port number.(if not, this is 0)
+//							cuk:		"cuk", if creator is host on iaas, this value is cuk.(allowed null)
+//							extra:		"extra", if creator is host on iaas, this value is extra.(allowed null)
+//							tenant:		"tenant name" for this role token(this mean token is scoped)
+//							verify:		"random 64bit id for verify token"
+//						}
+//
+// [NOTE]
+// "role id" which is in "Token Id" is included from role key(yrn:yahoo:<Tenant>:::role:<role name>/id).
+// This value is secret, any API could not get this value directly.
+//
+//---------------------------------------------------------
+// Get Role Token From user(token)
+//---------------------------------------------------------
+//
+// user			:	this value is parsed from user token
+// tenant		:	this value is parsed from user token
+// role			:	target role name(full yrn or only role name)
+// expire_limit	:	specify expire second(default 24H = 24 * 60 * 60 sec, 0 means no expire time.)
+//
+// result		:	resTypeGetRoleToken = {
+//						result:		true/false
+//						message:	null or error message string
+//						token:		undefined(error) or role token string
+// 					}
+//
+// [NOTE]
+// set role token value is following:
+// 					dkcTypeRoleTokenValue = {
+//						role:		token's role yrn("yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}")
+//						date:		create date(UTC ISO 8601)
+//						expire:		expire date(UTC ISO 8601)
+//						creator:	creator yrn("yrn:yahoo::::user:<user>" or "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/hosts/ip/<ip:port>")
+//						user:		if creator is user, this value is user name.
+//						hostname:	always null
+//						ip:			always null
+//						port:		if creator is host, this value is port number.(if not, this is 0)
+//						cuk:		if creator is host on iaas, this value is cuk.(allowed null)
+//						extra:		if creator is host on iaas, this value is extra.(allowed null)
+//						tenant:		tenant name for this role token(this mean token is scoped)
+//						base:		32bytes hex string
+//					}
+//
+const rawGetRoleTokenByUser = (
+	user:			string | null,
+	tenant:			string | null,
+	role:			string | null,
+	expire_limit:	number | null
+): resTypeGetRoleToken | null => {
+
+	const	resobj: resTypeGetRoleToken = {result: true, message: null};
+
+	if(!apiutil.isSafeString(user) || !apiutil.isSafeString(tenant) || !apiutil.isSafeString(role)){	// allow other argument is empty
+		resobj.result	= false;
+		resobj.message	= 'some parameters are wrong : user=' + JSON.stringify(user) + ', tenant=' + JSON.stringify(tenant) + ', role=' + JSON.stringify(role);
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+	if(!apiutil.isSafeNumber(expire_limit)){								// expire_limit must be number or null(undefined)
+		expire_limit = expire_rtoken;										// default 24H
+	}else{
+		if(0 == expire_limit){
+			// [NOTE]
+			// If 0, set the maximum value to 10 years.
+			// Disable expire by setting a period of time within which this
+			// application is guaranteed not to survive, as permitted by ISO8601.
+			//
+			expire_limit = expire_reg_rtoken;
+		}
+	}
+
+	// check role name is only name or full yrn path
+	const	keys		= r3keys(user, tenant);
+	role				= role.toLowerCase();
+	let		roleptn		= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);		// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
+	const	rolematchs	= role.match(roleptn);
+	if(!apiutil.isNotEmptyArray(rolematchs) || rolematchs.length < 4){
+		// role is not matched role(maybe not full yrn), then we need check it is another yrn path
+		roleptn		= new RegExp('^' + keys.NO_TENANT_KEY);					// regex = /^yrn:yahoo:/
+		if(role.match(roleptn)){
+			resobj.result	= false;
+			resobj.message	= 'role(' + role + ') is not role yrn path)';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// role is only role name, then we do not modify it.
+	}else{
+		// check tenant name
+		if(tenant !== rolematchs[2]){
+			resobj.result	= false;
+			resobj.message	= 'role(' + role + ') yrn has tenant(' + rolematchs[2] + '), but it is not specified tenant(' + tenant + ')';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// role is set only role name
+		role = rolematchs[3];
+	}
+
+	const	dkcobj		= k2hr3.getK2hdkc(true, false);						// use permanent object(need to clean)
+	let		subkeylist;
+	if(!apiutil.isSafeEntity(dkcobj)){
+		resobj.result	= false;
+		resobj.message	= 'Not initialize yet.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+
+	//
+	// keys
+	//
+	const role_key			= keys.ROLE_TOP_KEY + ':' + role;				// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}"
+	const role_id_key		= role_key + '/' + keys.ID_KW;					// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id"
+	const role_tokens_key	= role_key + '/' + keys.ROLE_TOKEN_KW;			// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+
+	// user id
+	const user_id = apiutil.getSafeString(dkcobj.getValue(keys.USER_ID_KEY, null, true, null));	// get user id from "yrn:yahoo::::user:<user name>:id"
+	if(!apiutil.isSafeString(user_id)){
+		resobj.result	= false;
+		resobj.message	= 'could not get user id(' + keys.USER_ID_KEY + ') value, or it is wrong value(' + JSON.stringify(user_id) + ').';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+
+	// role id
+	let role_id = apiutil.getSafeString(dkcobj.getValue(role_id_key, null, true, null));
+	if(!apiutil.isSafeStrUuid4(role_id)){
+		let		isError		= false;
+		const	old_role_id	= apiutil.parseJSON(role_id);
+		if(apiutil.isNotEmptyArray(old_role_id) && 4 == old_role_id.length){
+			// old version id, so reset new valus(UUID4) here.
+			role_id = apiutil.getStrUuid4();
+			if(!dkcobj.setValue(role_id_key, role_id)){							// set value -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id
+				isError			= true;
+				resobj.message	= 'could not get role id(' + role_id_key + ') value, because failed to reset new role id instead of old id.';
+			}
+		}else{
+			isError			= true;
+			resobj.message	= 'could not get role id(' + role_id_key + ') value, or it is wrong value(' + JSON.stringify(role_id) + ').';
+		}
+		if(isError){
+			resobj.result	= false;
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// make token value
+	const	now_unixtime = apiutil.getUnixtime();
+	const	token_value: dkcTypeRoleTokenValue = {
+		role:		role_key,														// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}"
+		date:		(new Date(now_unixtime * 1000)).toISOString(),					// now date(UTC ISO 8601)
+		expire:		(new Date((now_unixtime + expire_limit) * 1000)).toISOString(),	// expire date(UTC ISO 8601)
+		creator:	keys.USER_KEY,													// "yrn:yahoo::::user:<user>"
+		user:		user,															// user(creator)
+		hostname:	null,															// hostname(creator)
+		ip:			null,															// ip(creator)
+		port:		0,																// port(creator)
+		cuk:		null,															// cuk(creator)
+		extra:		null,															// extra(creator)
+		tenant:		tenant															// tenant(scope)
+	};
+
+	// role token and yrn key
+	let	role_token						= '';
+	let	token_role_key: string | null	= null;
+
+	// create key
+	for(let is_loop = true; is_loop; ){											// for eslint
+		// make role token
+		const token_elements = apiutil.makeStringToken256(user_id, role_id);
+		if(!apiutil.isSafeEntity(token_elements)){
+			resobj.result	= false;
+			resobj.message	= 'could not make token from ' + JSON.stringify(user_id) + ' and ' + JSON.stringify(role_id);
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+		role_token			= token_elements.str_token;
+		token_value.base	= token_elements.str_base;							// token base
+
+		// role token key
+		token_role_key		= keys.TOKEN_ROLE_TOP_KEY + '/' + role_token;					// "yrn:yahoo::::token:role/<role token>"
+
+		// get role token for existing check
+		const value			= apiutil.getSafeString(dkcobj.getValue(token_role_key, null, true, null));
+		if(!apiutil.isSafeString(value)){
+			// set value to role token
+			if(!dkcobj.setValue(token_role_key, JSON.stringify(token_value), null, null, expire_limit)){	// set token value -> yrn:yahoo::::token:role/<role token>
+				resobj.result	= false;
+				resobj.message	= 'could not set ' + JSON.stringify(token_value) + ' value to ' + token_role_key + ' key';
+				r3logger.elog(resobj.message);
+				dkcobj.clean();
+				return resobj;
+			}
+			break;
+		}else{
+			r3logger.dlog('conflict role token(' + role_token + ') which already is used, so remake token for uniq.');
+		}
+	}
+
+	// Add token to role token top key's subkey list
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true));
+	if(apiutil.isSafeString(token_role_key) && apiutil.tryAddStringToArray(subkeylist, token_role_key)){
+		if(!dkcobj.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, subkeylist)){				// add subkey yrn:yahoo::::token:role/<role token> -> yrn:yahoo::::token:role
+			resobj.result	= false;
+			resobj.message	= 'could not add ' + token_role_key + ' subkey under ' + keys.TOKEN_ROLE_TOP_KEY + ' key';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// Add token to role tokens key's subkey list
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(role_tokens_key, true));
+	if(apiutil.isSafeString(token_role_key) && apiutil.tryAddStringToArray(subkeylist, token_role_key)){
+		if(!dkcobj.setSubkeys(role_tokens_key, subkeylist)){						// add subkey yrn:yahoo::::token:role/<role token> -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens
+			resobj.result	= false;
+			resobj.message	= 'could not add ' + token_role_key + ' subkey under ' + role_tokens_key + ' key';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// Add role token into result object.
+	resobj.token = role_token;
+
+	dkcobj.clean();
+	return resobj;
+};
+
+//---------------------------------------------------------
+// Get Role Token From ip address
+//---------------------------------------------------------
+// ip			:	ip address
+// port			:	port number(0, undefined, null means any port)
+// cuk			:	container unique key(undefined, null means any)
+// tenant		:	tenant name
+// role			:	target role name(full yrn or only role name)
+// expire_limit	:	specify expire second(default 24H = 24 * 60 * 60 sec)
+//
+// result		:	resTypeGetRoleToken = {
+//						result:		true/false
+//						message:	null or error message string
+//						token:		undefined(error) or role token string
+// 					}
+//
+// [NOTE]
+// set role token value is following:
+// 					dkcTypeRoleTokenValue = {
+//						role:		token's role yrn("yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}")
+//						date:		create date(UTC ISO 8601)
+//						expire:		expire date(UTC ISO 8601)
+//						creator:	creator yrn("yrn:yahoo::::user:<user>" or "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/hosts/ip/<ip:port>")
+//						user:		always null
+//						hostname:	always null
+//						ip:			if creator is host, this value is ip address.
+//						port:		if creator is host, this value is port number.(if not, this is 0)
+//						cuk:		if creator is host on iaas, this value is cuk.(allowed null)
+//						extra:		if creator is host on iaas, this value is extra.(allowed null)
+//						tenant:		tenant name for this role token(this mean token is scoped)
+//						base:		32bytes hex string
+//					}
+//
+// The role token which is built by host is made by only IP address.
+// Hostname can not build a role token, because it is not secure.(= Hostname can easily be disguised.)
+// Then only IP address can build a role token without UserToken.
+//
+const rawGetRoleTokenByIP = (
+	ip:				string | null,
+	port:			number | null,
+	cuk:			string | null,
+	tenant:			string | null,
+	role:			string | null,
+	expire_limit:	number | null
+): resTypeGetRoleToken => {
+
+	const	resobj: resTypeGetRoleToken = {result: true, message: null};
+
+	if(!apiutil.isSafeString(tenant) || !apiutil.isSafeString(role) || !apiutil.isSafeString(ip)){	// allow other argument is empty
+		resobj.result	= false;
+		resobj.message	= 'some parameters are wrong : tenant=' + JSON.stringify(tenant) + ', role=' + JSON.stringify(role) + ', ip' + JSON.stringify(ip);
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+	if(!apiutil.isSafeNumber(port)){														// port must be number or null(undefined)
+		port = 0;																			// force set port 0(any).
+	}
+	if(!apiutil.isSafeString(cuk)){															// cuk is string if spacified
+		cuk = null;																			// force set null.
+	}
+	if(!apiutil.isSafeNumber(expire_limit)){												// expire_limit must be number or null(undefined)
+		expire_limit = expire_rtoken;														// default 24H
+	}
+
+	// check role name is only name or full yrn path
+	const	keys		= r3keys(null, tenant);
+	role				= role.toLowerCase();
+	let		roleptn		= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);						// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
+	const	rolematchs	= role.match(roleptn);
+	if(!apiutil.isNotEmptyArray(rolematchs) || rolematchs.length < 4){
+		// role is not matched role(maybe not full yrn), then we need check it is another yrn path
+		roleptn		= new RegExp('^' + keys.NO_TENANT_KEY);									// regex = /^yrn:yahoo:/
+		if(role.match(roleptn)){
+			resobj.result	= false;
+			resobj.message	= 'role(' + role + ') is not role yrn path)';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// role is only role name, then we do not modify it.
+	}else{
+		// check tenant name
+		if(tenant !== rolematchs[2]){
+			resobj.result	= false;
+			resobj.message	= 'role(' + role + ') yrn has tenant(' + rolematchs[2] + '), but it is not specified tenant(' + tenant + ')';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// role is set only role name
+		role = rolematchs[3];
+	}
+
+	const	dkcobj		= k2hr3.getK2hdkc(true, false);										// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		resobj.result	= false;
+		resobj.message	= 'Not initialize yet.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+
+	//
+	// keys
+	//
+	const role_key			= keys.ROLE_TOP_KEY + ':' + role;								// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}"
+	const role_id_key		= role_key + '/' + keys.ID_KW;									// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id"
+	const role_tokens_key	= role_key + '/' + keys.ROLE_TOKEN_KW;							// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+
+	// find host key and get host id for base id
+	const host_info: dkcTypeHostRawValueSet[] | null = k2hr3.findRoleHost(dkcobj, role_key, null, ip, port, cuk);
+	if(!apiutil.isNotEmptyArray(host_info)){
+		resobj.result	= false;
+		resobj.message	= 'Not found ip(' + ip + ') with port(' + String(port) + ') and cuk(' + JSON.stringify(cuk) + ') in tenant(' + tenant + ') + role(' + role + ')';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+	let	host_value: valTypeAll = null;
+	for(let pos = 0; pos < host_info.length; ++pos){
+		const host_info_tmp = host_info[pos];
+
+		if(!apiutil.isPlainObject(host_info_tmp) || !apiutil.isSafeString(host_info_tmp.key)){
+			r3logger.dlog('Found ip(' + ip + ') with port(' + String(port) + ') in tenant(' + tenant + ') + role(' + role + '), but this host info(' + JSON.stringify(host_info_tmp) + ') is something wrong, skip it');
+			continue;
+		}
+		const host_value_tmp	= apiutil.getSafeString(dkcobj.getValue(host_info_tmp.key, null, true, null));
+		host_value				= apiutil.parseJSON(host_value_tmp);
+		if(	!apiutil.isPlainObject(host_value)				||
+			(!apiutil.isSafeString(host_value.hostname) && !apiutil.isSafeString(host_value.ip)) ||	// hostname or ip is existed
+			!apiutil.isSafeEntity(host_value.port)			||
+			!apiutil.isSafeString(host_value[keys.ID_KW])	)
+		{
+			r3logger.dlog('Found ip(' + ip + ') with port(' + String(port) + ') in tenant(' + tenant + ') + role(' + role + '), but this host value(' + JSON.stringify(host_value) + ') is something wrong, skip it');
+		}else{
+			// found safe host info, we use this.
+			host_value.key	= host_info_tmp.key;
+			host_value.cuk	= host_info_tmp.cuk;
+			host_value.extra= host_info_tmp.extra;
+			break;
+		}
+		host_value = null;
+	}
+
+	if(!apiutil.isPlainObject(host_value)){
+		resobj.result	= false;
+		resobj.message	= 'Found ip(' + ip + ') with port(' + String(port) + ') in tenant(' + tenant + ') + role(' + role + '), but there is not safe any host info';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+
+	// role id
+	let	role_id = apiutil.getSafeString(dkcobj.getValue(role_id_key, null, true, null));
+	if(!apiutil.isSafeStrUuid4(role_id)){
+		let		isError		= false;
+		const	old_role_id	= apiutil.parseJSON(role_id);
+		if(apiutil.isNotEmptyArray(old_role_id) && 4 == old_role_id.length){
+			// old version id, so reset new valus(UUID4) here.
+			role_id = apiutil.getStrUuid4();
+			if(!dkcobj.setValue(role_id_key, role_id)){							// set value -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id
+				isError			= true;
+				resobj.message	= 'could not get role id(' + role_id_key + ') value, because failed to reset new role id instead of old id.';
+			}
+		}else{
+			isError			= true;
+			resobj.message	= 'could not get role id(' + role_id_key + ') value, or it is wrong value(' + JSON.stringify(role_id) + ').';
+		}
+		if(isError){
+			resobj.result	= false;
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// make token value
+	const	now_unixtime	= apiutil.getUnixtime();
+	const	tmp_date		= (new Date(now_unixtime * 1000)).toISOString();
+	const	tmp_expire		= (new Date((now_unixtime + expire_limit) * 1000)).toISOString();
+	const	tmp_creator		= apiutil.getSafeString(host_value.key);
+	const	tmp_ip			= apiutil.isSafeString(host_value.ip) ? host_value.ip : null;
+	const	tmp_port		= apiutil.cvtToNumber(host_value.port) ?? 0;
+	const	tmp_cuk			= apiutil.isSafeString(host_value.cuk) ? host_value.cuk : null;
+	const	tmp_extra		= apiutil.isSafeString(host_value.extra) ? host_value.extra : null;
+	const	token_value: dkcTypeRoleTokenValue = {
+		role:		role_key,		// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}"
+		date:		tmp_date,		// now date(UTC ISO 8601)
+		expire:		tmp_expire,		// expire date(UTC ISO 8601)
+		creator:	tmp_creator,	// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/hosts/ip/<ip:port>"
+		user:		null,			// user(creator)
+		hostname:	null,			// hostname(null)
+		ip:			tmp_ip,			// ip(creator)
+		port:		tmp_port,		// port(creator)
+		cuk:		tmp_cuk,		// cuk(creator)
+		extra:		tmp_extra,		// extra(creator)
+		tenant:		tenant,			// tenant(scope)
+	};
+
+	// role token and yrn key
+	let	role_token						= '';
+	let	token_role_key: string | null	= null;
+
+	// create key
+	for(let is_loop = true; is_loop; ){														// for eslint
+		// make role token
+		const token_elements: resTypeMakeStringToken256 | null = apiutil.makeStringToken256(host_value[keys.ID_KW], role_id);
+		if(!apiutil.isSafeEntity(token_elements)){
+			resobj.result	= false;
+			resobj.message	= 'could not make token from ' + JSON.stringify(host_value[keys.ID_KW]) + ' and ' + JSON.stringify(role_id);
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+		role_token			= token_elements.str_token;
+		token_value.base	= token_elements.str_base;										// token base
+
+		// role token key
+		token_role_key		= keys.TOKEN_ROLE_TOP_KEY + '/' + role_token;					// "yrn:yahoo::::token:role/<role token>"
+
+		// get role token for existing check
+		const	value		= apiutil.getSafeString(dkcobj.getValue(token_role_key, null, true, null));
+		if(!apiutil.isSafeString(value)){
+			// set value to role token
+			if(!dkcobj.setValue(token_role_key, JSON.stringify(token_value), null, null, expire_limit)){	// set token value -> yrn:yahoo::::token:role/<role token>
+				resobj.result	= false;
+				resobj.message	= 'could not set ' + JSON.stringify(token_value) + ' value to ' + token_role_key + ' key';
+				r3logger.elog(resobj.message);
+				dkcobj.clean();
+				return resobj;
+			}
+			break;
+		}else{
+			r3logger.dlog('conflict role token(' + role_token + ') which already is used, so remake token for uniq.');
+		}
+	}
+
+	// Add token to role token top key's subkey list
+	let subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true));
+	if(apiutil.isSafeString(token_role_key) && apiutil.tryAddStringToArray(subkeylist, token_role_key)){
+		if(!dkcobj.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, subkeylist)){				// add subkey yrn:yahoo::::token:role/<role token> -> yrn:yahoo::::token:role
+			r3logger.elog('could not add ' + token_role_key + ' subkey under ' + keys.TOKEN_ROLE_TOP_KEY + ' key');
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// Add token to role tokens key's subkey list
+	subkeylist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(role_tokens_key, true));
+	if(apiutil.isSafeString(token_role_key) && apiutil.tryAddStringToArray(subkeylist, token_role_key)){
+		if(!dkcobj.setSubkeys(role_tokens_key, subkeylist)){						// add subkey yrn:yahoo::::token:role/<role token> -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens
+			resobj.result	= false;
+			resobj.message	= 'could not add ' + token_role_key + ' subkey under ' + role_tokens_key + ' key';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// Add role token into result object.
+	resobj.token = role_token;
+
+	dkcobj.clean();
+	return resobj;
+};
+
+//---------------------------------------------------------
+// cleanup role by token
+//---------------------------------------------------------
+// utility local function
+//
+// [NOTE]
+// This process can be time consuming when subkey list is too many.
+// In that case, there is a possibility that the consistency of the subkey will be lost.
+// If a new token is added to the subkey list during processing with this function, that
+// token subkey will be overwritten(lost) when this function completes processing.
+// Originally, this subkey list of "yrn:yahoo::::token:role" key has no direct use, so this
+// is not a problem. Because it normally reads the sub key(token key) directly.
+// Please do not read subkey(token key) from the subkey list of "yrn:yahoo::::token:role" key.
+// This subkeys are only useful for "notes".
+//
+const rawCleanupRoleToken = (callback: cbTypeCleanupRoleToken): void => {
+
+	const dkcobj = k2hr3.getK2hdkc(true, false);											// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		callback(false);
+		return;
+	}
+
+	const	keys			= r3keys();
+	const	subkeylist		= apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true));	// get subkeys under "yrn:yahoo::::token:role"
+	let		is_changed		= false;
+	const	newsubkeylist	= new Array(0);
+
+	for(let cnt = 0; cnt < subkeylist.length; ++cnt){
+		let	role_tokens_key: string | null;
+
+		// not use attributes for getting role path
+		const	value_tmp	= apiutil.getSafeString(dkcobj.getValue(subkeylist[cnt], null, false, null));
+		let		value		= apiutil.parseJSON(value_tmp);
+		if(apiutil.isPlainObject(value) && apiutil.isSafeString(value.role)){
+			role_tokens_key = value.role + '/' + keys.ROLE_TOKEN_KW;			// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+		}else{
+			role_tokens_key = null;
+		}
+
+		// use attributes for getting role path
+		value = apiutil.getSafeString(dkcobj.getValue(subkeylist[cnt], null, true, null));
+		if(!apiutil.isSafeString(value)){
+			is_changed	= true;
+
+			// remove role token from role's tokens subkey
+			if(null !== role_tokens_key){
+				const tokenlist = apiutil.getSafeStringArray(dkcobj.getSubkeys(role_tokens_key, true));
+				if(apiutil.removeStringFromArray(tokenlist, subkeylist[cnt])){
+					if(!dkcobj.setSubkeys(role_tokens_key, tokenlist)){			// update subkey -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens
+						r3logger.elog('could not update subkey under ' + role_tokens_key + ' key, but continue...');
+					}
+				}
+			}
+		}else{
+			newsubkeylist.push(subkeylist[cnt]);
+		}
+	}
+
+	if(false === is_changed){
+		dkcobj.clean();
+		callback(true);
+		return;
+	}
+	if(!dkcobj.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, newsubkeylist)){				// add subkeys -> yrn:yahoo::::token:role
+		r3logger.elog('could not update subkeys(tokens) under ' + keys.TOKEN_ROLE_TOP_KEY + ' key');
+		dkcobj.clean();
+		callback(false);
+		return;
+	}
+	dkcobj.clean();
+	callback(true);
+};
+
+//---------------------------------------------------------
+// Remove Role Token by User/IP
+//---------------------------------------------------------
+// token		:	role token
+// user			:	this value is parsed from user token(or null)
+// tenant		:	this value is parsed from user token(or null)
+// ip			:	client ip address(or null)
+// port			:	port number when ip address parameter exists
+// cuk			:	cuk value when ip address parameter exists
+//
+// result		:	{
+//						result:		true/false
+//						message:	null or error message string
+// 					}
+//
+const rawRemoveRoleToken = (
+	token:		string | null,
+	user:		string | null,
+	tenant:		string | null,
+	ip:			string | null,
+	port:		number | null,
+	cuk:		string | null
+): resTypeBaseResult => {
+
+	const	resobj: resTypeBaseResult = {result: true, message: null};
+
+	if(!apiutil.isSafeString(token)){														// allow other argument is empty
+		resobj.result	= false;
+		resobj.message	= 'token parameter is empty';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+	if(	(apiutil.isSafeString(ip)	&& (apiutil.isSafeString(user)	|| apiutil.isSafeString(tenant))) 	||
+		(!apiutil.isSafeString(ip)	&& (!apiutil.isSafeString(user)	|| !apiutil.isSafeString(tenant)))	)
+	{
+		resobj.result	= false;
+		resobj.message	= 'tenant(' + JSON.stringify(tenant) + '), user(' + JSON.stringify(user) + '), ip(' + JSON.stringify(ip) + ') parameters are wrong pattern.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+
+	let	dkcobj = k2hr3.getK2hdkc(true, false);												// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		resobj.result	= false;
+		resobj.message	= 'Not initialize yet.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+
+	//
+	// keys
+	//
+	const keys				= (apiutil.isSafeString(ip) ? r3keys() : r3keys(user, tenant));
+	const role_token_key	= keys.TOKEN_ROLE_TOP_KEY + '/' + token;						// "yrn:yahoo::::token:role/<role token>"
+
+	// get role token value
+	const value_tmp	= apiutil.getSafeString(dkcobj.getValue(role_token_key, null, true, null));
+	const value		= apiutil.parseJSON(value_tmp);
+	if(!apiutil.isPlainObject(value)){
+		// already role token is removed or expired.
+		r3logger.dlog('could not get role token(' + role_token_key + ') value, or it is wrong value(' + JSON.stringify(value) + '). We check all role token for expire here.');
+		dkcobj.clean();
+		//
+		// check and remove old role token under token top key("yrn:yahoo::::token:role") if old token is expired
+		//
+		// [NOTE]
+		// This processing is taking time, so it runs asynchronously.
+		// And for notes on this processing, refer to NOTE of rawCleanupRoleToken function.
+		//
+		rawCleanupRoleToken((result: boolean): void => {
+			if(!result){
+				r3logger.wlog('Failed to cleanup expired role tokens under ' + keys.TOKEN_ROLE_TOP_KEY + ' key, but continue...');
+			}
+		});
+		// return success
+		return resobj;
+	}
+
+	// check token value
+	if(	!apiutil.isSafeString(value.role)			||
+		!apiutil.isSafeString(value.date)			||
+		!apiutil.isSafeString(value.expire)			||
+		!apiutil.isSafeString(value.creator)		||
+		(!apiutil.isSafeString(value.user) && !apiutil.isSafeString(value.hostname) && !apiutil.isSafeString(value.ip)) ||
+		!apiutil.isSafeNumber(value.port)			||
+		!apiutil.isSafeString(value.tenant)			||
+		!apiutil.isSafeString(value.base)			)
+	{
+		//
+		// Not check expired token and ip address is empty here.
+		//
+		resobj.result	= false;
+		resobj.message	= 'could not get role token(' + role_token_key + ') value, or it is wrong value(' + JSON.stringify(value) + ').';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+
+	// check expire
+	if(apiutil.isExpired(value.expire)){
+		resobj.result	= false;
+		resobj.message	= 'role token(' + role_token_key + ') is expired by expire date(' + value.expire + ').';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+
+	// keep role tokens key for removing key in its subkey list.
+	const role_tokens_key = value.role + '/' + keys.ROLE_TOKEN_KW;							// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+
+	// check requester
+	if(apiutil.isSafeString(ip)){
+		// check ip address bases
+		//
+		// port
+		if(!apiutil.isSafeNumber(port)){
+			port = 0;
+		}
+		// cuk
+		cuk = apiutil.getSafeString(cuk).trim();
+		if(!apiutil.isSafeString(cuk)){
+			cuk = null;
+		}
+
+		// check
+		if(	value.port != port												||
+			apiutil.isSafeString(value.cuk) != apiutil.isSafeString(cuk)	||
+			apiutil.getSafeString(value.cuk) !=  apiutil.getSafeString(cuk)	)
+		{
+			resobj.result	= false;
+			resobj.message	= 'could not remove role token(' + token + '), because port(' + JSON.stringify(port) + ' vs ' + JSON.stringify(value.port) + ')/cuk(' + JSON.stringify(cuk) + ' vs ' + JSON.stringify(value.cuk) + ') value is not same.';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+
+		// [NOTE]
+		// findHost() is creating k2hdkc object in it, thus we close dkc object here.
+		// and re-create dkc object after returning that function.
+		//
+		dkcobj.clean();
+
+		const	find_result: resTypeFindHost = k2hr3.findHost(value.tenant, value.role, null, ip, port, cuk, false);	// not strict checking
+		if(!find_result.result || !apiutil.isNotEmptyArray(find_result.host_info)){
+			// ip address is not member of role
+			resobj.result	= false;
+			resobj.message	= 'could not remove role token(' + token + '), because ip(' + ip + ') is not role host member.';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+
+		dkcobj = k2hr3.getK2hdkc(true, false);												// re-creating permanent object(need to clean)
+		if(!apiutil.isSafeEntity(dkcobj)){
+			resobj.result	= false;
+			resobj.message	= 'Failed to re-initialize.';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+
+	}else{
+		// check tenant name
+		if(0 !== value.role.indexOf(keys.ROLE_TOP_KEY)){
+			// not same tenant name
+			resobj.result	= false;
+			resobj.message	= 'could not remove role token(' + token + '), because user(' + JSON.stringify(user) + ')/tenant(' + JSON.stringify(tenant) + ') is not role member.';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// remove token
+	if(!dkcobj.remove(role_token_key, false)){										// remove yrn:yahoo::::token:role/<role token>
+		resobj.result	= false;
+		resobj.message	= 'could not remove role token(' + token + '), probably it is not existed.';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+	let subkeylist = apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true));
+	if(apiutil.removeStringFromArray(subkeylist, role_token_key)){
+		if(!dkcobj.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, subkeylist)){				// update subkey -> yrn:yahoo::::token:role
+			resobj.result	= false;
+			resobj.message	= 'could not update subkey under ' + keys.TOKEN_ROLE_TOP_KEY + ' key';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	// remove token key from role's tokens subkey.
+	subkeylist = apiutil.getSafeStringArray(dkcobj.getSubkeys(role_tokens_key, true));
+	if(apiutil.removeStringFromArray(subkeylist, role_token_key)){
+		if(!dkcobj.setSubkeys(role_tokens_key, subkeylist)){						// update subkey -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens
+			resobj.result	= false;
+			resobj.message	= 'could not update subkey under ' + role_tokens_key + ' key';
+			r3logger.elog(resobj.message);
+			dkcobj.clean();
+			return resobj;
+		}
+	}
+
+	dkcobj.clean();
+	return resobj;
+};
+
+//---------------------------------------------------------
+// Remove Role Tokens Directly
+//---------------------------------------------------------
+// dkcobj_permanent	:	dkcobj object
+// tokens			:	array to role token yrn path
+//
+// result			:	true/false
+//
+const rawDirectRemoveRoleTokens = (
+	dkcobj_permanent:	K2hdkc,
+	tokens:				string | string[] | null
+): boolean => {
+
+	if(!(dkcobj_permanent instanceof Object) || !dkcobj_permanent.isPermanent()){
+		r3logger.elog('dkcobj_parameters are wrong : dkcobj_permanent=' + JSON.stringify(dkcobj_permanent));
+		return false;
+	}
+	if(apiutil.isSafeString(tokens)){
+		tokens = [tokens];
+	}
+	if(!apiutil.isNotEmptyArray(tokens)){
+		r3logger.dlog('tokens(' + JSON.stringify(tokens) + ') is empty or not array');
+		return true;
+	}
+
+	//
+	// Keys
+	//
+	const	keys		= r3keys();
+	const	subkeylist	= dkcobj_permanent.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true);	// get subkeys under "yrn:yahoo::::token:role"
+	const	matchptn	= keys.TOKEN_ROLE_TOP_KEY + '/';								// matching pattern "yrn:yahoo::::token:role/"
+	let		needupdate	= false;
+
+	// remove each token
+	for(let cnt = 0; cnt < tokens.length; ++cnt){
+		if(!apiutil.isSafeString(tokens[cnt])){
+			r3logger.elog('token(' + JSON.stringify(tokens[cnt]) + ') yrn path is not string, but continue...');
+			continue;
+		}
+		if(0 !== tokens[cnt].indexOf(matchptn)){
+			r3logger.elog('token(' + JSON.stringify(tokens[cnt]) + ') is not full yrn path, but continue...');
+			continue;
+		}
+
+		// remove token
+		if(!dkcobj_permanent.remove(tokens[cnt], false)){							// remove yrn:yahoo::::token:role/<role token>
+			r3logger.elog('failed to remove token(' + JSON.stringify(tokens[cnt]) + '), but continue...');
+		}else{
+			// remove token from subkeys(token top key)
+			if(apiutil.removeStringFromArray(subkeylist, tokens[cnt])){
+				needupdate = true;
+			}
+		}
+	}
+	if(needupdate){
+		if(!dkcobj_permanent.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, subkeylist)){		// update subkey -> yrn:yahoo::::token:role
+			r3logger.elog('failed to reset role token subkeys to ' + keys.TOKEN_ROLE_TOP_KEY + ' top key, but continue...');
+		}
+	}
+	return true;
+};
+
+//---------------------------------------------------------
+// Remove Role Token with checking tenant
+//---------------------------------------------------------
+// token_string	:	role token string
+// tenant		:	tenant name
+//
+// result		:	true/false
+//
+const rawRemoveRoleTokenByPath = (
+	token_string:	string | null,
+	tenant:			string | null
+): boolean => {
+
+	if(!apiutil.isSafeString(token_string) || !apiutil.isSafeString(tenant)){
+		r3logger.elog('token_string(' + JSON.stringify(token_string) + ') or tenant(' + JSON.stringify(tenant) + ') parameter is something wrong.');
+		return false;
+	}
+
+	//
+	// Keys
+	//
+	const	keys			= r3keys(null, tenant);
+	const	role_token_key	= keys.TOKEN_ROLE_TOP_KEY + '/' + token_string;					// role token path "yrn:yahoo::::token:role/<token>"
+	const	dkcobj			= k2hr3.getK2hdkc(true, false);									// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		r3logger.elog('Not initialize yet.');
+		return false;
+	}
+
+	// get token value
+	const	value_tmp	= apiutil.getSafeString(dkcobj.getValue(role_token_key, null, true, null));
+	const	value		= apiutil.parseJSON(value_tmp);
+	if(	!apiutil.isPlainObject(value)				||
+		!apiutil.isSafeString(value.role)			||
+		!apiutil.isSafeString(value.date)			||
+		!apiutil.isSafeString(value.expire)			||
+		!apiutil.isSafeString(value.creator)		||
+		(!apiutil.isSafeString(value.user) && !apiutil.isSafeString(value.hostname) && !apiutil.isSafeString(value.ip)) ||
+		!apiutil.isSafeNumber(value.port)			||
+		!apiutil.isSafeString(value.tenant)			||
+		!apiutil.isSafeString(value.base)			)
+	{
+		r3logger.elog('could not get role role_token_key(' + role_token_key + ') value, or it is wrong value(' + JSON.stringify(value) + ') or already expired.');
+		dkcobj.clean();
+		return false;
+	}
+
+	// check tenant name
+	const	roleptn		= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);						// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
+	const	rolematchs	= value.role.match(roleptn);
+	if(!apiutil.isNotEmptyArray(rolematchs) || rolematchs.length < 4){
+		// token's role is not matched role yrn
+		r3logger.elog('role path(' + JSON.stringify(value.role) + ') in role token(' + role_token_key + ') value is not role yrn full path.');
+		dkcobj.clean();
+		return false;
+	}
+	if(tenant !== rolematchs[2]){
+		// tenant name is not matched.
+		r3logger.elog('tenant name(' + JSON.stringify(rolematchs[2]) + ') in role token(' + role_token_key + ') value is not as same as specified tenant(' + JSON.stringify(tenant) + ').');
+		dkcobj.clean();
+		return false;
+	}
+
+	// remove token
+	if(!dkcobj.remove(role_token_key, false)){												// remove yrn:yahoo::::token:role/<role token>
+		r3logger.elog('failed to remove token(' + JSON.stringify(role_token_key) + ').');
+		dkcobj.clean();
+		return false;
+	}
+
+	// remove token from subkeys(token top key)
+	let	subkeylist = apiutil.getSafeStringArray(dkcobj.getSubkeys(keys.TOKEN_ROLE_TOP_KEY, true));	// get subkeys under "yrn:yahoo::::token:role"
+	if(apiutil.removeStringFromArray(subkeylist, role_token_key)){
+		// update subkey
+		if(!dkcobj.setSubkeys(keys.TOKEN_ROLE_TOP_KEY, subkeylist)){						// update subkey -> yrn:yahoo::::token:role
+			r3logger.elog('failed to reset role token subkeys to ' + keys.TOKEN_ROLE_TOP_KEY + ' top key, but continue...');
+		}
+	}
+
+	// remove token key from role's tokens subkey.
+	const role_tokens_key = value.role + '/' + keys.ROLE_TOKEN_KW;							// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+	subkeylist = apiutil.getSafeStringArray(dkcobj.getSubkeys(role_tokens_key, true));
+	if(apiutil.removeStringFromArray(subkeylist, role_token_key)){
+		if(!dkcobj.setSubkeys(role_tokens_key, subkeylist)){								// update subkey -> yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens
+			r3logger.elog('could not update subkey under ' + role_tokens_key + ' key, but continue...');
+		}
+	}
+
+	dkcobj.clean();
+	return true;
+};
+
+//---------------------------------------------------------
+// Get Role Token Directly
+//---------------------------------------------------------
+// dkcobj_permanent	:	dkcobj object
+// tokens			:	array to role token yrn path
+//
+// result			:	{
+//							"token": {
+//								date:		create date(UTC ISO 8601)
+//								expire:		expire date(UTC ISO 8601)
+//								user:		user name if user created this token
+//								hostname:	hostname if this token was created by host(name)
+//								ip:			ip address if this token was created by ip
+//								port:		port number, if specified port when created token
+//								cuk:		cuk, if specified cuk when created token
+//							},
+//							...
+//						}
+//						or null(if error)
+//
+const rawGetDirectRoleTokenInfo = (
+	dkcobj_permanent:	K2hdkc,
+	tokens:				string | string[] | null
+): resTypeObjRoleTokens | null => {
+
+	if(!(dkcobj_permanent instanceof Object) || !dkcobj_permanent.isPermanent()){
+		r3logger.elog('dkcobj_parameters are wrong : dkcobj_permanent=' + JSON.stringify(dkcobj_permanent));
+		return null;
+	}
+	if(apiutil.isSafeString(tokens)){
+		tokens = [tokens];
+	}
+	if(!apiutil.isNotEmptyArray(tokens)){
+		r3logger.dlog('tokens(' + JSON.stringify(tokens) + ') is empty or not array');
+		return null;
+	}
+
+	//
+	// Keys
+	//
+	const	keys		= r3keys();
+	const	matchptn	= keys.TOKEN_ROLE_TOP_KEY + '/';										// matching pattern "yrn:yahoo::::token:role/"
+	const	resobj: resTypeObjRoleTokens = {};
+	for(let cnt = 0; cnt < tokens.length; ++cnt){
+		// check role token path and split token string
+		if(!apiutil.isSafeString(tokens[cnt])){
+			r3logger.elog('token(' + JSON.stringify(tokens[cnt]) + ') yrn path is not string, but continue...');
+			continue;
+		}
+		if(0 !== tokens[cnt].indexOf(matchptn)){
+			r3logger.elog('token(' + JSON.stringify(tokens[cnt]) + ') is not full yrn path, but continue...');
+			continue;
+		}
+		const token_key = tokens[cnt].split(matchptn)[1];
+
+		// get/check role token value
+		const value_tmp	= apiutil.getSafeString(dkcobj_permanent.getValue(tokens[cnt], null, true, null));
+		const value		= apiutil.parseJSON(value_tmp);
+		if(	!apiutil.isPlainObject(value)				||
+			!apiutil.isSafeString(value.role)			||
+			!apiutil.isSafeString(value.date)			||
+			!apiutil.isSafeString(value.expire)			||
+			!apiutil.isSafeString(value.creator)		||
+			(!apiutil.isSafeString(value.user) && !apiutil.isSafeString(value.hostname) && !apiutil.isSafeString(value.ip)) ||
+			!apiutil.isSafeNumber(value.port)			||
+			!apiutil.isSafeString(value.tenant)			||
+			!apiutil.isSafeString(value.base)			||
+			!apiutil.isSafeString(value.expire)			)
+		{
+			r3logger.dlog('could not get role token(' + tokens[cnt] + ') value, or it is wrong value(' + JSON.stringify(value) + ') or expired, thus skip this.');
+			continue;
+		}
+
+		// check expire by token value
+		if(apiutil.isExpired(value.expire)){
+			// expired
+			continue;
+		}
+
+		// add result
+		resobj[token_key] = {
+			user:		(apiutil.isSafeString(value.user) ? value.user : null),
+			hostname:	(apiutil.isSafeString(value.hostname) ? value.hostname : null),
+			ip:			(apiutil.isSafeString(value.ip) ? value.ip : null),
+			port:		value.port,
+			cuk:		(apiutil.isSafeString(value.cuk) ? value.cuk : null),
+			date:		value.date,
+			expire:		value.expire
+		};
+	}
+	return resobj;
+};
+
+//---------------------------------------------------------
+// Get List of Role Tokens
+//---------------------------------------------------------
+// role			:	role yrn full path or role name(path)
+// tenant		:	for checking role full yrn path
+// expand		:	whether to expand token information(default false)
+//
+// result		:	not expand
+//					{
+//						result:		true/false
+//						message:	null or error message string
+//						tokens: [
+//							"role token",
+//							....
+//						]
+// 					}
+//
+// result		:	expand
+//					{
+//						result:		true/false
+//						message:	null or error message string
+//						tokens:	{
+//							"token": {
+//								date:		create date(UTC ISO 8601)
+//								expire:		expire date(UTC ISO 8601)
+//								user:		user name if user created this token
+//								hostname:	hostname if this token was created by host(name)
+//								ip:			ip address if this token was created by ip
+//								port:		port number, if specified port when created token
+//								cuk:		cuk, if specified cuk when created token
+//							},
+//							...
+//						}
+// 					}
+//
+const rawGetListRoleTokens = (
+	role:		string | null,
+	tenant:		string | null,
+	expand:		boolean | null
+): resTypeListRoleTokens => {
+
+	const	resobj: resTypeListRoleTokens = {result: true, message: null};
+
+	if(!apiutil.isSafeString(role) || !apiutil.isSafeString(tenant)){
+		resobj.result	= false;
+		resobj.message	= 'role(' + JSON.stringify(role) + '), tenant(' + JSON.stringify(tenant) + ') parameters are wrong.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+	if(!apiutil.isBoolean(expand)){
+		expand = false;
+	}
+
+	// check role is full yrn path and tenant
+	const	keys		= r3keys(null, tenant);
+	const	roleptn		= new RegExp('^' + keys.MATCH_ANY_TENANT_ROLE);	// regex = /^yrn:yahoo:(.*)::(.*):role:(.*)/
+	const	rolematchs	= role.match(roleptn);
+	if(!apiutil.isNotEmptyArray(rolematchs) || rolematchs.length < 4){
+		// role is not full yrn
+		resobj.result	= false;
+		resobj.message	= 'role(' + JSON.stringify(role) + ') is nor full yrn path.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}else{
+		// role is full yrn to role
+		if(!apiutil.compareCaseString(rolematchs[2], tenant)){
+			resobj.result	= false;
+			resobj.message	= 'tenant(' + tenant + ') is not as same as tenant in role(' + role + ') full yrn.';
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+	}
+
+	const	dkcobj		= k2hr3.getK2hdkc(true, false);					// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		resobj.result	= false;
+		resobj.message	= 'Not initialize yet.';
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+
+	// check role path(check id key under role key)
+	const	id_key	= role + '/' + keys.ID_KW;							// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id"
+	const	value	= apiutil.getSafeString(dkcobj.getValue(id_key, null, true, null));
+	if(!apiutil.isSafeString(value)){
+		resobj.result	= false;
+		resobj.message	= 'role(' + JSON.stringify(role) + ') does not exist';
+		r3logger.elog(resobj.message);
+		dkcobj.clean();
+		return resobj;
+	}
+
+	// get all role tokens
+	const	tokens_key	= role + '/' + keys.ROLE_TOKEN_KW;				// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/tokens"
+	let		tokenlist	= apiutil.getSafeStringArray(dkcobj.getSubkeys(tokens_key, true));
+	if(expand){
+		// get each token information
+		const	token_info = rawGetDirectRoleTokenInfo(dkcobj, tokenlist);
+		if(null === token_info){
+			resobj.tokens = {} as resTypeObjRoleTokens;
+		}else{
+			resobj.tokens = token_info;
+		}
+	}else{
+		// set token list
+		const	tokenptn = new RegExp('^' + keys.MATCH_ANY_ROLE_TOKEN);	// regex = /^yrn:yahoo::::token:role\/(.*)/
+		const	token_info_list: string[] = [];
+
+		if(!apiutil.isNotEmptyArray(tokenlist)){						// token list is full yrn path
+			tokenlist = [];
+		}
+		for(let cnt = 0; cnt < tokenlist.length; ++cnt){
+			if(!apiutil.isSafeString(tokenlist[cnt])){
+				r3logger.wlog('Found wrong token string(' + JSON.stringify(tokenlist[cnt]) + ') in token list, skip this.');
+			}else{
+				const	tokenmatches = tokenlist[cnt].match(tokenptn);
+				if(apiutil.isNotEmptyArray(tokenmatches) && 2 <= tokenmatches.length && apiutil.isSafeString(tokenmatches[1])){
+					token_info_list.push(tokenmatches[1]);
+				}else{
+					r3logger.wlog('Found wrong token string(' + JSON.stringify(tokenlist[cnt]) + ') in token list, skip this.');
+				}
+			}
+		}
+		resobj.tokens = token_info_list;
+	}
+
+	dkcobj.clean();
+	return resobj;
+};
+
+//---------------------------------------------------------
+// Check Role Token
+//---------------------------------------------------------
+// token		:	role token
+// ip			:	client ip address
+// port			:	if is_strict is true, check port number
+// cuk			:	if is_strict is true, check cuk
+// is_strict	:	true means strict checking
+//
+// result		:	null or token information
+//					{
+//						role:			role name
+//						user:			null or user name
+//						hostname:		null or host name
+//						ip:				null or ip address
+//						port:			port number(if host is existed), 0 means any
+//						cuk:			cuk(allowed null)
+//						extra:			extra(allowed null)
+//						tenant:			tenant name
+//						display:		display alias name for tenant
+//						id:				tenant id string
+//						description:	description for tenant
+//						scoped:			role token is always scoped(true)
+//						region:			role token is always null
+//					}
+//
+const rawCheckRoleToken = (
+	token:		string | null,
+	ip:			string | null,
+	port?:		number | null,
+	cuk?:		string | null,
+	is_strict?:	boolean | null
+): resTypeCheckRoleToken | null => {
+
+	if(!apiutil.isSafeString(token)){
+		r3logger.elog('some parameters are wrong : token=' + JSON.stringify(token));
+		return null;
+	}
+	if(!apiutil.isSafeEntity(port)){
+		port = 0;
+	}else if(!apiutil.isSafeNumber(port)){
+		r3logger.elog('port(' + JSON.stringify(port) + ') parameter is wrong.');
+		return null;
+	}
+	if(!apiutil.isSafeString(cuk)){
+		cuk = null;
+	}
+	if(!apiutil.isBoolean(is_strict)){
+		is_strict = false;
+	}
+
+	const dkcobj = k2hr3.getK2hdkc(true, false);												// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		return null;
+	}
+
+	//
+	// keys
+	//
+	let		keys			= r3keys();
+	const	role_token_key	= keys.TOKEN_ROLE_TOP_KEY + '/' + token;							// "yrn:yahoo::::token:role/<role token>"
+
+	// get role token value
+	const	value_tmp	= apiutil.getSafeString(dkcobj.getValue(role_token_key, null, true, null));
+	const	value		= apiutil.parseJSON(value_tmp);
+	if(!apiutil.isPlainObject(value)){
+		r3logger.dlog('could not get role token(' + role_token_key + ') value, or it is wrong value(' + JSON.stringify(value) + '). We check all role token for expire here.');
+		dkcobj.clean();
+		//
+		// check and remove old role token under token top key("yrn:yahoo::::token:role") if old token is expired
+		//
+		// [NOTE]
+		// This processing is taking time, so it runs asynchronously.
+		// And for notes on this processing, refer to NOTE of rawCleanupRoleToken function.
+		//
+		rawCleanupRoleToken((result: boolean): void => {
+			if(!result){
+				r3logger.wlog('Failed to cleanup expired role tokens under ' + keys.TOKEN_ROLE_TOP_KEY + ' key, but continue...');
+			}
+		});
+		return null;
+	}
+	if(	!apiutil.isSafeString(value.role)			||
+		!apiutil.isSafeString(value.date)			||
+		!apiutil.isSafeString(value.expire)			||
+		!apiutil.isSafeString(value.creator)		||
+		(!apiutil.isSafeString(value.user) && !apiutil.isSafeString(value.hostname) && !apiutil.isSafeString(value.ip)) ||
+		!apiutil.isSafeNumber(value.port)			||
+		!apiutil.isSafeString(value.tenant)			||
+		!apiutil.isSafeString(value.base)			||
+		(null !== value.ip && undefined !== value.ip && !apiutil.isSafeString(value.ip))			||
+		(null !== value.cuk && undefined !== value.cuk && !apiutil.isSafeString(value.cuk))			||
+		(null !== value.extra && undefined !== value.extra && !apiutil.isSafeString(value.extra))	)
+	{
+		//
+		// Not check expired token and ip address is empty here.
+		//
+		r3logger.dlog('could not get role token(' + role_token_key + ') value, or it is wrong value(' + JSON.stringify(value) + ').');
+		dkcobj.clean();
+		return null;
+	}
+	const tmp_role		= value.role;
+	//const tmp_date	= value.date;
+	const tmp_expire	= value.expire;
+	//const tmp_creator	= value.creator;
+	const tmp_user		= apiutil.isSafeString(value.user) ? value.user : null;
+	const tmp_hostname	= apiutil.isSafeString(value.hostname) ? value.hostname : null;
+	const tmp_port		= value.port;
+	const tmp_tenant	= value.tenant;
+	const tmp_base		= value.base;
+	const tmp_ip		= apiutil.isSafeString(value.ip) ? value.ip : null;
+	const tmp_cuk		= apiutil.isSafeString(value.cuk) ? value.cuk : null;
+	const tmp_extra		= apiutil.isSafeString(value.extra) ? value.extra : null;
+
+	// Get tenant information
+	const tenant_keys		= r3keys(null, value.tenant);
+	const tmp_display		= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_DISP_KEY, null, true, null));
+	const tmp_id			= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_ID_KEY, null, true, null));
+	const tmp_description	= apiutil.getSafeString(dkcobj.getValue(tenant_keys.TENANT_DESC_KEY, null, true, null));
+
+	// compare ip address, if they are specified and token is not created by user
+	if(!apiutil.isSafeString(tmp_user)){
+		if(!apiutil.isSafeString(ip) || ip !== tmp_ip){
+			r3logger.dlog('role token(' + role_token_key + ') has value(' + JSON.stringify(value) + '), but it is not same ip(' + ip + ').');
+			dkcobj.clean();
+			return null;
+		}
+		// strict checking
+		if(is_strict){
+			if(	tmp_port != port												||
+				!apiutil.isSafeString(tmp_cuk) != apiutil.isSafeString(cuk)		||
+				(apiutil.isSafeString(tmp_cuk) && tmp_cuk != cuk)				)
+			{
+				r3logger.dlog('failed strictly checking role token(' + role_token_key + ').');
+				dkcobj.clean();
+				return null;
+			}
+		}
+	}
+
+	// check expire
+	if(apiutil.isExpired(tmp_expire)){
+		r3logger.dlog('token(' + token + ') is expired.');
+		dkcobj.clean();
+		return null;
+	}
+
+	// get seed id(user id or host(ip) id)
+	let	seed_id: string | null;
+	if(!apiutil.isSafeString(tmp_user)){
+		// creator is host(ip), then get it's id
+		const	host_value_tmp	= apiutil.getSafeString(dkcobj.getValue(value.creator, null, true, null));	// get value from "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/hosts/ip/<ip:port>"
+		const	host_value		= apiutil.parseJSON(host_value_tmp);
+		if(	!apiutil.isPlainObject(host_value)				||
+			(!apiutil.isSafeString(host_value.hostname) && !apiutil.isSafeString(host_value.ip)) ||	// hostname or ip is existed
+			!apiutil.isSafeEntity(host_value.port)			||
+			!apiutil.isSafeString(host_value[keys.ID_KW])	)
+		{
+			r3logger.dlog('could not get host or ip(' + value.creator + ') value, or it is wrong value(' + JSON.stringify(host_value) + ').');
+			dkcobj.clean();
+			return null;
+		}
+		seed_id = apiutil.getSafeString(host_value[keys.ID_KW]);
+
+	}else{
+		// creator is user, then get user's id
+		const	user_id_key	= value.creator + ':' + keys.ID_KW;								// "yrn:yahoo::::user:<user name>:id"
+		seed_id				= apiutil.getSafeString(dkcobj.getValue(user_id_key, null, true, null));
+		if(!apiutil.isSafeString(seed_id)){
+			r3logger.dlog('could not get user id(' + user_id_key + ') value, or it is wrong value(' + JSON.stringify(seed_id) + ').');
+			dkcobj.clean();
+			return null;
+		}
+	}
+
+	// get role id for verify
+	keys				= r3keys(null, value.tenant);										// remake keys
+	const role_key		= tmp_role;															// role member is full yrn => "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}"
+	const role_id_key	= role_key + '/' + keys.ID_KW;										// "yrn:yahoo:<service>::<tenant>:role:<role>{/<role>{...}}/id"
+	const role_id		= apiutil.getSafeString(dkcobj.getValue(role_id_key, null, true, null));
+	if(!apiutil.isSafeStrUuid4(role_id)){
+		r3logger.dlog('could not get role id(' + role_id_key + ') value, or it is wrong value(' + JSON.stringify(role_id) + '), maybe expired this token');
+		dkcobj.clean();
+		return null;
+	}
+	dkcobj.clean();
+
+	// make verify token
+	const token_elements	= apiutil.makeStringToken256(seed_id, role_id, tmp_base);
+	if(!apiutil.isSafeEntity(token_elements)){
+		r3logger.dlog('could not make verify token from ' + JSON.stringify(seed_id) + ' and ' + JSON.stringify(role_id) + ' and ' + JSON.stringify(value));
+		dkcobj.clean();
+		return null;
+	}
+	if(token !== token_elements.str_token){
+		r3logger.elog('token(' + token + ') verify is failure, verify token is ' + token_elements.str_token + '.');
+		dkcobj.clean();
+		return null;
+	}
+
+	// make result
+	const token_info: resTypeCheckRoleToken = {
+		role:			tmp_role,
+		user:			tmp_user,
+		hostname:		tmp_hostname,														// hostname
+		ip:				tmp_ip,
+		port:			tmp_port,
+		cuk:			tmp_cuk,
+		extra:			tmp_extra,
+		tenant:			tmp_tenant,
+		display:		tmp_display,
+		id:				tmp_id,
+		description:	tmp_description,
+		scoped:			true,																// role token is always scoped
+		region:			null
+	};
+	return token_info;
+};
+
+//---------------------------------------------------------
+// get tenant list by user(with DKC)
+//---------------------------------------------------------
+//	result		[
+//					{
+//						name:			"tenant name",			=> tenant name which is "key" in k2hdkc
+//						display:		"display tenant name"	=> display alias name for tenant
+//						id:				"tenant id"				=> tenant id string
+//						description:	"tenant description"	=> description for tenant
+//					},
+//					...
+//				]
+//
+//	[NOTE]		Must initialize User/Tenant before calling this function.
+//
+const rawGetTenantListByUserWithDkc = (
+	dkcobj_permanent:	K2hdkc,
+	user:				string | null
+): valTypeOsapiTenantInfoList | null => {
+
+	if(!(dkcobj_permanent instanceof Object) || !dkcobj_permanent.isPermanent()){
+		r3logger.elog('dkcobj_parameters are wrong : dkcobj_permanent=' + JSON.stringify(dkcobj_permanent));
+		return null;
+	}
+	if(!apiutil.isSafeString(user)){
+		r3logger.elog('user parameters are wrong : user=' + JSON.stringify(user));
+		return null;
+	}
+
+	//
+	// Get subkeys under token top key
+	//
+	const	keys		= r3keys(user);
+	const	subkeylist	= dkcobj_permanent.getSubkeys(keys.USER_TENANT_TOP_KEY, true);		// get subkeys from "yrn:yahoo::::user:<user>:tenant"
+
+	// remove no tenant key in tenant subkey list
+	if(apiutil.removeStringFromArray(subkeylist, keys.USER_TENANT_COMMON_KEY)){				// remove "yrn:yahoo::::user:<user>:tenant/"
+		r3logger.dlog('found ' + keys.USER_TENANT_COMMON_KEY + ' subkey in ' + keys.USER_TENANT_TOP_KEY + ' = user(' + user + ') tenant top key');
+	}else{
+		r3logger.dlog('not found ' + keys.USER_TENANT_COMMON_KEY + ' subkey in ' + keys.USER_TENANT_TOP_KEY + ' = user(' + user + ') tenant top key');
+	}
+	if(!apiutil.isNotEmptyArray(subkeylist)){
+		r3logger.wlog('There is no tenant for user(' + user + ')');
+		return null;
+	}
+
+	// modify tenant name from yrn full path to only tenant name
+	const	pattern				= new RegExp('^' + keys.USER_TENANT_COMMON_KEY + '(.*)');	// regex = /^yrn:yahoo::::user:<user>\:tenant\/(.*)/
+	const	name_list: string[]	= [];
+	for(let cnt = 0; cnt < subkeylist.length; ++cnt){
+		const	tenant_matches	= subkeylist[cnt].match(pattern);							// reverse to tenant name
+		if(apiutil.isNotEmptyArray(tenant_matches) && 2 <= tenant_matches.length && '' !== apiutil.getSafeString(tenant_matches[1])){
+			name_list.push(apiutil.getSafeString(tenant_matches[1]));
+		}
+	}
+	if(!apiutil.isNotEmptyArray(name_list)){
+		r3logger.wlog('There is no tenant for user(' + user + ')');
+		return null;
+	}
+
+	// get display name for each tenant
+	const	tenant_list: valTypeOsapiTenantInfoList = [];
+	for(let cnt = 0; cnt < name_list.length; ++cnt){
+		const	tenant_keys		= r3keys(user, name_list[cnt]);
+		const	tenant_display	= apiutil.getSafeString(dkcobj_permanent.getValue(tenant_keys.TENANT_DISP_KEY, null, true, null));
+		const	tenant_id		= apiutil.getSafeString(dkcobj_permanent.getValue(tenant_keys.TENANT_ID_KEY, null, true, null));
+		const	tenant_desc		= apiutil.getSafeString(dkcobj_permanent.getValue(tenant_keys.TENANT_DESC_KEY, null, true, null));
+
+		tenant_list.push({
+			name:			name_list[cnt],
+			display:		tenant_display,
+			id:				tenant_id,
+			description:	tenant_desc
+		});
+	}
+
+	return tenant_list;
+};
+
+//---------------------------------------------------------
+// get tenant list by user
+//---------------------------------------------------------
+//	result		[
+//					{
+//						name:			"tenant name",			=> tenant name which is "key" in k2hdkc
+//						display:		"display tenant name"	=> display alias name for tenant
+//						id:				"tenant id"				=> tenant id string
+//						description:	"tenant description"	=> description for tenant
+//					},
+//					...
+//				]
+//
+//	[NOTE]		Must initialize User/Tenant before calling this function.
+//
+const rawGetTenantListByUser = (user: string | null): valTypeOsapiTenantInfoList | null => {
+
+	const	dkcobj	= k2hr3.getK2hdkc(true, false);							// use permanent object(need to clean)
+	if(!apiutil.isSafeEntity(dkcobj)){
+		return null;
+	}
+	const	result	= rawGetTenantListByUserWithDkc(dkcobj, user);
+	dkcobj.clean();
+	return result;
+};
+
+//---------------------------------------------------------
+// Initialize tenant list
+//---------------------------------------------------------
+const rawInitializeTenantListByToken = (
+	unscopedtoken:	string | null,
+	username:		string | null,
+	userid:			string | null,
+	callback:		cbTypeInitializeTenantList
+): void => {
+
+	const	_callback		= callback;
+
+	if(!apiutil.isSafeEntity(osapi)){
+		const	error = new Error('could not load osapi file(object)');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+	if(!apiutil.isSafeString(unscopedtoken) || !apiutil.isSafeString(username) || !apiutil.isSafeString(userid)){
+		const	error = new Error('unscopedtoken or username or userid parameters are wrong');
+		r3logger.elog(error.message);
+		_callback(error, null);
+		return;
+	}
+
+	const	_unscopedtoken	= unscopedtoken;
+	const	_username		= username;
+	const 	_userid			= userid;
+
+	// get tenant list for check
+	osapi.getUserTenantList(_unscopedtoken, _userid, (err: Error | null, jsonres: valTypeOsapiTenantInfoList | null): void => {
+		if(null !== err || null === jsonres){
+			const error = new Error('could not get tenant list for user ' + _username + '(token=' + _unscopedtoken + ') by ' + (err?.message ?? 'unknown'));
+			r3logger.elog(error.message);
+			_callback(error, null);
+			return;
+		}
+		//r3logger.dlog('get user tenant list jsonres=\n' + JSON.stringify(jsonres));
+
+		// check tenants(and initialize tenants)
+		const	_name_list: string[]					= [];
+		const	_tenant_list: dkcTypeTenantNameList[]	= [];
+
+		for(let cnt = 0; cnt < jsonres.length; ++cnt){
+			if(!apiutil.isSafeEntity(jsonres[cnt])){
+				continue;
+			}
+
+			// over write
+			const	resobj = k2hr3.initUserTenant(_username, _userid, _username, jsonres[cnt].name, jsonres[cnt].id, jsonres[cnt].description, jsonres[cnt].display);
+			if(!resobj.result){
+				const error = new Error(resobj.message ?? '');
+				r3logger.elog(error.message);
+				_callback(error, null);
+				return;
+			}
+
+			_name_list.push(jsonres[cnt].name);
+			_tenant_list.push({
+				name:		jsonres[cnt].name,
+				display:	apiutil.getSafeString(jsonres[cnt].display)
+			});
+		}
+
+		// get and add local tenants
+		const	tmpresobj = k2hr3.listLocalTenant(_username, true);
+		if(!apiutil.isPlainObject(tmpresobj) || !apiutil.isSafeEntity(tmpresobj.result) || false === tmpresobj.result || !apiutil.isSafeEntity(tmpresobj.tenants)){
+			if(apiutil.isPlainObject(tmpresobj) && apiutil.isSafeString(tmpresobj.message)){
+				r3logger.wlog('failed to get local tenant list by ' + tmpresobj.message);
+			}else{
+				r3logger.wlog('failed to get local tenant list.');
+			}
+		}else{
+			if(apiutil.isNotEmptyArray(tmpresobj.tenants)){
+				for(let cnt2 = 0; cnt2 < tmpresobj.tenants.length; ++cnt2){
+					const tmpTenatInfo = tmpresobj.tenants[cnt2];
+					if(k2hr3.isDkcTypeTenantInfo(tmpTenatInfo)){
+						_name_list.push(tmpTenatInfo.name);
+						_tenant_list.push({
+							name:		tmpTenatInfo.name,
+							display:	apiutil.getSafeString(tmpTenatInfo.display)
+						});
+					}else if(apiutil.isStringArray(tmpTenatInfo)){
+						_name_list.push(tmpTenatInfo);
+						_tenant_list.push({
+							name:		tmpTenatInfo,
+							display:	''
+						});
+					}
+				}
+			}
+		}
+
+		// check and remove old tenant for user
+		if(!k2hr3.removeComprehensionByNewTenants(_username, _name_list)){
+			r3logger.elog('failed to remove some tenant for user, but continue...');
+		}
+
+		// succeed
+		_callback(null, _tenant_list);
+		return;
+	});
+};
+
+//---------------------------------------------------------
+// Initialize tenant list by unscoped user token
+//---------------------------------------------------------
+const rawInitializeTenantListByUnscoped = (
+	unscopedtoken:	string | null,
+	username:		string | null,
+	callback:		cbTypeInitializeTenantList
+): void => {
+
+	if(!apiutil.isSafeString(unscopedtoken) || !apiutil.isSafeString(username)){
+		const error = new Error('unscopedtoken or username parameters are wrong');
+		r3logger.elog(error.message);
+		callback(error, null);
+		return;
+	}
+
+	// user id from user name
+	const user_info: resTypeBasicUserInfo | null = k2hr3.getUserId(username);	// user id from user name
+	if(null === user_info || !apiutil.isSafeEntity(user_info.name) || !apiutil.isSafeEntity(user_info.id)){
+		const error = new Error('could not find username(' + username + ') from unscoped token in k2hdkc.');
+		r3logger.elog(error.message);
+		callback(error, null);
+		return;
+	}
+
+	// get scoped user token
+	return rawInitializeTenantListByToken(unscopedtoken, user_info.name, user_info.id, callback);
+};
+
+const rawCheckTenantInTenantList = (
+	tenants:	valTypeOsapiTenantInfoList | null,
+	tenant:		string | null
+): boolean => {
+
+	if(!apiutil.isNotEmptyArray(tenants) || !apiutil.isSafeString(tenant)){
+		return false;
+	}
+	for(let cnt = 0; cnt < tenants.length; ++cnt){
+		if(!apiutil.isSafeString(tenants[cnt].name)){
+			continue;
+		}
+		if(String(tenants[cnt].name).trim().toLowerCase() === String(tenant).trim().toLowerCase()){
+			// found
+			return true;
+		}
+	}
+	return false;
+};
+
+//---------------------------------------------------------
+// Check Token Automatically
+//---------------------------------------------------------
+// req			:	request from http(s)
+// is_scoped	:	check scoped token(default not scoped check)
+// is_user		:	= true	: token must be user token
+//					= false	: token must be role token
+//					= other	: both token type is allowed, automatically checking.
+//
+// result		:	{
+//						result:		true/false
+//						message:	null or error message string
+//						status:		status code
+//						token:		undefined(error) or token string
+//						token_type;	undefined(error) or "user" or "role"
+//						token_info:	undefined(error) or token information object
+// 					}
+//
+// token is following:
+//					{
+//						role:			role name
+//						user:			null or user name
+//						hostname:		null or host name
+//						ip:				null or host ip address
+//						port:			port number(if host is existed), 0 means any
+//						cuk:			cuk(allowed null)
+//						extra:			extra(allowed null)
+//						tenant:			tenant name
+//						display:		display alias name for tenant
+//						id:				tenant id string
+//						description:	description for tenant
+//						scoped:			role token is always scoped(true)
+//						region:			role token is always null / user token is the creator region name of the token
+//					}
+const rawCheckToken = (
+	req:		Request,
+	is_scoped?:	boolean | null,
+	is_user?:	boolean | null
+): resTypeCheckToken => {
+
+	const	resobj: resTypeCheckToken = {result: true, status: 200, message: null};
+
+	if(!apiutil.isPlainObject(req)){
+		resobj.result	= false;
+		resobj.message	= 'POST body does not have policy data';
+		resobj.status	= 400;								// 400: Bad Request
+		r3logger.elog(resobj.message);
+		return resobj;
+	}
+	if(!apiutil.isBoolean(is_scoped)){
+		is_scoped = false;									// default no scope check
+	}
+	let	user_type = true;
+	let	role_type = true;
+	if(apiutil.isBoolean(is_user)){
+		if(is_user){
+			role_type = false;
+		}else{
+			user_type = false;
+		}
+	}
+
+	//------------------------------
+	// check token
+	//------------------------------
+	let	token: string | null;
+	let	token_type: string;
+	let	token_info: resTypeCheckRoleToken | null;
+	if(rawIsRoleAuthToken(req)){
+		// Get IP address
+		const	ip = apiutil.getClientIpAddress(req);
+		if(!apiutil.isSafeString(ip)){
+			resobj.result	= false;
+			resobj.message	= 'Could not get client ip address from request';
+			resobj.status	= 401;								// 401: Unauthorized
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// Token is ROLE
+		if(!role_type){
+			resobj.result	= false;
+			resobj.message	= 'x-auth-token header token is not role token';
+			resobj.status	= 400;								// 400: Bad Request
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// get token
+		token = rawGetAuthTokenHeader(req, true);
+		if(null === token){
+			resobj.result	= false;
+			resobj.message	= 'There is no x-auth-token header';
+			resobj.status	= 400;								// 400: Bad Request
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// get token information
+		//
+		// [NOTE]
+		// we set always ip address to token(and role/hosts) value now.
+		// then we do not need to convert ip to hostname here.
+		//
+
+		token_info = rawCheckRoleToken(token, ip);				// not strictly checking
+		if(null === token_info || !apiutil.isSafeEntity(token_info.role)){
+			resobj.result	= false;
+			resobj.message	= 'token(' + token + ') is not existed, because it is expired or not set yet.';
+			resobj.status	= 401;								// 401: Unauthorized
+			r3logger.elog(resobj.message);
+			return resobj;
+
+		}else if(is_scoped && !token_info.scoped){
+			resobj.result	= false;
+			resobj.message	= 'token(' + token + ') is not scoped.';
+			resobj.status	= 401;								// 401: Unauthorized
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		token_type = 'role';
+
+	}else{
+		// Token is USER
+		if(!user_type){
+			resobj.result	= false;
+			resobj.message	= 'x-auth-token header token is not user token';
+			resobj.status	= 400;								// 400: Bad Request
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// get token
+		token = rawGetAuthTokenHeader(req, false);
+		if(null === token){
+			resobj.result	= false;
+			resobj.message	= 'There is no x-auth-token header';
+			resobj.status	= 400;								// 400: Bad Request
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		// get token information
+		token_info = rawCheckUserToken(token);
+		if(null === token_info || !apiutil.isSafeEntity(token_info.user)){
+			resobj.result	= false;
+			resobj.message	= 'token(' + token + ') is not existed, because it is expired or not set yet.';
+			resobj.status	= 401;								// 401: Unauthorized
+			r3logger.elog(resobj.message);
+			return resobj;
+
+		}else if(is_scoped && !token_info.scoped){
+			resobj.result	= false;
+			resobj.message	= 'token(' + token + ') is not scoped.';
+			resobj.status	= 401;								// 401: Unauthorized
+			r3logger.elog(resobj.message);
+			return resobj;
+		}
+		token_type = 'user';
+	}
+
+	resobj.token		= token;
+	resobj.token_type	= token_type;
+	resobj.token_info	= token_info;
+
+	return resobj;
+};
+
+//---------------------------------------------------------
+// Parse Token from X-Auth-Token header in request
+//---------------------------------------------------------
+const rawHasAuthTokenHeader = (req: Request): boolean => {
+
+	if(	apiutil.isPlainObject(req) &&
+		apiutil.isPlainObject(req.headers) &&
+		apiutil.isSafeString(req.headers['x-auth-token']) )
+	{
+		return true;
+	}
+	return false;
+};
+
+const rawGetAuthTokenHeader = (
+	req:		Request,
+	is_role:	boolean | null
+): string | null => {
+
+	if(!apiutil.isBoolean(is_role)){
+		is_role = false;
+	}
+	if(	apiutil.isPlainObject(req) &&
+		apiutil.isPlainObject(req.headers) &&
+		apiutil.isSafeString(req.headers['x-auth-token']) )
+	{
+		let token = req.headers['x-auth-token'];
+		if(!apiutil.isString(token)){
+			return null;
+		}
+		if(is_role){
+			if(0 !== token.indexOf('R=')){
+				return null;
+			}
+			token = token.substr(2);						// cut 'R='
+		}else{
+			if(0 === token.indexOf('U=')){
+				token = token.substr(2);					// cut 'U='
+			}
+		}
+		return token;
+	}
+	return null;
+};
+
+const rawIsUserAuthToken = (req: Request): boolean => {
+
+	if(	apiutil.isPlainObject(req) &&
+		apiutil.isPlainObject(req.headers) &&
+		apiutil.isSafeString(req.headers['x-auth-token']) )
+	{
+		const token = req.headers['x-auth-token'];
+		if(!apiutil.isString(token)){
+			return false;
+		}
+		if(-1 === token.indexOf('U=')){						// user token has 'U='
+			return true;
+		}else if(-1 === token.indexOf('R=')){
+			return true;									// user token does not have any prefix
+		}
+	}
+	return false;
+};
+
+const rawIsRoleAuthToken = (req: Request): boolean => {
+
+	if(	apiutil.isPlainObject(req) &&
+		apiutil.isPlainObject(req.headers) &&
+		apiutil.isSafeString(req.headers['x-auth-token']) )
+	{
+		const token = req.headers['x-auth-token'];
+		if(!apiutil.isString(token)){
+			return false;
+		}
+		if(0 === token.indexOf('R=')){
+			return true;										// role token has 'R='
+		}
+	}
+	return false;
+};
+
+//---------------------------------------------------------
+// Exports
+//---------------------------------------------------------
+export const k2hr3tokens = {
+	isDkcTypeSourceUserHostInfo:	rawIsDkcTypeSourceUserHostInfo,
+	isValTypeUserTenantInfo:		rawIsValTypeUserTenantInfo,
+	isDkcTypeBaseRoleToken:			rawIsDkcTypeBaseRoleToken,
+	isResTypeObjRoleTokens:			rawIsResTypeObjRoleTokens,
+	isResTypeCheckKindToken:		rawIsResTypeCheckKindToken,
+	isResTypeCheckUserToken:		rawIsResTypeCheckUserToken,
+	isResTypeCheckRoleToken:		rawIsResTypeCheckRoleToken,
+	getUserToken:					rawGetUserToken,
+	getUserTokenByToken:			rawGetUserTokenByToken,
+	getScopedUserToken:				rawGetScopedUserTokenByUnscoped,
+	removeScopedUserToken:			rawRemoveScopedUserToken,
+	checkUserToken:					rawCheckUserToken,
+	getRoleTokenByUser:				rawGetRoleTokenByUser,
+	getRoleTokenByIP:				rawGetRoleTokenByIP,
+	removeRoleTokenByUser:			(token: string | null, user: string | null, tenant: string | null): resTypeBaseResult => rawRemoveRoleToken(token, user, tenant, null, 0, null),
+	directRemoveRoleTokens:			rawDirectRemoveRoleTokens,
+	removeRoleTokenByPath:			rawRemoveRoleTokenByPath,
+	getListRoleTokens:				rawGetListRoleTokens,
+	getDirectRoleTokenInfo:			rawGetDirectRoleTokenInfo,
+	removeRoleTokenByIP:			(token: string | null, ip: string | null, port: number | null, cuk: string | null): resTypeBaseResult => rawRemoveRoleToken(token, null, null, ip, port, cuk),
+	checkRoleToken:					rawCheckRoleToken,
+	getTenantListWithDkc:			rawGetTenantListByUserWithDkc,
+	getTenantList:					rawGetTenantListByUser,
+	initializeTenantList:			rawInitializeTenantListByUnscoped,
+	checkTenantInTenantList:		rawCheckTenantInTenantList,
+	hasAuthTokenHeader:				rawHasAuthTokenHeader,
+	getAuthTokenHeader:				rawGetAuthTokenHeader,
+	isUserAuthToken:				rawIsUserAuthToken,
+	isRoleAuthToken:				rawIsRoleAuthToken,
+	checkToken:						rawCheckToken
+};
+
+//
+// Default
+//
+export default k2hr3tokens;
+
+//---------------------------------------------------------
+// Export types
+//---------------------------------------------------------
+//
+// Variables
+//
+export {
+	dkcTypeTenantNameList,
+	valTypeUserTenantInfo,
+	resTypeUserToken,
+	resTypeGetRoleToken,
+	resTypeListRoleTokens,
+	resTypeObjRoleTokens,
+	resTypeCheckKindToken,
+	resTypeCheckUserToken,
+	resTypeCheckRoleToken,
+	resTypeCheckToken,
+	valTypeJwtParam,
+	resTypeCreateUserToken,
+	resTypeUserTenantInfo
+};
+
+//
+// Callbacks
+//
+export {
+	cbTypeGetUserScopedToken,
+	cbTypeGetUserUnscopedToken,
+	cbTypeGetUserTenantList
+};
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noexpandtab sw=4 ts=4 fdm=marker
+ * vim<600: noexpandtab sw=4 ts=4
+ */
