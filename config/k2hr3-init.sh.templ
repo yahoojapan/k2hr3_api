@@ -741,9 +741,9 @@ if [ "${SCRIPTMODE}" = "r" ]; then
 		RESOLVE_DOMAIN=$(grep -i '^domain' /etc/resolv.conf | awk '{print $NF}')
 	fi
 
-	if [ -n "${RESOLVE_DOMAIN}" ]; then
+	if [ -n "${RESOLVE_DOMAIN}" ] && [ -n "${LOCAL_HOSTNAME}" ]; then
 		LOCAL_FULL_HOSTNAME="${LOCAL_HOSTNAME}.${RESOLVE_DOMAIN}"
-	elif [ -n "${LOCAL_DOMAIN}" ]; then
+	elif [ -n "${LOCAL_DOMAIN}" ] && [ -n "${LOCAL_HOSTNAME}" ]; then
 		LOCAL_FULL_HOSTNAME="${LOCAL_HOSTNAME}.${LOCAL_DOMAIN}"
 	else
 		LOCAL_FULL_HOSTNAME=$(hostname -f)

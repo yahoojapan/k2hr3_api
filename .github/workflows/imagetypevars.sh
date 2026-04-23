@@ -93,7 +93,7 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	PKG_INSTALL_CURL="curl"
 	PKG_INSTALL_BASE="g++ make nodejs k2hdkc-dev dnsutils procps"
 
-	NODE_MAJOR=18
+	NODE_MAJOR=24
 	PKG_REPO_SETUP_NODEJS="
 		${PKGMGR_NAME} install -y ca-certificates gnupg
 		mkdir -p /etc/apt/keyrings
