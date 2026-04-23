@@ -79,18 +79,6 @@ if [ -z "${CI_NODEJS_MAJOR_VERSION}" ]; then
 	#
 	:
 
-elif [ "${CI_NODEJS_MAJOR_VERSION}" = "20" ]; then
-	INSTALLER_BIN="apt-get"
-	UPDATE_CMD="update"
-	UPDATE_CMD_ARG=""
-	INSTALL_CMD="install"
-	INSTALL_CMD_ARG=""
-	INSTALL_AUTO_ARG="-y"
-	INSTALL_QUIET_ARG="-qq"
-	INSTALL_PKG_LIST="git gcc g++ make k2hdkc-dev"
-
-	IS_NPM_PUBLISHER=0
-
 elif [ "${CI_NODEJS_MAJOR_VERSION}" = "22" ]; then
 	INSTALLER_BIN="apt-get"
 	UPDATE_CMD="update"
