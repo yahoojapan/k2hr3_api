@@ -1,6 +1,6 @@
 {
   "name": "k2hr3-api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "K2HR3 REST API is K2hdkc based Resource and Roles and policy Rules",
   "main": "dist/app.js",
   "dependencies": {
