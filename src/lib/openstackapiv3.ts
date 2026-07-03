@@ -145,7 +145,7 @@ const rawGetUserUnscopedTokenV3 = (
 		};
 		const	options	= {
 			'host':				apiutil.getSafeString(keystone_ep.hostname),
-			'port':				apiutil.isSafeNumber(keystone_ep.port) ? keystone_ep.port : 0,
+			'port':				apiutil.isSafeString(keystone_ep.port) ? keystone_ep.port : 0,
 			'path': 			apiutil.getSafeString(keystone_ep.pathname) + '/v3/auth/tokens',
 			'method':			'POST',
 			'headers':			headers,
@@ -330,7 +330,7 @@ const rawGetUserUnscopedTokenByOstokenV3 = (
 		};
 		const	options	= {
 			'host':				apiutil.getSafeString(keystone_ep.hostname),
-			'port':				apiutil.isSafeNumber(keystone_ep.port) ? keystone_ep.port : 0,
+			'port':				apiutil.isSafeString(keystone_ep.port) ? keystone_ep.port : 0,
 			'path': 			apiutil.getSafeString(keystone_ep.pathname) + '/v3/auth/tokens',
 			'method':			'POST',
 			'headers':			headers,
@@ -571,7 +571,7 @@ const rawGetUserScopedTokenV3 = (
 		};
 		const	options	= {
 			'host':				apiutil.getSafeString(keystone_ep.hostname),
-			'port':				apiutil.isSafeNumber(keystone_ep.port) ? keystone_ep.port : 0,
+			'port':				apiutil.isSafeString(keystone_ep.port) ? keystone_ep.port : 0,
 			'path': 			apiutil.getSafeString(keystone_ep.pathname) + '/v3/auth/tokens',
 			'method':			'POST',
 			'headers':			headers,
@@ -868,7 +868,7 @@ const rawGetUserTenantListV3 = (
 		};
 		const	options = {
 			'host':				apiutil.getSafeString(keystone_ep.hostname),
-			'port':				apiutil.isSafeNumber(keystone_ep.port) ? keystone_ep.port : 0,
+			'port':				apiutil.isSafeString(keystone_ep.port) ? keystone_ep.port : 0,
 			'path': 			apiutil.getSafeString(keystone_ep.pathname) + '/v3/users/' + _userid + '/projects',
 			'method':			'GET',
 			'headers':			headers,
