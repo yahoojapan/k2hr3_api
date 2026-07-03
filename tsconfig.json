@@ -10,7 +10,11 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "allowJs": false
+    "allowJs": false,
+    "types": [
+      "node",
+      "mocha"
+    ]
   },
   "include": [
     "src/**/*.ts",

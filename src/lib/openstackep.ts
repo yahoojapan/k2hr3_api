@@ -26,7 +26,6 @@ import	{ getK2hr3Keys }						from './k2hr3keys';
 import	{ ca }									from './cacerts';
 
 import type	{ dkcTypeKeystoneEndpoints }		from './k2hr3dkc';
-import type	{ UrlWithStringQuery }				from 'url';
 import type	{ ClientRequest, IncomingMessage  }	from 'http';
 import type	{ Socket }							from 'net';
 
@@ -53,8 +52,8 @@ type valTypeGetKeystoneEndpointArgs = {
 	callback:		cbTypeGetKeystoneEndpoint
 };
 
-type valTypeUrlKeystoneEndpoint = UrlWithStringQuery & {
-	region?:		string;
+type valTypeUrlKeystoneEndpoint = URL & {
+	region?: string;
 };
 
 //
@@ -142,21 +141,24 @@ const rawIsValTypeUrlKeystoneEndpoint = (val: unknown): val is valTypeUrlKeyston
 		return false;
 	}
 
-	// check UrlWithStringQuery
-	if(	(apiutil.isSafeEntity(val.query)	&& !apiutil.isString(val.query)		) ||
+	// check URL (not same UrlWithStringQuery)
+	if(	(apiutil.isSafeEntity(val.origin)	&& !apiutil.isString(val.origin)	) ||
 		(apiutil.isSafeEntity(val.href)		&& !apiutil.isString(val.href)		) ||
 		(apiutil.isSafeEntity(val.protocol)	&& !apiutil.isString(val.protocol)	) ||
-		(apiutil.isSafeEntity(val.auth)		&& !apiutil.isString(val.auth)		) ||
+		(apiutil.isSafeEntity(val.username)	&& !apiutil.isString(val.username)	) ||
+		(apiutil.isSafeEntity(val.password)	&& !apiutil.isString(val.password)	) ||
 		(apiutil.isSafeEntity(val.host)		&& !apiutil.isString(val.host)		) ||
 		(apiutil.isSafeEntity(val.hostname)	&& !apiutil.isString(val.hostname)	) ||
 		(apiutil.isSafeEntity(val.port)		&& !apiutil.isString(val.port)		) ||
 		(apiutil.isSafeEntity(val.pathname)	&& !apiutil.isString(val.pathname)	) ||
 		(apiutil.isSafeEntity(val.search)	&& !apiutil.isString(val.search)	) ||
-		(apiutil.isSafeEntity(val.path)		&& !apiutil.isString(val.path)		) ||
-		(apiutil.isSafeEntity(val.hash)		&& !apiutil.isString(val.hash)		) ||
-		(apiutil.isSafeEntity(val.query)	&& !apiutil.isSafeEntity(val.query)	) ||
-		(apiutil.isSafeEntity(val.slashes)	&& !apiutil.isBoolean(val.slashes)	) )
+		(apiutil.isSafeEntity(val.hash)		&& !apiutil.isString(val.hash)		) )
 	{
+		return false;
+	}
+
+	// check only type as object in URL
+	if(apiutil.isSafeEntity(val.searchParams) && !apiutil.isSafeEntity(val.searchParams)) {
 		return false;
 	}
 
@@ -371,7 +373,7 @@ const rawTestKeystoneEndpoint = (
 	};
 	const	options = {
 		'host':			apiutil.getSafeString(ep.hostname),
-		'port':			apiutil.isSafeNumber(ep.port) ? ep.port : 0,
+		'port':			apiutil.isSafeString(ep.port) ? ep.port : 0,
 		'path': 		_is_v3 ? '/v3/auth/tokens' : '/v2.0/tokens',
 		'method':		'POST',
 		'headers':		headers,

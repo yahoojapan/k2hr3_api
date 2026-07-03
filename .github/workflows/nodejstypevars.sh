@@ -134,6 +134,7 @@ fi
 #	RUN_PUBLISH				1
 #	RUN_POST_PUBLISH		0
 #
+RUN_PRE_INSTALL=1
 RUN_CPPCHECK=0
 
 #---------------------------------------------------------------
@@ -175,7 +176,7 @@ SHELLCHECK_EXCEPT_PATHS="/node_modules/"
 # and PRNINFO defined in nodejs_helper.sh.
 #
 #	<function name>		<which processing>			<implemented or not>
-#	run_pre_install		: before installing npm packages	no
+#	run_pre_install		: before installing npm packages	yes
 #	run_install			: installing npm packages			yes
 #	run_post_install	: after installing npm packages		no
 #	run_pre_audit		: before audit checking				no
@@ -194,6 +195,71 @@ SHELLCHECK_EXCEPT_PATHS="/node_modules/"
 #	run_publish			: publishing package				yes
 #	run_post_publish	: after publishing package			yes
 #
+
+#
+# Override pre-install
+#
+# Set min-release-age(=3) to prevent risks immediately after release.
+# To achieve this, set RUN_PRE_INSTALL=1 as described above, and then
+# override the run_pre_install function here.
+#
+run_pre_install()
+{
+	#
+	# Check npm version
+	#
+	# Use the npm `min-release-age` option to protect against supply chain attacks.
+	# To use this option, npm version 11.10.0 or later is required.
+	# Notably, the default npm version included with Node.js v22 is older than this,
+	# so an upgrade is necessary.
+	#
+	_NPMVER_MAJOR=$(npm -v 2>&1 | awk -F'.' '{print $1}' 2>&1)
+	_NPMVER_MINOR=$(npm -v 2>&1 | awk -F'.' '{print $2}' 2>&1)
+	_NPMVER_PATCH=$(npm -v 2>&1 | awk -F'.' '{print $3}' 2>&1)
+	_NEED_NPM_UPGRADE=0
+
+	if [ -z "${_NPMVER_MAJOR}" ]; then
+		_NEED_NPM_UPGRADE=1
+	elif [ "${_NPMVER_MAJOR}" -eq 11 ]; then
+		if [ -z "${_NPMVER_MINOR}" ]; then
+			_NEED_NPM_UPGRADE=1
+		elif [ "${_NPMVER_MINOR}" -lt 10 ]; then
+			_NEED_NPM_UPGRADE=1
+		fi
+	elif [ "${_NPMVER_MAJOR}" -lt 11 ]; then
+		_NEED_NPM_UPGRADE=1
+	fi
+
+	if [ "${_NEED_NPM_UPGRADE}" -eq 1 ]; then
+		PRNINFO "The npm is v${_NPMVER_MAJOR}.${_NPMVER_MINOR}.${_NPMVER_PATCH}, so it will be upgraded."
+
+		if ! /bin/sh -c "npm install -g npm@latest"; then
+			PRNERR "Failed to upgrade npm."
+			return 1
+		fi
+		PRNINFO "Succeed to upgrade npm."
+	fi
+
+	# [NOTE]
+	# If CI_FORCE_MIN_RELEASE_AGE is set, min-release-age is executed using that value.
+	# If it is not set, the default is 3 days.
+	#
+	MIN_RELEASE_AGE_VALUE=3
+	if [ -n "${CI_FORCE_MIN_RELEASE_AGE}" ]; then
+		MIN_RELEASE_AGE_VALUE="${CI_FORCE_MIN_RELEASE_AGE}"
+	fi
+	if [ "${MIN_RELEASE_AGE_VALUE}" -ne 0 ]; then
+		if ! /bin/sh -c "npm config set min-release-age ${MIN_RELEASE_AGE_VALUE}"; then
+			PRNERR "Failed to run \"npm config set min-release-age ${MIN_RELEASE_AGE_VALUE}\"."
+			return 1
+		fi
+		PRNINFO "Finished to run \"npm config set min-release-age ${MIN_RELEASE_AGE_VALUE}\"."
+	else
+		PRNINFO "The min-release-age value is specified 0, so skip to check minimun release age."
+	fi
+
+	return 0
+}
 
 #
 # Override Audit

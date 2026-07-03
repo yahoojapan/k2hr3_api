@@ -183,6 +183,20 @@ set_custom_variables()
 	fi
 
 	#
+	# Npm set config
+	#
+	# Since the Docker image targets Node.js 24 or later, npm is at version
+	# 11.10.0 or higher, so "min-release-age" typically does not cause an
+	# error.
+	# Therefore, "NPM_CONFIG_BASE_COMMAND" is configured to avoid failure.
+	#
+	MIN_RELEASE_AGE_VALUE=3
+	if [ -n "${ENV_FORCE_MIN_RELEASE_AGE}" ] && echo "${ENV_FORCE_MIN_RELEASE_AGE}" | grep -q -v '[^0-9]'; then
+		MIN_RELEASE_AGE_VALUE="${ENV_FORCE_MIN_RELEASE_AGE}"
+	fi
+	NPM_CONFIG_BASE_COMMAND="if ! npm config set min-release-age ${MIN_RELEASE_AGE_VALUE}; then echo \"Failed to set set min-release-age ${MIN_RELEASE_AGE_VALUE}, maybe npm version is old. So skip check package age.\"; fi"
+
+	#
 	# Npm install packages
 	#
 	if [ -n "${NPM_INSTALL_BASE}" ]; then
@@ -255,6 +269,7 @@ custom_dockerfile_conversion()
 
 	if ! sed -e "s#%%PACKAGE_NAME%%#${PACKAGE_NAME}#g"							\
 			-e "s#%%PKG_REPO_SETUP_NODEJS%%#${PKG_REPO_SETUP_NODEJS_COMMAND}#g"	\
+			-e "s#%%NPM_CONFIG_BASE%%#${NPM_CONFIG_BASE_COMMAND}#g"				\
 			-e "s#%%NPM_INSTALL_BASE%%#${NPM_INSTALL_BASE_COMMAND}#g"			\
 			-i "${_TMP_DOCKERFILE_PATH}"; then
 

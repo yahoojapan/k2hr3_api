@@ -18,12 +18,10 @@
  *
  */
 
-import	* as dns						from 'dns';
-import	* as fs							from 'fs';
-import	* as crypto						from 'crypto';
-import	* as url						from 'url';
-import type	{ UrlWithStringQuery }		from 'url';
-import type	{ Request }					from 'express';
+import	* as dns		from 'dns';
+import	* as fs			from 'fs';
+import	* as crypto		from 'crypto';
+import type	{ Request }	from 'express';
 import type { valTypeTokenSeed, valTypeAllObject, valTypeAll, valTypeRoleInfo }	from './types';
 
 //---------------------------------------------------------
@@ -1362,10 +1360,10 @@ const rawComplementHostnameIpAddress = (
 //
 // url parser with default port
 //
-const rawUrlParse = (strurl: string): UrlWithStringQuery => {
-
-	const	ep = url.parse(strurl);
-	if(rawIsSafeEntity(ep) && (null === ep.port || !rawIsSafeEntity(ep.port) || isNaN(Number(ep.port)))){
+const rawUrlParse = (strurl: string): URL =>
+{
+	const	ep = new URL(strurl, 'http://localhost');
+	if(rawIsSafeEntity(ep) && (null === ep.port || '' === ep.port || !rawIsSafeEntity(ep.port) || isNaN(Number(ep.port)))) {
 		// set default port
 		if(rawIsSafeString(ep.protocol) && 'https:' === ep.protocol){
 			ep.port	= String(443);
