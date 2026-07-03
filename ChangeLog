@@ -1,3 +1,9 @@
+k2hr3-api (2.0.2) unstable; urgency=low
+
+  * Adds Alpine3.24/manual GHA trigger, Updates dependencies/codes - #141
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 03 Jul 2026 19:13:32 +0900
+
 k2hr3-api (2.0.1) unstable; urgency=low
 
   * Changed support NodeJS and Fixed some code - #139
