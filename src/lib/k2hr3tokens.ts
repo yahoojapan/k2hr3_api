@@ -614,7 +614,7 @@ const rawGetUserToken = (
 	}
 
 	const	_tenant	= apiutil.getSafeString(tenant).toLowerCase();
-	let		_user	= user;
+	const	_user	= user;
 	const	_passwd	= apiutil.getSafeString(passwd);
 
 	// get unscoped token
@@ -627,7 +627,7 @@ const rawGetUserToken = (
 		}
 
 		// save to local val
-		_user					= jsonres.user;								// over write
+		//const _cur_user		= jsonres.user;
 		const _userid			= jsonres.userid;
 		const _username			= jsonres.user;
 		const _unscopedtoken	= jsonres.token;

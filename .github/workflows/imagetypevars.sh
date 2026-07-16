@@ -84,6 +84,7 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "alpine" ]; then
 	PKG_INSTALL_BASE="g++ make nodejs npm python3 k2hdkc-dev bind-tools procps"
 	PKG_REPO_SETUP_NODEJS=""
 	NPM_INSTALL_BASE=""
+	NPM_INSTALL_ALLOW_SCRIPTS="--allow-scripts=k2hdkc"
 
 elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	PKGMGR_NAME="apt-get"
@@ -103,6 +104,7 @@ elif [ "${CI_DOCKER_IMAGE_OSTYPE}" = "ubuntu" ]; then
 	"
 
 	NPM_INSTALL_BASE=""
+	NPM_INSTALL_ALLOW_SCRIPTS="--allow-scripts=k2hdkc"
 
 	#
 	# For installing tzdata with another package(ex. git)
@@ -200,12 +202,12 @@ set_custom_variables()
 	# Npm install packages
 	#
 	if [ -n "${NPM_INSTALL_BASE}" ]; then
-		NPM_INSTALL_BASE_COMMAND="${NPM_INSTALL_BASE}"
+		NPM_INSTALL_BASE_COMMAND="${NPM_INSTALL_BASE} ${NPM_INSTALL_ALLOW_SCRIPTS}"
 	else
 		#
 		# Set default package
 		#
-		NPM_INSTALL_BASE_COMMAND="npm install -g ${PACKAGE_NAME}${PACKAGE_VERSION_SUFFIX}"
+		NPM_INSTALL_BASE_COMMAND="npm install -g ${PACKAGE_NAME}${PACKAGE_VERSION_SUFFIX} ${NPM_INSTALL_ALLOW_SCRIPTS}"
 	fi
 	return 0
 }
