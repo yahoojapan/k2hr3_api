@@ -1,3 +1,9 @@
+k2hr3-api (2.0.3) unstable; urgency=low
+
+  * Allow k2hdkc installation scripts to run under newer npm versions - #143
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 16 Jul 2026 11:12:54 +0900
+
 k2hr3-api (2.0.2) unstable; urgency=low
 
   * Adds Alpine3.24/manual GHA trigger, Updates dependencies/codes - #141
