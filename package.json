@@ -12,9 +12,12 @@
     "debug": "~4.4.3",
     "express": "^5.2.1",
     "jose": "^6.2.3",
-    "k2hdkc": "^2.0.5",
+    "k2hdkc": "^2.0.6",
     "morgan": "~1.11.0",
     "rotating-file-stream": "^3.2.9"
+  },
+  "allowScripts": {
+    "k2hdkc": true
   },
   "directories": {
     "config": "config",
@@ -35,7 +38,7 @@
     "k2hr3-watcher": "dist/src/bin/watcher.js"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
     "@types/body-parser": "^1.19.6",
     "@types/chai": "^5.2.3",
@@ -46,12 +49,12 @@
     "@types/express": "^5.0.6",
     "@types/mocha": "^10.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@typescript-eslint/eslint-plugin": "^8.62.1",
     "@typescript-eslint/parser": "^8.62.1",
     "chai": "^6.2.2",
     "chai-http": "^5.1.2",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "globals": "^17.7.0",
     "mocha": "^11.7.6",
     "nyc": "^18.0.0",
